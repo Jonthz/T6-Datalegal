@@ -20,4 +20,9 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        mapfile -d '' py_files < <(git ls-files -z '*.py')
+        if [ "${#py_files[@]}" -gt 0 ]; then
+          pylint "${py_files[@]}"
+        else
+          echo "No Python files to lint."
+        fi
