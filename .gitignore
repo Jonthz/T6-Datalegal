@@ -1,0 +1,26 @@
+# Logs de ingreso de credenciales, builds 
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+.DS_Store
+dist/
+build/
+.coverage
+.pytest_cache/
+.idea/
+.vscode/
+
+# Python packaging artifacts
+*.egg-info/
+
+# Test databases
+*.db
+
+# Runtime artifacts written by the SQLite backup endpoint and CLI
+backend/backups/
+
+# Frontend lock files (not versioned in this repo)
+package-lock.json
