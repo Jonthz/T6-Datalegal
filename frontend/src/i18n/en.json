@@ -1,0 +1,1499 @@
+{
+  "app": {
+    "title": "DataLegal 2.0",
+    "subtitle": "LOPDP Compliance Platform",
+    "environment": "Multi-tenant compliance workspace"
+  },
+  "nav": {
+    "sidebar": "Primary navigation",
+    "breadcrumbs": "Breadcrumb",
+    "openSidebar": "Open navigation",
+    "dashboard": "Dashboard",
+    "alerts": "Alerts",
+    "reports": "Reports",
+    "companyProfile": "Company profile",
+    "users": "Users",
+    "departments": "Departments",
+    "catalogs": "Master catalogs",
+    "tenants": "Tenants",
+    "dataInventory": "Data inventory",
+    "treatmentActivities": "Treatment activities",
+    "informationAssets": "Information assets",
+    "retention": "Retention",
+    "importExport": "Import / export",
+    "riskAssessments": "Risk assessments",
+    "dpias": "DPIAs",
+    "arco": "ARCO requests",
+    "portability": "Portability",
+    "incidents": "Incidents",
+    "consents": "Consents",
+    "legalDocuments": "Legal documents",
+    "ropa": "ROPA",
+    "actionPlans": "Action plans",
+    "auditPlans": "Audit plans",
+    "remediations": "Remediations",
+    "auditLog": "Audit log",
+    "training": "Training",
+    "backups": "Backups",
+    "settings": "Settings",
+    "sectors": "Economic sectors",
+    "logout": "Sign out",
+    "groups": {
+      "overview": "Overview",
+      "organization": "Organization",
+      "dataRegistry": "Data registry",
+      "risk": "Risk & DPIA",
+      "rights": "Rights & incidents",
+      "documents": "Documents",
+      "operations": "Operations",
+      "transversal": "Support"
+    }
+  },
+  "auth": {
+    "login": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "mfaTitle": "Two-factor authentication",
+    "mfaDescription": "Enter the 6-digit code from your authenticator app.",
+    "mfaCode": "TOTP code",
+    "mfaVerify": "Verify",
+    "mfaSetupTitle": "Set up authenticator",
+    "mfaSetupDescription": "Scan this QR code with your authenticator app (Google Authenticator, Authy, 1Password), then enter the generated code to confirm.",
+    "mfaSetupManualKey": "Manual entry key",
+    "mfaSetupSuccess": "MFA enabled successfully. Redirecting…",
+    "mfaConfirm": "Confirm and enable MFA",
+    "loginFailed": "Invalid email or password.",
+    "mfaFailed": "Invalid TOTP code. Please try again.",
+    "accountLocked": "Account is locked. Please try again later.",
+    "loggingIn": "Signing in…",
+    "tagline": "Built for DPOs, auditors and compliance leads.",
+    "tenantPrompt": "Sign in to your tenant workspace."
+  },
+  "topbar": {
+    "signedInAs": "Signed in as",
+    "tenantId": "Tenant",
+    "manageMfa": "Manage MFA"
+  },
+  "dashboard": {
+    "title": "Executive dashboard",
+    "description": "Real-time view of risk posture, ARCO SLA and operational alerts.",
+    "kpis": {
+      "title": "Key indicators",
+      "activitiesRegistered": "Activities registered",
+      "activitiesHint": "Treatment activities with status ACTIVE.",
+      "avgRisk": "Average risk score",
+      "avgRiskHint": "Mean risk score across all assessments.",
+      "arcoOnTime": "ARCO on-time rate",
+      "arcoHint": "Closed within the 30-day SLA.",
+      "breaches": "Reported breaches",
+      "breachesHint": "Incidents reported to the regulator."
+    },
+    "trends": {
+      "title": "Trends",
+      "description": "Risk and operational signals across the last months.",
+      "noData": "We will display trends as soon as data is available."
+    },
+    "alerts": {
+      "title": "Latest alerts",
+      "viewAll": "View all alerts",
+      "empty": "No new alerts — you're all caught up."
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "registerActivity": "Register a treatment activity",
+      "registerActivityHint": "Start the guided RoT wizard.",
+      "runRisk": "Run a risk assessment",
+      "runRiskHint": "Use the questionnaire to score a treatment activity.",
+      "openARCO": "Manage ARCO requests",
+      "openARCOHint": "Track 30-day SLA on access, rectification, cancellation and opposition.",
+      "exportReport": "Export consolidated report",
+      "exportReportHint": "Download PDF or CSV with KPIs and trends."
+    }
+  },
+  "users": {
+    "title": "User management",
+    "description": "Invite, deactivate or update workspace members and assigned roles.",
+    "create": "Create user",
+    "email": "Email",
+    "fullName": "Full name",
+    "role": "Role",
+    "department": "Department",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "mfaEnabled": "MFA",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "createSuccess": "User created successfully.",
+    "updateSuccess": "User updated successfully.",
+    "deleteSuccess": "User deleted successfully.",
+    "confirmDelete": "Are you sure you want to delete this user?"
+  },
+  "alerts": {
+    "title": "Alerts center",
+    "description": "Internal notifications about critical compliance events.",
+    "unread": "Unread",
+    "all": "All",
+    "markRead": "Mark read",
+    "delete": "Delete",
+    "create": "New alert",
+    "createHint": "Broadcast a compliance event to your tenant or to a specific user.",
+    "createSuccess": "Alert created.",
+    "validation": "Type, title and message are required.",
+    "broadcast": "Broadcast",
+    "new": "New",
+    "creationGated": "Only DPO, ADMIN and SUPER_ADMIN roles can create alerts. You can mark or delete the alerts you receive.",
+    "empty": "Nothing to show",
+    "emptyAll": "No alerts have been recorded yet.",
+    "emptyDescription": "When relevant compliance events happen, they will appear here.",
+    "loadFailed": "We could not load alerts. Try again.",
+    "kpis": {
+      "unread": "Unread",
+      "unreadHint": "Across your inbox and tenant-wide broadcasts.",
+      "shown": "In view",
+      "shownUnreadHint": "Currently filtered to unread items.",
+      "shownAllHint": "All alerts visible to your role."
+    },
+    "columns": {
+      "title": "Title",
+      "type": "Type",
+      "severity": "Severity",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "fields": {
+      "type": "Alert type",
+      "typeHint": "Free-form domain code (e.g. ARCO_SLA, INCIDENT_REPORTED).",
+      "title": "Title",
+      "message": "Message",
+      "severity": "Severity",
+      "resourceType": "Resource type",
+      "resourceId": "Resource ID",
+      "recipientId": "Recipient user ID",
+      "recipientHint": "Leave empty to broadcast to all DPOs."
+    }
+  },
+  "departments": {
+    "title": "Departments",
+    "description": "Organize workspace teams and assign department heads.",
+    "create": "Create department",
+    "edit": "Edit department",
+    "fields": {
+      "name": "Name",
+      "head": "Department head",
+      "created": "Created"
+    },
+    "noHead": "No head assigned",
+    "createSuccess": "Department created.",
+    "updateSuccess": "Department updated.",
+    "deleteSuccess": "Department deleted.",
+    "confirmDelete": "Delete this department? Users assigned to it will lose this assignment.",
+    "empty": "No departments yet",
+    "emptyHint": "Create the first department to start organizing teams.",
+    "loadFailed": "We could not load departments."
+  },
+  "companyProfile": {
+    "title": "Company profile",
+    "description": "Configure the legal entity, DPO contact and tenant identity.",
+    "sections": {
+      "company": "Company details",
+      "dpo": "Data protection officer"
+    },
+    "fields": {
+      "name": "Company name",
+      "ruc": "RUC",
+      "country": "Country",
+      "sector": "Economic sector",
+      "address": "Address",
+      "website": "Website",
+      "dpoName": "DPO name",
+      "dpoEmail": "DPO email",
+      "dpoPhone": "DPO phone"
+    },
+    "updateSuccess": "Profile saved.",
+    "loadFailed": "We could not load the company profile.",
+    "rucReadonly": "RUC can only be changed by Super-Admin during tenant provisioning.",
+    "permissionRequired": "Only the DPO or a Super-Admin can edit the company profile."
+  },
+  "tenants": {
+    "title": "Tenants",
+    "description": "Provision new client tenants and bootstrap their first admin.",
+    "create": "Provision tenant",
+    "fields": {
+      "name": "Tenant name",
+      "ruc": "RUC",
+      "country": "Country",
+      "sector": "Sector",
+      "status": "Status",
+      "created": "Created"
+    },
+    "newAdmin": "Initial admin account",
+    "adminFields": {
+      "email": "Admin email",
+      "password": "Temporary password",
+      "fullName": "Full name",
+      "role": "Role"
+    },
+    "provisionSuccess": "Tenant provisioned. Share the admin credentials securely.",
+    "loadFailed": "We could not load tenants.",
+    "empty": "No tenants",
+    "emptyHint": "Provision the first tenant to bootstrap a client workspace.",
+    "passwordHint": "Min 8 characters, mixed case, digit and symbol."
+  },
+  "sectors": {
+    "title": "Economic sectors",
+    "description": "Economic sector pre-population for treatment activities, data types and document templates.",
+    "currentSector": "Current company sector",
+    "noSectorYet": "No sector configured yet — pick the closest match below.",
+    "useSector": "Use this sector",
+    "useSectorSuccess": "Company sector updated.",
+    "loadFailed": "We could not load sectors.",
+    "suggested": {
+      "dataTypes": "Suggested data types",
+      "activities": "Example treatment activities",
+      "templates": "Recommended templates"
+    }
+  },
+  "catalogs": {
+    "title": "Master catalogs",
+    "description": "Manage editable lookup tables for legal bases, data types, threats, controls, asset taxonomy and more.",
+    "filterByType": "Filter by type",
+    "allTypes": "All catalog types",
+    "create": "Bulk import entries",
+    "addEntry": "Add entry",
+    "fields": {
+      "type": "Type",
+      "code": "Code",
+      "label": "Label",
+      "description": "Description",
+      "sensitivity": "Sensitivity",
+      "criticality": "Criticality",
+      "version": "Version",
+      "active": "Active"
+    },
+    "sensitivity": {
+      "ORDINARY": "Ordinary",
+      "SENSITIVE": "Sensitive"
+    },
+    "criticality": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "csvLabel": "CSV file",
+    "csvHint": "Columns required: type, code, label, description.",
+    "csvImported": "Bulk import succeeded: {{count}} entries.",
+    "csvFailed": "Bulk import failed — verify the CSV columns.",
+    "createSuccess": "Entry created.",
+    "updateSuccess": "Entry saved.",
+    "deleteSuccess": "Entry deleted.",
+    "deleteBlocked": "Cannot delete this entry — it is still referenced by other records.",
+    "confirmDelete": "Soft-delete this catalog entry?",
+    "loadFailed": "We could not load catalogs.",
+    "empty": "No entries match the current filter."
+  },
+  "dataInventory": {
+    "title": "Data inventory progress",
+    "description": "Coverage of treatment activities, risk assessments and information assets.",
+    "kpis": {
+      "completion": "Activity coverage",
+      "completionHint": "Activities with at least one risk assessment.",
+      "activities": "Treatment activities",
+      "activitiesHint": "Total registered (any status).",
+      "assets": "Information assets",
+      "assetsHint": "Technical assets registered.",
+      "assessments": "Risk assessments",
+      "assessmentsHint": "Independent risk records."
+    },
+    "statusBreakdown": "Activities by status",
+    "riskBreakdown": "Risk distribution",
+    "classBreakdown": "Classification distribution",
+    "asOf": "As of {{date}}",
+    "noClassifications": "No information assets classified yet.",
+    "noRiskScores": "No risk assessments yet.",
+    "loadFailed": "We could not load data inventory metrics."
+  },
+  "treatmentActivities": {
+    "title": "Treatment activities",
+    "description": "Register, edit and finalize processing activities with the guided RoT wizard.",
+    "create": "Start RoT wizard",
+    "filterStatus": "Filter by status",
+    "filterAll": "All",
+    "filterDraft": "Draft",
+    "filterActive": "Active",
+    "filterArchived": "Archived",
+    "fields": {
+      "name": "Activity name",
+      "purpose": "Purpose",
+      "legalBasis": "Legal basis",
+      "dataTypes": "Personal data types",
+      "dataSubjects": "Data subjects",
+      "retentionDays": "Retention (days)",
+      "department": "Department",
+      "isCrossBorder": "Cross-border transfer",
+      "destinationCountries": "Destination countries",
+      "processorName": "Processor name",
+      "processorCountry": "Processor country",
+      "status": "Status"
+    },
+    "csvHelp": "Separate entries with commas",
+    "wizard": {
+      "title": "RoT wizard",
+      "step1": "Identification",
+      "step2": "Legal basis & data",
+      "step3": "Transfers",
+      "step4": "Review",
+      "step1Hint": "Name, purpose and responsible department.",
+      "step2Hint": "Choose the legal basis, the data types processed and the data subjects.",
+      "step3Hint": "Declare any international transfer or external processor.",
+      "step4Hint": "Review the activity before activating it.",
+      "stepLabel": "Step {{current}} of {{total}}",
+      "finalize": "Finalize and activate",
+      "saveDraft": "Save draft",
+      "started": "Draft created.",
+      "stepSaved": "Step saved.",
+      "finalized": "Activity activated.",
+      "validateLegal": "Legal basis is required before activating."
+    },
+    "deleteSuccess": "Activity archived.",
+    "confirmDelete": "Archive this treatment activity? It will not be deleted but its status will become ARCHIVED.",
+    "loadFailed": "We could not load treatment activities.",
+    "empty": "No activities registered",
+    "emptyHint": "Use the wizard to register the first processing activity."
+  },
+  "informationAssets": {
+    "title": "Information assets",
+    "description": "Technical metadata, format, storage medium and classification of every asset.",
+    "create": "Add asset",
+    "edit": "Edit asset",
+    "fields": {
+      "name": "Asset name",
+      "description": "Description",
+      "assetType": "Asset type",
+      "format": "Format",
+      "storageMedium": "Storage medium",
+      "classification": "Classification",
+      "treatmentActivity": "Linked activity",
+      "department": "Department"
+    },
+    "filterByClass": "Filter by classification",
+    "filterAll": "All classifications",
+    "createSuccess": "Asset created.",
+    "updateSuccess": "Asset updated.",
+    "deleteSuccess": "Asset deleted.",
+    "confirmDelete": "Delete this information asset?",
+    "loadFailed": "We could not load assets.",
+    "empty": "No assets yet",
+    "emptyHint": "Register the first asset to enable risk assessments and retention.",
+    "missingCatalogs": "No catalog entries configured for {{type}}. Add them in Catalogs before registering assets."
+  },
+  "retention": {
+    "title": "Retention",
+    "description": "Define retention policies, track records, surface expired data and run scheduled cleanups.",
+    "tabs": {
+      "policies": "Policies",
+      "records": "Records",
+      "expired": "Expired under review",
+      "logs": "Execution logs"
+    },
+    "policies": {
+      "title": "Retention policies",
+      "create": "Add policy",
+      "fields": {
+        "name": "Policy name",
+        "category": "Data category",
+        "days": "Retention (days)",
+        "action": "Action on expiry",
+        "legalBasis": "Legal basis"
+      },
+      "actions": {
+        "DELETE": "Delete",
+        "ANONYMIZE": "Anonymize",
+        "REVIEW": "Review (manual)"
+      },
+      "createSuccess": "Policy saved.",
+      "updateSuccess": "Policy updated.",
+      "empty": "No retention policies defined",
+      "emptyHint": "Add a policy to start tracking expiry dates per data category."
+    },
+    "records": {
+      "title": "Retention records",
+      "fields": {
+        "asset": "Information asset",
+        "policy": "Policy",
+        "expiry": "Expiry date",
+        "status": "Status",
+        "legalHold": "Legal hold"
+      },
+      "empty": "No retention records",
+      "emptyHint": "Create records to attach expiry dates to information assets."
+    },
+    "expired": {
+      "title": "Expired under review",
+      "description": "Records that have passed their expiry date and require a DPO decision.",
+      "asOf": "As of {{date}}",
+      "empty": "No expired records pending review",
+      "decisionLabel": "Decision",
+      "rationale": "Rationale",
+      "decisionOptions": {
+        "RETAIN": "Retain",
+        "DELETE": "Delete",
+        "ANONYMIZE": "Anonymize"
+      },
+      "decisionSaved": "Decision recorded.",
+      "noLegalHold": "Only records with legal_hold=true are listed."
+    },
+    "execute": {
+      "title": "Run retention",
+      "description": "Mark expired records as UNDER_REVIEW based on active policies.",
+      "policyAll": "All active policies",
+      "runType": "Run type",
+      "manual": "Manual",
+      "scheduled": "Scheduled",
+      "success": "Retention run completed.",
+      "failed": "Retention run failed."
+    },
+    "logs": {
+      "title": "Execution logs",
+      "empty": "No retention runs executed yet.",
+      "processed": "Processed",
+      "exceptions": "Exceptions",
+      "runType": "Run type"
+    },
+    "loadFailed": "We could not load retention data."
+  },
+  "importExport": {
+    "title": "Import & export",
+    "description": "Bulk import treatment activities from CSV/JSON and export compliance datasets.",
+    "tabs": {
+      "import": "Import",
+      "export": "Export"
+    },
+    "import": {
+      "title": "Import treatment activities",
+      "description": "Upload a CSV or JSON file. Required columns: name, purpose, legal_basis. Arrays (personal_data_types, data_subjects, destination_countries) can be pipe (|) separated in CSV.",
+      "csvFile": "File",
+      "preview": "Preview",
+      "previewHint": "{{count}} row(s) detected.",
+      "submit": "Import {{count}} row(s)",
+      "success": "Imported {{count}} activities.",
+      "partial": "Imported {{count}} activities with {{errors}} error(s).",
+      "failed": "Import failed — fix the file and try again.",
+      "parsingFailed": "We could not parse the file.",
+      "errorsTitle": "Errors",
+      "noFile": "No file selected.",
+      "emptyFile": "File contains no rows."
+    },
+    "export": {
+      "title": "Export",
+      "csvActivities": "Treatment activities (CSV)",
+      "csvActivitiesHint": "id, name, purpose, legal_basis, status, retention_period_days, is_cross_border, department_id",
+      "jsonReport": "Compliance report (JSON)",
+      "jsonReportHint": "Totals and breakdowns across compliance modules.",
+      "downloadCsv": "Download CSV",
+      "downloadJson": "Download JSON",
+      "downloading": "Preparing download…",
+      "failed": "Export failed."
+    }
+  },
+  "riskAssessments": {
+    "title": "Risk assessments",
+    "description": "Score treatment activities with the LOPDP questionnaire and visualize the green/yellow/red posture.",
+    "create": "New assessment",
+    "edit": "Edit assessment",
+    "tabs": {
+      "list": "Assessments",
+      "dashboard": "Dashboard"
+    },
+    "fields": {
+      "activity": "Treatment activity",
+      "level": "Risk level",
+      "score": "Score",
+      "probability": "Probability",
+      "impact": "Impact",
+      "status": "Status",
+      "analyst": "Analyst",
+      "notes": "Analyst notes"
+    },
+    "scoreLabel": "{{score}}/25",
+    "questionnaire": {
+      "title": "Risk questionnaire",
+      "description": "Answer Yes or No to each question. Q1 is a gateway — answering No skips assessment entirely.",
+      "gatewayBlocked": "This activity does not handle personal data — no risk assessment is required.",
+      "yes": "Yes",
+      "no": "No",
+      "loadFailed": "We could not load the questionnaire."
+    },
+    "createSuccess": "Risk assessment recorded.",
+    "updateSuccess": "Risk assessment updated.",
+    "loadFailed": "We could not load risk assessments.",
+    "empty": "No risk assessments yet",
+    "emptyHint": "Pick a treatment activity and answer the questionnaire to compute its score.",
+    "selectActivity": "Select a treatment activity",
+    "noActivities": "Register a treatment activity first before running an assessment.",
+    "filters": {
+      "level": "Risk level",
+      "all": "All levels"
+    },
+    "dashboard": {
+      "title": "Risk dashboard",
+      "total": "Total assessments",
+      "totalHint": "All risk records (any status).",
+      "avg": "Average score",
+      "avgHint": "Mean of P × I across the workspace.",
+      "green": "Low (green)",
+      "greenHint": "Score 1-8 — acceptable residual risk.",
+      "yellow": "Medium (yellow)",
+      "yellowHint": "Score 9-16 — requires mitigation plan.",
+      "red": "High (red)",
+      "redHint": "Score 17-25 — immediate action required.",
+      "high": "Top high-risk activities",
+      "highHint": "Highest scoring activities pending mitigation.",
+      "noHighRisk": "No high-risk activities — keep monitoring.",
+      "kpiTitle": "Reports KPIs",
+      "registeredActivities": "Activities registered",
+      "registeredHint": "Active treatment activities reported via /reports/kpis.",
+      "breachesReported": "Breaches reported",
+      "breachesHint": "Incidents with regulator notification flagged."
+    }
+  },
+  "dpias": {
+    "title": "Data protection impact assessments",
+    "description": "Three-step DPIA wizard with description, risk analysis, mitigations, signature and PDF export.",
+    "create": "New DPIA",
+    "edit": "Edit DPIA",
+    "fields": {
+      "activity": "Treatment activity",
+      "status": "Status",
+      "version": "Version",
+      "signedAt": "Signed at",
+      "signedBy": "Signed by",
+      "step1": "Step 1 — Description",
+      "step2": "Step 2 — Risk analysis",
+      "step3": "Step 3 — Mitigation measures"
+    },
+    "wizard": {
+      "title": "DPIA wizard",
+      "stepLabel": "Step {{current}} of {{total}}",
+      "step1Hint": "Describe the processing, the legal basis and the data subjects.",
+      "step2Hint": "Identify residual risks, threats and CIA impact.",
+      "step3Hint": "List the mitigation measures and controls.",
+      "step4": "Review",
+      "step4Hint": "Confirm and create the draft. Sign it from the list to issue the PDF.",
+      "step1Placeholder": "Describe the processing activity, legal basis, data subjects and any cross-border transfer.",
+      "step2Placeholder": "List identified risks: confidentiality, integrity, availability impacts. Reference Probability × Impact.",
+      "step3Placeholder": "List the technical and organizational measures, controls, and residual risk after mitigation.",
+      "createSuccess": "DPIA draft created.",
+      "saveSuccess": "DPIA updated.",
+      "signSuccess": "DPIA signed. PDF is ready for download.",
+      "validate": "All three steps must contain content before signing."
+    },
+    "sign": "Sign DPIA",
+    "downloadPdf": "Download PDF",
+    "pdfFilename": "dpia_{{id}}_v{{version}}.pdf",
+    "pdfMissing": "Sign the DPIA before downloading the PDF.",
+    "permissionRequired": "Only the DPO or Super-Admin can sign a DPIA.",
+    "loadFailed": "We could not load DPIAs.",
+    "empty": "No DPIAs yet",
+    "emptyHint": "Pick a high-risk treatment activity and start a DPIA.",
+    "selectActivity": "Select a treatment activity",
+    "noActivities": "Register a treatment activity first to launch a DPIA."
+  },
+  "arco": {
+    "title": "ARCO requests",
+    "description": "Access, rectification, cancellation and opposition tickets with 30-day SLA traffic-light.",
+    "create": "Register ARCO request",
+    "tabs": {
+      "list": "Tickets",
+      "dashboard": "Dashboard"
+    },
+    "fields": {
+      "ticket": "Ticket",
+      "type": "Type",
+      "requester": "Requester",
+      "email": "Email",
+      "idNumber": "ID number",
+      "status": "Status",
+      "deadline": "Deadline",
+      "received": "Received",
+      "description": "Description",
+      "responseText": "Response",
+      "rejectionReason": "Rejection reason",
+      "assignedDpo": "Assigned DPO"
+    },
+    "types": {
+      "ACCESS": "Access",
+      "RECTIFICATION": "Rectification",
+      "CANCELLATION": "Cancellation",
+      "OPPOSITION": "Opposition"
+    },
+    "statuses": {
+      "RECEIVED": "Received",
+      "VERIFYING": "Verifying",
+      "IN_PROGRESS": "In progress",
+      "RESPONDED": "Responded",
+      "CLOSED": "Closed",
+      "REJECTED": "Rejected"
+    },
+    "sla": {
+      "label": "SLA status",
+      "GREEN": "On track",
+      "YELLOW": "Due soon",
+      "RED": "Overdue",
+      "GREY": "Closed",
+      "daysRemaining": "{{days}} day(s) remaining",
+      "overdue": "Overdue by {{days}} day(s)",
+      "closed": "Closed",
+      "onTime": "Closed on time",
+      "late": "Closed late",
+      "loadFailed": "We could not load the SLA status."
+    },
+    "filters": {
+      "type": "Request type",
+      "status": "Status",
+      "all": "All"
+    },
+    "dashboard": {
+      "total": "Total tickets",
+      "totalHint": "ARCO requests recorded.",
+      "overdue": "Overdue",
+      "overdueHint": "Past the 30-day deadline and not closed.",
+      "byType": "By request type",
+      "byStatus": "By status",
+      "empty": "No data yet."
+    },
+    "createSuccess": "ARCO request created — DPO has been alerted.",
+    "updateSuccess": "Ticket updated.",
+    "loadFailed": "We could not load ARCO requests.",
+    "empty": "No ARCO requests yet",
+    "emptyHint": "Register the first access, rectification, cancellation or opposition ticket.",
+    "detail": {
+      "title": "Ticket {{ticket}}",
+      "back": "Back to list",
+      "sectionRequester": "Requester",
+      "sectionRequest": "Request",
+      "sectionResolution": "Resolution"
+    }
+  },
+  "incidents": {
+    "title": "Incidents",
+    "description": "Register data breaches, classify impact, and track regulator and data-subject notification deadlines.",
+    "create": "Register incident",
+    "edit": "Edit incident",
+    "fields": {
+      "title": "Title",
+      "description": "Description",
+      "type": "Incident type",
+      "severity": "Severity",
+      "status": "Status",
+      "spdp": "SPDP notification required",
+      "spdpHint": "Toggle if the Superintendency of Personal Data Protection must be notified.",
+      "affectedData": "Affected data types",
+      "department": "Department",
+      "assigned": "Assigned to",
+      "regulatoryNotified": "Regulator notified",
+      "resolvedAt": "Resolved at",
+      "reporter": "Reporter"
+    },
+    "types": {
+      "DATA_BREACH": "Data breach",
+      "UNAUTHORIZED_ACCESS": "Unauthorized access",
+      "SYSTEM_FAILURE": "System failure",
+      "POLICY_VIOLATION": "Policy violation",
+      "OTHER": "Other"
+    },
+    "severities": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "CRITICAL": "Critical"
+    },
+    "statuses": {
+      "OPEN": "Open",
+      "INVESTIGATING": "Investigating",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "deadlines": {
+      "title": "Notification deadlines",
+      "regulator": "Regulator (5 days from detection)",
+      "subjects": "Affected subjects (without undue delay)",
+      "regulatorNotified": "Regulator notified {{when}}",
+      "subjectsPending": "Pending data-subject communication",
+      "overdue": "Overdue by {{days}} day(s)",
+      "remaining": "{{days}} day(s) remaining",
+      "today": "Due today",
+      "noDeadline": "No regulatory deadline yet"
+    },
+    "filters": {
+      "status": "Status",
+      "severity": "Severity",
+      "all": "All"
+    },
+    "createSuccess": "Incident registered.",
+    "updateSuccess": "Incident updated.",
+    "notifySuccess": "Regulator notification marked.",
+    "notifyAction": "Mark regulator notified",
+    "loadFailed": "We could not load incidents.",
+    "empty": "No incidents reported",
+    "emptyHint": "Register the first security or privacy incident to start tracking deadlines.",
+    "csvHelp": "Comma-separated values."
+  },
+  "portability": {
+    "title": "Data portability",
+    "description": "Receive portability requests, complete them and export the data in interoperable JSON (RFC 8259).",
+    "create": "New portability request",
+    "complete": "Complete & export",
+    "fields": {
+      "subjectName": "Subject name",
+      "subjectEmail": "Subject email",
+      "status": "Status",
+      "requestDate": "Requested",
+      "completedAt": "Completed",
+      "notes": "Notes",
+      "responseData": "Response payload (JSON)"
+    },
+    "filters": {
+      "status": "Status",
+      "all": "All"
+    },
+    "statuses": {
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In progress",
+      "COMPLETED": "Completed",
+      "REJECTED": "Rejected"
+    },
+    "createSuccess": "Portability request created.",
+    "updateSuccess": "Request updated.",
+    "completeSuccess": "Request marked complete.",
+    "exportSuccess": "Export ready.",
+    "exportLabel": "Export JSON",
+    "responseHint": "JSON payload that will be exported to the data subject. Leave empty to export an empty object.",
+    "invalidJson": "Response payload must be valid JSON.",
+    "loadFailed": "We could not load portability requests.",
+    "empty": "No portability requests yet",
+    "emptyHint": "Register a request to start the interoperable export flow.",
+    "exportFilename": "portability_{{id}}_{{subject}}.json"
+  },
+  "consents": {
+    "title": "Consents",
+    "description": "Consent registry, immutable revocation, cookie banners and cookie consents.",
+    "loadFailed": "We could not load consent data.",
+    "stats": {
+      "total": "Total records",
+      "active": "Active",
+      "revoked": "Revoked",
+      "sensitive": "Sensitive",
+      "revocationRate": "revocation rate"
+    },
+    "tabs": {
+      "records": "Consent records",
+      "banners": "Cookie banners",
+      "cookies": "Cookie consents"
+    },
+    "records": {
+      "create": "Record consent",
+      "createHint": "Capture a consent grant on behalf of a data subject for an existing treatment activity.",
+      "createSuccess": "Consent recorded.",
+      "validation": "Subject token and purpose are required.",
+      "revoke": "Revoke",
+      "revokeHint": "Once revoked, the consent record becomes immutable; you cannot grant it again with the same token.",
+      "revokeSuccess": "Consent revoked.",
+      "alreadyRevoked": "Already revoked",
+      "filter": "Filter",
+      "filterAll": "All consents",
+      "filterActive": "Active only",
+      "filterRevoked": "Revoked only",
+      "active": "Active",
+      "revoked": "Revoked",
+      "sensitive": "Sensitive",
+      "empty": "No consent records yet",
+      "emptyHint": "Capture the first consent to populate the registry.",
+      "columns": {
+        "subject": "Subject / purpose",
+        "legalBasis": "Legal basis",
+        "flags": "Flags",
+        "granted": "Granted",
+        "revoked": "Revoked"
+      },
+      "fields": {
+        "subject": "Data subject token",
+        "purpose": "Purpose",
+        "legalBasis": "Legal basis",
+        "treatmentActivityId": "Treatment activity ID",
+        "treatmentActivityHint": "Optional — links the consent to a treatment activity.",
+        "sensitive": "This consent involves sensitive personal data",
+        "reason": "Revocation reason (optional)"
+      }
+    },
+    "banners": {
+      "subtitle": "Versioned banners with effective date. Only one banner should be active at a time.",
+      "create": "Create banner",
+      "createSuccess": "Banner created.",
+      "validation": "Version and content are required.",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "activateSuccess": "Banner activated.",
+      "deactivateSuccess": "Banner deactivated.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "empty": "No banners yet",
+      "emptyHint": "Publish the first cookie banner to start collecting cookie consents.",
+      "columns": {
+        "version": "Version / content",
+        "effective": "Effective date",
+        "state": "State"
+      },
+      "fields": {
+        "version": "Version",
+        "content": "Banner copy",
+        "effective": "Effective date"
+      }
+    },
+    "cookies": {
+      "title": "Cookie consents",
+      "description": "Record a cookie consent against the active banner and optionally revoke it.",
+      "modalHint": "Each (banner_id, data_subject_token) pair is unique.",
+      "record": "Record cookie consent",
+      "createSuccess": "Cookie consent recorded.",
+      "revoke": "Revoke",
+      "revokeSuccess": "Cookie consent revoked.",
+      "validation": "Banner and subject token are required.",
+      "noBanners": "Create and activate a banner first.",
+      "recorded": "Cookie consent recorded",
+      "revoked": "Cookie consent revoked",
+      "acceptedAt": "Accepted",
+      "revokedAt": "Revoked",
+      "fields": {
+        "banner": "Cookie banner",
+        "bannerPlaceholder": "Choose a banner",
+        "subject": "Data subject token"
+      }
+    }
+  },
+  "legalDocuments": {
+    "title": "Legal documents",
+    "description": "Generate, version and download privacy notices, cookie notices and contractual templates.",
+    "create": "New document",
+    "createHint": "A new document of the same type automatically demotes the prior current version.",
+    "createSuccess": "Document generated.",
+    "validation": "Doc type, title and version are required.",
+    "downloadPdf": "Download PDF",
+    "generate": "Generate",
+    "current": "Current",
+    "loadFailed": "We could not load legal documents.",
+    "notFound": "The generated PDF is not available.",
+    "empty": "No documents yet",
+    "emptyHint": "Generate the first legal document from one of the catalog templates.",
+    "filterType": "Document type",
+    "filterAllTypes": "All types",
+    "onlyCurrent": "Show only current versions",
+    "templates": {
+      "title": "Catalog templates",
+      "description": "Pre-defined LOPDP templates seeded by the backend.",
+      "empty": "No templates returned by the backend."
+    },
+    "columns": {
+      "title": "Title",
+      "version": "Version",
+      "effective": "Effective",
+      "created": "Created"
+    },
+    "fields": {
+      "docType": "Template",
+      "docTypePlaceholder": "Choose a template",
+      "title": "Title",
+      "version": "Version",
+      "effective": "Effective date",
+      "content": "Content",
+      "contentHint": "Leave empty to use the template defaults. Avoid em-dashes and curly quotes (PDF font is Latin-1)."
+    }
+  },
+  "ropa": {
+    "title": "Record of Processing Activities",
+    "description": "LOPDP-aligned ROPA assembled from every treatment activity in this tenant.",
+    "downloadPdf": "Download PDF",
+    "loadFailed": "We could not assemble the ROPA report.",
+    "empty": "ROPA is empty",
+    "emptyHint": "Register treatment activities to populate this report.",
+    "footer": {
+      "note": "The downloadable PDF mirrors this content grouped by legal basis."
+    },
+    "kpis": {
+      "total": "Total activities",
+      "totalHint": "Treatment activities in scope of the ROPA.",
+      "legalBases": "Legal bases in use",
+      "legalBasesHint": "Distinct legal bases applied across activities.",
+      "generated": "Generated",
+      "generatedHint": "Report timestamp."
+    },
+    "section": {
+      "legalBasis": "Legal basis",
+      "activities": "activities",
+      "crossBorder": "Cross-border",
+      "dataTypes": "Personal data",
+      "subjects": "Data subjects",
+      "retention": "Retention",
+      "days": "days",
+      "destinations": "Destinations",
+      "processor": "Processor"
+    }
+  },
+  "actionPlans": {
+    "title": "Action plans",
+    "description": "Templates, auto-generation from high-risk results and task-level progress tracking.",
+    "create": "New plan",
+    "createSuccess": "Action plan created.",
+    "edit": "Edit plan",
+    "updateSuccess": "Plan updated.",
+    "validation": "Title is required.",
+    "filter": "Status",
+    "loadFailed": "We could not load action plans.",
+    "autoGenerate": "Auto-generate from risk",
+    "autoGenerateSuccess": "Auto-generation completed. {{count}} new plans created.",
+    "autoGenerated": "Auto",
+    "linkedRisk": "Risk assessment",
+    "overdue": "Overdue",
+    "tasksUnit": "tasks",
+    "empty": "No action plans yet",
+    "emptyHint": "Create plans manually or auto-generate them from HIGH / MEDIUM risk assessments.",
+    "tabs": {
+      "plans": "Plans",
+      "templates": "Templates"
+    },
+    "templates": {
+      "create": "New template",
+      "createSuccess": "Template created.",
+      "validation": "Template name is required.",
+      "description": "Reusable templates pre-populate plan tasks. Auto-generation also consumes these.",
+      "empty": "No templates yet — create one to speed up plan creation."
+    },
+    "columns": {
+      "title": "Title",
+      "tasks": "Tasks",
+      "target": "Target date"
+    },
+    "fields": {
+      "title": "Title",
+      "description": "Description",
+      "target": "Target date",
+      "template": "Template",
+      "templateNone": "(no template)",
+      "risk": "Link to risk assessment",
+      "riskNone": "(none)",
+      "tasks": "Tasks",
+      "addTask": "Add task",
+      "noTasks": "No tasks yet — add one or apply a template.",
+      "taskTitle": "Task title",
+      "taskDescription": "Notes",
+      "taskDue": "Due date",
+      "name": "Template name",
+      "appliesTo": "Applies to risk level"
+    }
+  },
+  "auditPlans": {
+    "title": "Audit plans",
+    "description": "Plan internal audits, capture findings and download the audit report PDF.",
+    "create": "New audit plan",
+    "createSuccess": "Audit plan created.",
+    "edit": "Edit audit plan",
+    "updateSuccess": "Audit plan updated.",
+    "downloadReport": "Report PDF",
+    "reportNotFound": "Report PDF is not available yet.",
+    "filter": "Status",
+    "validation": "Plan name is required.",
+    "loadFailed": "We could not load audit plans.",
+    "empty": "No audit plans yet",
+    "emptyHint": "Create the first audit plan to capture findings later.",
+    "columns": {
+      "name": "Plan / scope",
+      "period": "Period"
+    },
+    "fields": {
+      "name": "Name",
+      "scope": "Scope",
+      "periodStart": "Period start",
+      "periodEnd": "Period end",
+      "notes": "Notes"
+    },
+    "findings": {
+      "title": "Findings",
+      "open": "Findings",
+      "add": "Add finding",
+      "edit": "Edit finding",
+      "createSuccess": "Finding recorded.",
+      "updateSuccess": "Finding updated.",
+      "validation": "Finding title is required.",
+      "loadFailed": "We could not load the findings.",
+      "empty": "No findings yet",
+      "emptyHint": "Record the first finding for this audit plan.",
+      "columns": {
+        "title": "Finding",
+        "severity": "Severity",
+        "remediation": "Remediation due"
+      },
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "evidence": "Evidence",
+        "severity": "Severity",
+        "remediationNotes": "Remediation notes",
+        "remediationDate": "Remediation date"
+      }
+    }
+  },
+  "remediations": {
+    "title": "Remediations",
+    "description": "Remediation tasks linked to risk assessments. Track pre- and post-remediation risk scores.",
+    "create": "New remediation",
+    "createSuccess": "Remediation created.",
+    "edit": "Edit remediation",
+    "updateSuccess": "Remediation updated.",
+    "validation": "Risk assessment and title are required.",
+    "filter": "Status",
+    "filterRisk": "Risk assessment",
+    "linkedRisk": "Risk assessment",
+    "overdue": "Overdue",
+    "loadFailed": "We could not load remediations.",
+    "empty": "No remediations yet",
+    "emptyHint": "Open the first remediation against a HIGH / CRITICAL risk assessment.",
+    "columns": {
+      "title": "Title",
+      "before": "Before",
+      "after": "After",
+      "score": "Score",
+      "due": "Due date"
+    },
+    "fields": {
+      "risk": "Risk assessment",
+      "riskPlaceholder": "Choose a risk assessment",
+      "title": "Title",
+      "description": "Description",
+      "due": "Due date",
+      "completed": "Completion date",
+      "scoreAfter": "Risk score after",
+      "levelAfter": "Risk level after",
+      "levelUnchanged": "(unchanged)"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "description": "Filterable consolidated compliance reports with PDF / CSV export and KPI / trend breakdown.",
+    "loadFailed": "We could not load the reports payload.",
+    "tabs": {
+      "overview": "KPIs",
+      "trends": "Trends",
+      "summary": "Consolidated summary"
+    },
+    "kpis": {
+      "activitiesActive": "Activities active",
+      "activitiesActiveHint": "% of treatment activities with status ACTIVE.",
+      "avgRisk": "Average risk score",
+      "avgRiskHint": "Mean risk score across all assessments (1-25).",
+      "arcoOnTime": "ARCO on-time",
+      "arcoOnTimeHint": "% of responded/closed ARCO requests answered before deadline.",
+      "breaches": "Reported breaches",
+      "breachesHint": "HIGH / CRITICAL incidents (regulator-grade)."
+    },
+    "alerts": {
+      "title": "Live alerts",
+      "description": "Open items the executive committee should be aware of right now.",
+      "overdueArco": "Overdue ARCO requests",
+      "criticalFindings": "Critical findings (OPEN)",
+      "highRisk": "High-risk assessments (OPEN)"
+    },
+    "trends": {
+      "range": "Time range",
+      "months": "Last {{count}} months",
+      "month": "Month",
+      "activities": "Activities",
+      "risks": "Risks",
+      "incidents": "Incidents",
+      "arco": "ARCO",
+      "consents": "Consents",
+      "empty": "No trend data available."
+    },
+    "summary": {
+      "empty": "Consolidated summary is unavailable.",
+      "activities": "Treatment activities",
+      "risks": "Risks",
+      "arco": "ARCO",
+      "incidents": "Incidents",
+      "actionPlans": "Action plans",
+      "audits": "Audits",
+      "consents": "Consents",
+      "documents": "Documents & remediation",
+      "total": "Total",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "open": "Open",
+      "completed": "Completed",
+      "draft": "Draft",
+      "active": "Active",
+      "regulator": "Regulator notification required",
+      "totalPlans": "Total plans",
+      "openFindings": "Open findings",
+      "criticalFindings": "Critical findings",
+      "revoked": "Revoked",
+      "sensitive": "Sensitive",
+      "legalDocs": "Legal documents (current)",
+      "dpias": "DPIAs",
+      "openRemediations": "Open remediations"
+    }
+  },
+  "auditLog": {
+    "title": "Audit log",
+    "description": "Immutable activity log. Filter by action, user or date range and export to CSV.",
+    "loadFailed": "We could not load the audit log.",
+    "exportForbidden": "Your role cannot export the audit log.",
+    "empty": "No audit log entries match the filter.",
+    "emptyHint": "Try widening the date range or clearing the action filter.",
+    "system": "system",
+    "filters": {
+      "action": "Action",
+      "actionPlaceholder": "e.g. LOGIN, USER_CREATE",
+      "user": "User ID",
+      "from": "From",
+      "to": "To"
+    },
+    "columns": {
+      "time": "When",
+      "user": "User",
+      "action": "Action",
+      "resource": "Resource",
+      "detail": "Detail",
+      "ip": "IP"
+    }
+  },
+  "training": {
+    "title": "Training",
+    "description": "Programs, modules and materials with enrollment progress tracking.",
+    "loadFailed": "We could not load the training catalog.",
+    "tabs": {
+      "catalog": "Catalog",
+      "enrollments": "Enrollments"
+    },
+    "programs": {
+      "title": "Programs",
+      "create": "New program",
+      "edit": "Edit",
+      "createSuccess": "Program created.",
+      "updateSuccess": "Program updated.",
+      "validation": "Title is required.",
+      "empty": "No programs yet.",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "active": "Active"
+      }
+    },
+    "modules": {
+      "title": "Modules",
+      "create": "Add module",
+      "edit": "Edit module",
+      "createSuccess": "Module created.",
+      "updateSuccess": "Module updated.",
+      "validation": "Title is required.",
+      "selectProgram": "Select a program to manage its modules.",
+      "empty": "No modules yet.",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "order": "Order"
+      }
+    },
+    "materials": {
+      "title": "Materials",
+      "create": "Add material",
+      "edit": "Edit material",
+      "createSuccess": "Material created.",
+      "updateSuccess": "Material updated.",
+      "validation": "Title is required.",
+      "selectModule": "Select a module to manage its materials.",
+      "empty": "No materials yet.",
+      "fields": {
+        "title": "Title",
+        "contentType": "Type",
+        "url": "URL",
+        "content": "Content"
+      }
+    },
+    "enrollments": {
+      "description": "Track which users are enrolled in which program and update their progress.",
+      "create": "New enrollment",
+      "createSuccess": "Enrollment created.",
+      "validation": "User and program are required.",
+      "inProgress": "In progress",
+      "empty": "No enrollments yet.",
+      "emptyHint": "Enroll users into a program to start tracking progress.",
+      "columns": {
+        "user": "User",
+        "program": "Program",
+        "progress": "Progress",
+        "completed": "Completed"
+      },
+      "fields": {
+        "user": "User",
+        "userPlaceholder": "Choose a user",
+        "program": "Program",
+        "programPlaceholder": "Choose a program"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Personal session, security and workspace preferences.",
+    "sections": {
+      "identity": "Identity",
+      "security": "Security",
+      "preferences": "Preferences",
+      "about": "About this workspace"
+    },
+    "identity": {
+      "role": "Active role",
+      "tenant": "Tenant",
+      "session": "Session token",
+      "sessionHint": "Session expires after 30 minutes of inactivity.",
+      "tokenStored": "Stored locally",
+      "tokenNone": "Not signed in"
+    },
+    "security": {
+      "mfaTitle": "Multi-factor authentication",
+      "mfaBody": "Use the authenticator app linked to your account to confirm sign-ins.",
+      "mfaManage": "Manage MFA",
+      "signOutTitle": "Sign out everywhere",
+      "signOutBody": "Clears the local session and returns to the login screen.",
+      "signOutAction": "Sign out"
+    },
+    "preferences": {
+      "language": "Interface language",
+      "languageHint": "English is the MVP locale. Additional locales arrive after launch.",
+      "current": "English (en-US)"
+    },
+    "about": {
+      "platform": "DataLegal 2.0",
+      "version": "Build",
+      "buildLabel": "Release {{label}}",
+      "docs": "API documentation",
+      "docsLink": "Open /api/docs",
+      "support": "Support",
+      "supportHint": "Contact your DPO or open an internal ticket for help."
+    }
+  },
+  "backups": {
+    "title": "Backups",
+    "description": "Database backups with checksum verification and RPO / RTO posture.",
+    "create": "Create backup",
+    "createSuccess": "Backup created and checksum captured.",
+    "createPending": "Backup record created with PENDING status — run pg_dump manually to complete it.",
+    "verify": "Verify",
+    "verifySuccess": "Checksum matches — backup is intact.",
+    "verifyMismatch": "Checksum mismatch detected. Investigate the file before relying on it.",
+    "loadFailed": "We could not load the backup history.",
+    "forbidden": "Only SUPER_ADMIN can create or read SQLite backups (the snapshot is cross-tenant).",
+    "empty": "No backups recorded yet.",
+    "emptyHint": "Create the first backup to start enforcing your RPO.",
+    "gate": {
+      "title": "SUPER_ADMIN required",
+      "body": "SQLite backups are cross-tenant snapshots. Tenant-scoped roles can view this page but cannot create new backups."
+    },
+    "kpis": {
+      "total": "Backups recorded",
+      "totalHint": "Across all retention windows.",
+      "verified": "Verified / completed",
+      "verifiedHint": "Checksum verified after creation.",
+      "rpo": "Time since last backup",
+      "rpoHint": "Target RPO ≤ {{rpo}} hours.",
+      "rpoNever": "No backups yet",
+      "rto": "Target RTO",
+      "rtoHint": "Restore operations should complete within this window."
+    },
+    "posture": {
+      "title": "Disaster recovery posture",
+      "description": "Lower is better. Green when within RPO and the most recent backup is checksum-verified.",
+      "rpoBadge": "RPO: {{ok}}",
+      "green": "within target",
+      "red": "out of target",
+      "checksumOk": "Checksum verified",
+      "checksumWarn": "Checksum unverified"
+    },
+    "verifyResult": {
+      "ok": "Backup verified",
+      "fail": "Backup checksum mismatch",
+      "expected": "Expected",
+      "actual": "Actual",
+      "verifiedAt": "Verified at"
+    },
+    "columns": {
+      "filename": "Filename / checksum",
+      "size": "Size",
+      "created": "Created",
+      "verified": "Verified"
+    }
+  },
+  "placeholder": {
+    "comingSoonTitle": "Coming in the next sprint",
+    "comingSoonBody": "This module already exists in the backend. The user interface is scheduled for an upcoming sprint and will follow this same design system.",
+    "explore": "Explore the available endpoints",
+    "scheduledFor": "Scheduled for",
+    "modules": {
+      "departments": {
+        "title": "Departments",
+        "description": "CRUD departments and assign heads. Backend ready under /api/v1/departments."
+      },
+      "companyProfile": {
+        "title": "Company profile",
+        "description": "Configure organization details, DPO contact and sector classification."
+      },
+      "tenants": {
+        "title": "Tenants",
+        "description": "SUPER_ADMIN console to provision tenants and bootstrap admin accounts."
+      },
+      "catalogs": {
+        "title": "Master catalogs",
+        "description": "Versioned catalog entries for legal bases, data types, threats, controls and more."
+      },
+      "dataInventory": {
+        "title": "Data inventory",
+        "description": "Progress dashboard for classified treatment activities and information assets."
+      },
+      "treatmentActivities": {
+        "title": "Treatment activities",
+        "description": "Registry of processing activities with the guided RoT wizard."
+      },
+      "informationAssets": {
+        "title": "Information assets",
+        "description": "Technical metadata, classification level and ownership of every asset."
+      },
+      "retention": {
+        "title": "Retention",
+        "description": "Policies, execution and expired-under-review tracking."
+      },
+      "importExport": {
+        "title": "Import & export",
+        "description": "Standard CSV/JSON import-export for treatment activities and compliance data."
+      },
+      "riskAssessments": {
+        "title": "Risk assessments",
+        "description": "Questionnaire-driven risk scoring with CIA traceability and stoplight visualization."
+      },
+      "dpias": {
+        "title": "Data protection impact assessments",
+        "description": "Three-step DPIA workflow with signing and versioned PDF generation."
+      },
+      "arco": {
+        "title": "ARCO requests",
+        "description": "Access, rectification, cancellation and opposition tickets with 30-day SLA tracking."
+      },
+      "portability": {
+        "title": "Data portability",
+        "description": "Receive, complete and export portability requests in interoperable JSON."
+      },
+      "incidents": {
+        "title": "Incidents",
+        "description": "Register breaches, classify impact and trigger regulator notification flows."
+      },
+      "consents": {
+        "title": "Consents",
+        "description": "Consent registry, immutable revocation, cookie banners and cookie consents."
+      },
+      "legalDocuments": {
+        "title": "Legal documents",
+        "description": "Generate, version and download privacy notices, cookie notices and contractual templates."
+      },
+      "ropa": {
+        "title": "ROPA",
+        "description": "Full Record of Processing Activities with PDF export."
+      },
+      "actionPlans": {
+        "title": "Action plans",
+        "description": "Templates, auto-generation from high-risk results and task tracking."
+      },
+      "auditPlans": {
+        "title": "Audit plans",
+        "description": "Plan internal audits, capture findings and download the audit report PDF."
+      },
+      "remediations": {
+        "title": "Remediations",
+        "description": "Remediation tasks linked to risk assessments and audit findings."
+      },
+      "reports": {
+        "title": "Reports",
+        "description": "Filterable consolidated reports with PDF / CSV export and KPI / trend breakdown."
+      },
+      "auditLog": {
+        "title": "Audit log",
+        "description": "Immutable activity log with CSV export for authorized users."
+      },
+      "training": {
+        "title": "Training",
+        "description": "Programs, modules, materials and enrollment progress."
+      },
+      "backups": {
+        "title": "Backups",
+        "description": "SQLite snapshots and PostgreSQL guidance with verification and RPO/RTO posture."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Personal preferences, MFA and workspace defaults."
+      }
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading…",
+    "error": "Something went wrong. Please try again.",
+    "noData": "No data available.",
+    "search": "Search",
+    "searchPlaceholder": "Search…",
+    "filter": "Filter",
+    "export": "Export",
+    "exportPdf": "Export PDF",
+    "exportCsv": "Export CSV",
+    "yes": "Yes",
+    "no": "No",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "viewDetails": "View details",
+    "all": "All",
+    "active": "Active",
+    "inactive": "Inactive",
+    "optional": "optional",
+    "actions": "Actions",
+    "name": "Name",
+    "description": "Description",
+    "code": "Code",
+    "label": "Label",
+    "status": "Status",
+    "type": "Type",
+    "created": "Created",
+    "updated": "Updated",
+    "refresh": "Refresh",
+    "saveChanges": "Save changes",
+    "saved": "Saved",
+    "submit": "Submit",
+    "noResults": "No results match the current filter.",
+    "deleting": "Deleting…",
+    "saving": "Saving…"
+  },
+  "errors": {
+    "unauthorized": "You are not authorized to perform this action.",
+    "notFound": "The requested resource was not found.",
+    "serverError": "A server error occurred. Please contact support.",
+    "networkError": "Network error. Please check your connection.",
+    "loadDashboard": "We could not load the dashboard. Some metrics may be unavailable."
+  }
+}
