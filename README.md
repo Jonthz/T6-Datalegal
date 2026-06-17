@@ -1,4 +1,4 @@
-# DataLegal 2.0
+# DataLegal
 
 **Privacy compliance platform for LOPDP — multi-tenant SaaS**
 
