@@ -1,0 +1,206 @@
+# =============================================================================
+# .pylintrc — Bradford Health / datalegal backend
+# FastAPI · SQLAlchemy · Pydantic · Alembic · pytest
+# =============================================================================
+
+[MASTER]
+
+# Correr con N workers en paralelo (0 = auto)
+jobs = 0
+
+# Archivos/directorios a ignorar por completo
+ignore = migrations, .venv, venv, __pycache__, node_modules
+
+# Patrones de archivo a ignorar (Alembic genera código con líneas largas
+# y nombres de módulo con hashes; no tiene sentido lintearlos)
+ignore-patterns =
+    ^[0-9a-f]{12,}_.*\.py$,
+    ^env\.py$
+
+# Extensiones de plugins de pylint a cargar
+# (pylint-pydantic mejora el soporte de Pydantic BaseModel)
+load-plugins =
+
+# Falsos positivos de entorno: pylint no resuelve paquetes del venv
+# cuando se corre fuera de él. Lista todos los módulos de terceros del proyecto.
+extension-pkg-whitelist =
+    pydantic
+
+[MESSAGES CONTROL]
+
+# -------------------------------------------------------------------------
+# DESHABILITADOS GLOBALMENTE
+# -------------------------------------------------------------------------
+disable =
+    # --- Falsos positivos de entorno (pylint sin venv) -------------------
+    E0401,   # import-error           — fastapi, sqlalchemy, pydantic, etc.
+    E0611,   # no-name-in-module      — alembic.op, alembic.context, etc.
+
+    # --- Patrones legítimos de FastAPI / SQLAlchemy / Pydantic -----------
+    R0903,   # too-few-public-methods — schemas y modelos son clases de datos
+    C0415,   # import-outside-toplevel — patrón común en tests y lazy imports
+    W0621,   # redefined-outer-name   — fixture injection de pytest
+    W0611,   # unused-import          — importar modelos para registrarlos en
+             #                          SQLAlchemy Base.metadata es intencional
+
+    # --- Argumentos de DI no usados todavía (current_user placeholder) ---
+    # W0613 se deja HABILITADO para que CI avise cuando un endpoint olvida
+    # usar current_user de verdad; comenta la línea de abajo si prefieres
+    # silenciarlo globalmente y manejar caso a caso con # pylint: disable
+    # W0613,
+
+    # --- Convenciones de menor prioridad ---------------------------------
+    C0114,   # missing-module-docstring — módulos cortos no necesitan docstring
+    C0103,   # invalid-name            — revision, down_revision, _is_prod, etc.
+    W0707,   # raise-missing-from      — "raise X from exc" pendiente de sprint
+
+    # --- Alembic: funciones upgrade/downgrade siempre son largas ---------
+    R0915,   # too-many-statements     — migraciones con muchas tablas
+
+[REPORTS]
+
+# Formato de salida: text | json | colorized | msvs
+output-format = colorized
+
+# Mostrar estadísticas al final
+reports = yes
+
+# Mostrar score
+score = yes
+
+[FORMAT]
+
+# Longitud máxima de línea (PEP 8 recomienda 88-100; Black usa 88)
+max-line-length = 100
+
+# Número de espacios por nivel de indentación
+indent-string = '    '
+
+# Permitir líneas largas que sean solo un string (URLs en docstrings, etc.)
+single-line-if-stmt = no
+
+[DESIGN]
+
+# Límite de argumentos por función. FastAPI endpoints con muchos
+# parámetros de Query son legítimos; subimos el umbral.
+max-args = 8
+max-positional-arguments = 8
+
+# Límite de variables locales por función
+max-locals = 20
+
+# Límite de atributos de clase (modelos SQLAlchemy pueden tener muchos)
+max-attributes = 20
+
+# Límite de ramas condicionales por función
+max-branches = 15
+
+# Límite de returns por función
+max-returns = 8
+
+# Límite de statements (migraciones excluidas por ignore-patterns arriba)
+max-statements = 60
+
+# Mínimo de métodos públicos en una clase
+# 0 para no penalizar schemas/modelos de datos
+min-public-methods = 0
+
+[SIMILARITIES]
+
+# Mínimo de líneas para detectar código duplicado
+min-similarity-lines = 8
+
+# Ignorar imports al comparar similitudes
+ignore-imports = yes
+
+# Ignorar docstrings al comparar similitudes
+ignore-docstrings = yes
+
+[VARIABLES]
+
+# Nombres permitidos para variables de un solo uso (bucles, etc.)
+good-names = i, j, k, n, v, e, f, db, id, ok, _
+
+# Permitir variables que empiecen con _ como "intencionalmente no usadas"
+dummy-variables-rgx = _+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+$)|dummy|^ignored_|^unused_
+
+[TYPECHECK]
+
+# Módulos cuya ausencia de atributos no debe reportarse
+# (resuelve falsos positivos de SQLAlchemy column accessors y Pydantic)
+ignored-modules =
+    sqlalchemy,
+    sqlalchemy.orm,
+    sqlalchemy.ext.declarative,
+    fastapi,
+    fastapi.security,
+    fastapi.testclient,
+    fastapi.middleware.cors,
+    fastapi.responses,
+    pydantic,
+    pydantic_settings,
+    jose,
+    passlib,
+    passlib.context,
+    alembic,
+    alembic.op,
+    alembic.context,
+    alembic.config,
+    alembic.command,
+    pyotp,
+    cryptography,
+    cryptography.fernet,
+    slowapi,
+    slowapi.errors,
+    fpdf,
+    starlette,
+    starlette.middleware.base,
+    starlette.requests,
+    starlette.responses
+
+# Clases cuya herencia puede generar atributos dinámicos
+ignored-classes =
+    SQLAlchemy,
+    DeclarativeBase,
+    DeclarativeMeta,
+    BaseModel,
+    Session,
+    scoped_session
+
+# No reportar accesos a miembros generados dinámicamente por SQLAlchemy
+generated-members =
+    query,
+    session.*,
+    Column.*,
+    relationship.*,
+    backref.*
+
+[IMPORTS]
+
+# Orden preferido de imports (compatible con isort)
+known-third-party =
+    fastapi,
+    sqlalchemy,
+    pydantic,
+    pydantic_settings,
+    alembic,
+    jose,
+    passlib,
+    pyotp,
+    cryptography,
+    slowapi,
+    fpdf,
+    pytest,
+    starlette
+
+[LOGGING]
+
+# Formato de string de logging a validar
+logging-format-style = new
+
+[EXCEPTIONS]
+
+# Excepciones que no deben nunca ser silenciadas con bare except
+overgeneral-exceptions =
+    builtins.BaseException,
+    builtins.Exception
