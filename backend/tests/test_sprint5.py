@@ -1,4 +1,5 @@
 """Sprint 5 tests: US-RF06-1, US-RF07-1, US-RF15-1, US-RF16-1, US-RF18-1, US-RF21-1, US-RF23-1."""
+# pylint: disable=missing-class-docstring,missing-function-docstring,unused-argument,line-too-long
 
 import pytest
 from fastapi.testclient import TestClient

@@ -28,4 +28,3 @@ class DPIAssessment(TenantBase):
     )
     pdf_bytes: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-

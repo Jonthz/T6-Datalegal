@@ -26,8 +26,8 @@ def get_unread_count(
         db.query(Alert)
         .filter(
             Alert.tenant_id == tenant_id,
-            Alert.is_read == False,  # noqa: E712
-            (Alert.recipient_id == current_user.id) | (Alert.recipient_id == None),  # noqa: E711
+            Alert.is_read.is_(False),
+            (Alert.recipient_id == current_user.id) | (Alert.recipient_id.is_(None)),
         )
         .count()
     )
@@ -49,7 +49,7 @@ def list_alerts(
     if current_user.role not in ("ADMIN", "DPO", "SUPER_ADMIN"):
         # Non-privileged users: only their personal alerts and broadcasts
         q = q.filter(
-            (Alert.recipient_id == current_user.id) | (Alert.recipient_id == None)  # noqa: E711
+            (Alert.recipient_id == current_user.id) | (Alert.recipient_id.is_(None))
         )
 
     if is_read is not None:
@@ -85,7 +85,10 @@ def create_alert(
         resource="alerts",
         tenant_id=tenant_id,
         user_id=current_user.id,
-        detail=f"id={alert.id} type={alert.alert_type} severity={alert.severity} recipient={alert.recipient_id}",
+        detail=(
+            f"id={alert.id} type={alert.alert_type} "
+            f"severity={alert.severity} recipient={alert.recipient_id}"
+        ),
     )
     return alert
 

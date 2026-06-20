@@ -21,13 +21,18 @@ from app.schemas.action_plan import (
 router = APIRouter(prefix="/action-plans", tags=["action-plans"])
 
 
-@router.post("/templates", response_model=ActionPlanTemplateRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/templates",
+    response_model=ActionPlanTemplateRead,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_template(
     body: ActionPlanTemplateCreate,
-    current_user: Annotated[User, Depends(require_permission("action_plans", "c"))],
+    _: Annotated[User, Depends(require_permission("action_plans", "c"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create a reusable action plan template."""
     template = ActionPlanTemplate(
         tenant_id=tenant_id,
         name=body.name,
@@ -43,18 +48,23 @@ def create_template(
 
 @router.get("/templates", response_model=list[ActionPlanTemplateRead])
 def list_templates(
-    current_user: Annotated[User, Depends(require_permission("action_plans", "r"))],
+    _: Annotated[User, Depends(require_permission("action_plans", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """List all active action plan templates."""
     return (
         db.query(ActionPlanTemplate)
-        .filter(ActionPlanTemplate.tenant_id == tenant_id, ActionPlanTemplate.is_active == True)  # noqa: E712
+        .filter(ActionPlanTemplate.tenant_id == tenant_id, ActionPlanTemplate.is_active.is_(True))
         .all()
     )
 
 
-@router.post("/auto-generate", response_model=list[ActionPlanRead], status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/auto-generate",
+    response_model=list[ActionPlanRead],
+    status_code=status.HTTP_201_CREATED,
+)
 def auto_generate_plans(
     current_user: Annotated[User, Depends(require_permission("action_plans", "c"))],
     tenant_id: int = Depends(get_current_tenant_id),
@@ -88,7 +98,7 @@ def auto_generate_plans(
             db.query(ActionPlanTemplate)
             .filter(
                 ActionPlanTemplate.tenant_id == tenant_id,
-                ActionPlanTemplate.is_active == True,  # noqa: E712
+                ActionPlanTemplate.is_active.is_(True),
                 ActionPlanTemplate.applies_to_level.in_([ra.risk_level, "ANY"]),
             )
             .first()
@@ -123,6 +133,7 @@ def create_plan(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create a new action plan."""
     plan = ActionPlan(
         tenant_id=tenant_id,
         risk_assessment_id=body.risk_assessment_id,
@@ -141,12 +152,13 @@ def create_plan(
 
 @router.get("", response_model=list[ActionPlanRead])
 def list_plans(
-    current_user: Annotated[User, Depends(require_permission("action_plans", "r"))],
+    _: Annotated[User, Depends(require_permission("action_plans", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     plan_status: str | None = Query(None),
     risk_assessment_id: int | None = Query(None),
 ):
+    """List action plans with optional status and risk assessment filters."""
     q = db.query(ActionPlan).filter(ActionPlan.tenant_id == tenant_id)
     if plan_status:
         q = q.filter(ActionPlan.status == plan_status)
@@ -158,10 +170,11 @@ def list_plans(
 @router.get("/{plan_id}", response_model=ActionPlanRead)
 def get_plan(
     plan_id: int,
-    current_user: Annotated[User, Depends(require_permission("action_plans", "r"))],
+    _: Annotated[User, Depends(require_permission("action_plans", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Retrieve an action plan by ID."""
     plan = db.query(ActionPlan).filter(
         ActionPlan.id == plan_id, ActionPlan.tenant_id == tenant_id
     ).first()
@@ -174,10 +187,11 @@ def get_plan(
 def update_plan(
     plan_id: int,
     body: ActionPlanUpdate,
-    current_user: Annotated[User, Depends(require_permission("action_plans", "u"))],
+    _: Annotated[User, Depends(require_permission("action_plans", "u"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Update an action plan's fields."""
     plan = db.query(ActionPlan).filter(
         ActionPlan.id == plan_id, ActionPlan.tenant_id == tenant_id
     ).first()

@@ -9,6 +9,8 @@ ARCO_STATUSES = ["RECEIVED", "VERIFYING", "IN_PROGRESS", "RESPONDED", "CLOSED", 
 
 
 class ARCORequestCreate(BaseModel):
+    """Fields required to submit an ARCO rights request."""
+
     request_type: str
     requester_name: str
     requester_email: str
@@ -17,6 +19,8 @@ class ARCORequestCreate(BaseModel):
 
 
 class ARCORequestUpdate(BaseModel):
+    """Partial update fields for an ARCO request."""
+
     status: str | None = None
     assigned_dpo_id: int | None = None
     response_text: str | None = None
@@ -24,6 +28,8 @@ class ARCORequestUpdate(BaseModel):
 
 
 class ARCORequestRead(BaseModel):
+    """ARCO request as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int

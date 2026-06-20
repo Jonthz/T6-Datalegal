@@ -22,6 +22,7 @@ def create_remediation(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create a remediation action linked to a risk assessment."""
     ra = db.query(RiskAssessment).filter(
         RiskAssessment.id == body.risk_assessment_id,
         RiskAssessment.tenant_id == tenant_id,
@@ -54,7 +55,7 @@ def create_remediation(
 
 @router.get("", response_model=list[RemediationRead])
 def list_remediations(
-    current_user: Annotated[User, Depends(require_permission("remediations", "r"))],
+    _: Annotated[User, Depends(require_permission("remediations", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     risk_assessment_id: int | None = Query(None),
@@ -62,6 +63,7 @@ def list_remediations(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List remediations with optional risk assessment and status filters."""
     q = db.query(Remediation).filter(Remediation.tenant_id == tenant_id)
     if risk_assessment_id:
         q = q.filter(Remediation.risk_assessment_id == risk_assessment_id)
@@ -73,10 +75,11 @@ def list_remediations(
 @router.get("/{remediation_id}", response_model=RemediationRead)
 def get_remediation(
     remediation_id: int,
-    current_user: Annotated[User, Depends(require_permission("remediations", "r"))],
+    _: Annotated[User, Depends(require_permission("remediations", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Retrieve a remediation by ID."""
     rem = db.query(Remediation).filter(
         Remediation.id == remediation_id, Remediation.tenant_id == tenant_id
     ).first()
@@ -93,6 +96,7 @@ def update_remediation(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Update a remediation's status, dates, or risk impact scores."""
     rem = db.query(Remediation).filter(
         Remediation.id == remediation_id, Remediation.tenant_id == tenant_id
     ).first()

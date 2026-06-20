@@ -30,7 +30,7 @@ router = APIRouter(tags=["consents"])
 
 @router.get("/consents/stats")
 def get_consent_stats(
-    current_user: Annotated[User, Depends(require_permission("consents", "r"))],
+    _: Annotated[User, Depends(require_permission("consents", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ) -> dict:
@@ -70,6 +70,7 @@ def create_consent(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Register a new explicit consent record."""
     record = ConsentRecord(
         tenant_id=tenant_id,
         treatment_activity_id=body.treatment_activity_id,
@@ -92,7 +93,7 @@ def create_consent(
 
 @router.get("/consents", response_model=list[ConsentRecordRead])
 def list_consents(
-    current_user: Annotated[User, Depends(require_permission("consents", "r"))],
+    _: Annotated[User, Depends(require_permission("consents", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     is_revoked: bool | None = Query(None),
@@ -100,6 +101,7 @@ def list_consents(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List consent records with optional filters."""
     q = db.query(ConsentRecord).filter(ConsentRecord.tenant_id == tenant_id)
     if is_revoked is not None:
         q = q.filter(ConsentRecord.is_revoked == is_revoked)
@@ -111,10 +113,11 @@ def list_consents(
 @router.get("/consents/{record_id}", response_model=ConsentRecordRead)
 def get_consent(
     record_id: int,
-    current_user: Annotated[User, Depends(require_permission("consents", "r"))],
+    _: Annotated[User, Depends(require_permission("consents", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Retrieve a consent record by ID."""
     record = db.query(ConsentRecord).filter(
         ConsentRecord.id == record_id, ConsentRecord.tenant_id == tenant_id
     ).first()
@@ -154,13 +157,18 @@ def revoke_consent(
 
 # ── Cookie Banners (US-RF25-1) ───────────────────────────────────────────────
 
-@router.post("/cookie-banners", response_model=CookieBannerRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/cookie-banners",
+    response_model=CookieBannerRead,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_banner(
     body: CookieBannerCreate,
     current_user: Annotated[User, Depends(require_permission("consents", "c"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create a new versioned cookie consent banner."""
     banner = CookieBanner(
         tenant_id=tenant_id,
         version=body.version,
@@ -180,14 +188,15 @@ def create_banner(
 
 @router.get("/cookie-banners", response_model=list[CookieBannerRead])
 def list_banners(
-    current_user: Annotated[User, Depends(require_permission("consents", "r"))],
+    _: Annotated[User, Depends(require_permission("consents", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     active_only: bool = Query(False),
 ):
+    """List cookie banners, optionally filtering to active-only."""
     q = db.query(CookieBanner).filter(CookieBanner.tenant_id == tenant_id)
     if active_only:
-        q = q.filter(CookieBanner.is_active == True)  # noqa: E712
+        q = q.filter(CookieBanner.is_active.is_(True))
     return q.order_by(CookieBanner.id.desc()).all()
 
 
@@ -195,10 +204,11 @@ def list_banners(
 def update_banner(
     banner_id: int,
     body: CookieBannerUpdate,
-    current_user: Annotated[User, Depends(require_permission("consents", "u"))],
+    _: Annotated[User, Depends(require_permission("consents", "u"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Update a cookie banner's content or active status."""
     banner = db.query(CookieBanner).filter(
         CookieBanner.id == banner_id, CookieBanner.tenant_id == tenant_id
     ).first()
@@ -211,13 +221,18 @@ def update_banner(
     return banner
 
 
-@router.post("/cookie-consents", response_model=CookieConsentRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/cookie-consents",
+    response_model=CookieConsentRead,
+    status_code=status.HTTP_201_CREATED,
+)
 def record_cookie_consent(
     body: CookieConsentCreate,
-    current_user: Annotated[User, Depends(require_permission("consents", "c"))],
+    _: Annotated[User, Depends(require_permission("consents", "c"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Record a data subject's acceptance of a cookie banner version."""
     banner = db.query(CookieBanner).filter(
         CookieBanner.id == body.banner_id, CookieBanner.tenant_id == tenant_id
     ).first()
@@ -237,10 +252,11 @@ def record_cookie_consent(
 @router.post("/cookie-consents/{consent_id}/revoke", response_model=CookieConsentRead)
 def revoke_cookie_consent(
     consent_id: int,
-    current_user: Annotated[User, Depends(require_permission("consents", "u"))],
+    _: Annotated[User, Depends(require_permission("consents", "u"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Revoke a previously recorded cookie consent."""
     consent = db.query(CookieConsent).filter(
         CookieConsent.id == consent_id, CookieConsent.tenant_id == tenant_id
     ).first()

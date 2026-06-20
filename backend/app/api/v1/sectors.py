@@ -115,6 +115,8 @@ SECTOR_CATALOG: dict[str, dict] = {
 
 
 class SectorSuggestions(BaseModel):
+    """Sector catalog entry with auto-suggested data types, activities, and templates."""
+
     sector_code: str
     label: str
     suggested_data_types: list[str]
@@ -123,6 +125,8 @@ class SectorSuggestions(BaseModel):
 
 
 class SectorUpdate(BaseModel):
+    """Request body for updating the company's economic sector."""
+
     sector: str
 
 
@@ -146,7 +150,10 @@ def get_sector_suggestions(
     sector_code = sector_code.upper()
     data = SECTOR_CATALOG.get(sector_code)
     if not data:
-        raise HTTPException(status_code=404, detail=f"Sector '{sector_code}' not found. Valid: {list(SECTOR_CATALOG)}")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Sector '{sector_code}' not found. Valid: {list(SECTOR_CATALOG)}",
+        )
     return SectorSuggestions(sector_code=sector_code, **data)
 
 
@@ -160,7 +167,10 @@ def update_company_sector(
     """Update the company's economic sector and get pre-populated suggestions (US-RF34-1)."""
     sector_code = body.sector.upper()
     if sector_code not in SECTOR_CATALOG:
-        raise HTTPException(status_code=400, detail=f"Unknown sector '{sector_code}'. Valid: {list(SECTOR_CATALOG)}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown sector '{sector_code}'. Valid: {list(SECTOR_CATALOG)}",
+        )
 
     tenant = db.get(Tenant, tenant_id)
     if not tenant:
@@ -181,4 +191,3 @@ def update_company_sector(
                    f"{len(suggestions['suggested_activities'])} activities, and "
                    f"{len(suggestions['suggested_templates'])} document templates pre-selected.",
     }
-
