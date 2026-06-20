@@ -24,6 +24,7 @@ DEV_SECRET_PLACEHOLDER = "dev-secret-key-change-in-production-please"
 
 
 class Settings(BaseSettings):
+    """Settings schema/model definition."""
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     ENVIRONMENT: str = "development"
@@ -58,10 +59,12 @@ class Settings(BaseSettings):
     @field_validator("ENVIRONMENT")
     @classmethod
     def _normalize_env(cls, v: str) -> str:
+        """Handle normalize env."""
         return v.strip().lower() or "development"
 
     @model_validator(mode="after")
     def _apply_env_policy(self) -> "Settings":
+        """Handle apply env policy."""
         is_prod = self.ENVIRONMENT == "production"
 
         if is_prod:
@@ -84,8 +87,7 @@ class Settings(BaseSettings):
             if errors:
                 joined = "\n  - ".join(errors)
                 raise RuntimeError(
-                    "Refusing to start in production with insecure configuration:\n  - "
-                    + joined
+                    "Refusing to start in production with insecure configuration:\n  - " + joined
                 )
             # In production, never expose docs unless operator opts in.
             # (`SHOW_DOCS=true` in env still wins explicitly.)
@@ -99,9 +101,7 @@ class Settings(BaseSettings):
                 # makes failure modes legible).
                 from cryptography.fernet import Fernet
 
-                object.__setattr__(
-                    self, "MFA_ENCRYPTION_KEY", Fernet.generate_key().decode()
-                )
+                object.__setattr__(self, "MFA_ENCRYPTION_KEY", Fernet.generate_key().decode())
 
         return self
 
@@ -115,6 +115,7 @@ class Settings(BaseSettings):
 
     @property
     def trusted_proxies_list(self) -> list[str]:
+        """Handle trusted proxies list."""
         raw = (self.TRUSTED_PROXIES or "").strip()
         if not raw:
             return []

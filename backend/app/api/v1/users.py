@@ -20,13 +20,8 @@ def list_users(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
 ):
-    users = (
-        db.query(User)
-        .filter(User.tenant_id == tenant_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    """List users."""
+    users = db.query(User).filter(User.tenant_id == tenant_id).offset(skip).limit(limit).all()
     return users
 
 
@@ -37,9 +32,12 @@ def create_user(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create user."""
     existing = db.query(User).filter(User.email == body.email).first()
     if existing:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered.")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Email already registered."
+        )
 
     user = User(
         tenant_id=tenant_id,
@@ -66,10 +64,11 @@ def create_user(
 @router.get("/{user_id}", response_model=UserRead)
 def get_user(
     user_id: int,
-    current_user: Annotated[User, Depends(require_permission("users", "r"))],
+    current_user: Annotated[User, Depends(require_permission("users", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Return user."""
     user = db.query(User).filter(User.id == user_id, User.tenant_id == tenant_id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
@@ -84,6 +83,7 @@ def update_user(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Update user."""
     user = db.query(User).filter(User.id == user_id, User.tenant_id == tenant_id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
@@ -114,6 +114,7 @@ def delete_user(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Delete user."""
     user = db.query(User).filter(User.id == user_id, User.tenant_id == tenant_id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")

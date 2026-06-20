@@ -33,6 +33,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 def _get_client_ip(request: Request) -> str:
+    """Handle get client ip."""
     return get_client_ip(request)
 
 
@@ -43,6 +44,7 @@ def login(
     request: Request,
     db: Session = Depends(get_db),
 ):
+    """Handle login."""
     ip = _get_client_ip(request)
     user = db.query(User).filter(User.email == payload.email).first()
 
@@ -65,7 +67,9 @@ def login(
     if not verify_password(payload.password, user.hashed_password):
         user.failed_attempts += 1
         if user.failed_attempts >= settings.MAX_FAILED_ATTEMPTS:
-            user.locked_until = datetime.now(timezone.utc) + timedelta(minutes=settings.LOCKOUT_MINUTES)
+            user.locked_until = datetime.now(timezone.utc) + timedelta(
+                minutes=settings.LOCKOUT_MINUTES
+            )
             user.failed_attempts = 0
         db.commit()
         AuditLog.create_log(
@@ -125,14 +129,19 @@ def mfa_verify(
     request: Request,
     db: Session = Depends(get_db),
 ):
+    """Handle mfa verify."""
     ip = _get_client_ip(request)
     try:
         token_data = decode_token(payload.mfa_token)
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired MFA token.")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired MFA token."
+        )
 
     if token_data.get("type") != "mfa_pending":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid MFA token type.")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid MFA token type."
+        )
 
     user_id = int(token_data["sub"])
     user = db.get(User, user_id)
@@ -201,7 +210,9 @@ def mfa_confirm(
     """Confirm MFA setup by verifying a TOTP code — enables MFA."""
     secret = decrypt_mfa_secret(current_user.mfa_secret)
     if not secret:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="MFA setup not started.")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="MFA setup not started."
+        )
     if not verify_totp(secret, payload.code):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid TOTP code.")
     current_user.mfa_enabled = True

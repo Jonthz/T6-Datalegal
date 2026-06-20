@@ -10,7 +10,9 @@ from app.core.mfa_crypto import (
 
 
 class TestMfaCryptoRoundTrip:
+    """TestMfaCryptoRoundTrip schema/model definition."""
     def test_encrypt_then_decrypt_returns_original(self):
+        """Test that encrypt then decrypt returns original behaves as expected."""
         secret = pyotp.random_base32()
         token = encrypt_mfa_secret(secret)
         assert token != secret
@@ -18,6 +20,7 @@ class TestMfaCryptoRoundTrip:
         assert decrypt_mfa_secret(token) == secret
 
     def test_encrypt_is_non_deterministic(self):
+        """Test that encrypt is non deterministic behaves as expected."""
         secret = pyotp.random_base32()
         a = encrypt_mfa_secret(secret)
         b = encrypt_mfa_secret(secret)
@@ -25,11 +28,13 @@ class TestMfaCryptoRoundTrip:
         assert decrypt_mfa_secret(a) == decrypt_mfa_secret(b) == secret
 
     def test_legacy_plaintext_pass_through(self):
+        """Test that legacy plaintext pass through behaves as expected."""
         legacy = pyotp.random_base32()
         assert is_legacy_plaintext(legacy)
         assert decrypt_mfa_secret(legacy) == legacy
 
     def test_none_round_trip(self):
+        """Test that none round trip behaves as expected."""
         assert decrypt_mfa_secret(None) is None
         assert encrypt_mfa_secret("") == ""
         assert is_legacy_plaintext(None) is False
@@ -39,6 +44,7 @@ class TestMfaCryptoIntegrationWithLogin:
     """Encrypted secrets must work end-to-end through the MFA verify flow."""
 
     def test_verify_with_encrypted_secret(self, client, tenant_a, session):
+        """Test that verify with encrypted secret behaves as expected."""
         from tests.conftest import _make_user
 
         secret = pyotp.random_base32()
@@ -68,6 +74,7 @@ class TestMfaCryptoIntegrationWithLogin:
         assert "access_token" in resp2.json()
 
     def test_mfa_setup_persists_encrypted_secret(self, client, admin_token, session, admin_user):
+        """Test that mfa setup persists encrypted secret behaves as expected."""
         from tests.conftest import auth_headers
 
         resp = client.post("/api/v1/auth/mfa-setup", headers=auth_headers(admin_token))

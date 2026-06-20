@@ -22,6 +22,7 @@ def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     db: Session = Depends(get_db),
 ) -> User:
+    """Return current user."""
     if credentials is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -46,13 +47,17 @@ def get_current_user(
 
     user_id = payload.get("sub")
     if user_id is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload.")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload."
+        )
 
     user = db.get(User, int(user_id))
     if user is None or not user.is_active:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found or inactive.")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found or inactive."
+        )
 
-    #server-side inactivity check
+    # server-side inactivity check
     now = datetime.now(timezone.utc)
     if user.last_activity_at is not None:
         last = user.last_activity_at
@@ -87,6 +92,7 @@ def get_current_tenant_id(
 
 
 def require_super_admin(current_user: Annotated[User, Depends(get_current_user)]) -> User:
+    """Handle require super admin."""
     if current_user.role != "SUPER_ADMIN":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -102,6 +108,7 @@ def require_permission(module: str, action: str):
         current_user: Annotated[User, Depends(get_current_user)],
         db: Session = Depends(get_db),
     ) -> User:
+        """Handle checker."""
         if not has_permission(current_user.role, module, action):
             from app.models.audit_log import AuditLog
 
@@ -115,7 +122,7 @@ def require_permission(module: str, action: str):
             )
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Permission denied: role '{current_user.role}' cannot perform '{action}' on '{module}'.",
+                detail=f"Permission denied: role '{current_user.role}' cannot perform '{action}' on '{module}'.",  # pylint: disable=line-too-long
             )
         return current_user
 

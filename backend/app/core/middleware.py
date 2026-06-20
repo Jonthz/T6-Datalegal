@@ -17,6 +17,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Adds common defensive headers to every response."""
 
     async def dispatch(self, request: Request, call_next) -> Response:
+        """Handle dispatch."""
         response: Response = await call_next(request)
         headers = response.headers
 
