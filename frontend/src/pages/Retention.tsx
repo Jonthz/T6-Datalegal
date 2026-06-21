@@ -437,7 +437,7 @@ export default function RetentionPage() {
             label: t('retention.tabs.policies'),
             content: (
               <GlassPanel>
-                <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
+                <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200">
                   <h3 className="text-sm font-semibold text-ink-50">
                     {t('retention.policies.title')}
                   </h3>

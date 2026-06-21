@@ -629,7 +629,7 @@ function BreakdownCard({
                     {value} · {pct.toFixed(0)}%
                   </span>
                 </div>
-                <div className="h-1.5 w-full rounded-full bg-white/[0.04] overflow-hidden">
+                <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
                   <div
                     className="h-full rounded-full bg-brand-400/70"
                     style={{ width: `${Math.min(100, pct).toFixed(1)}%` }}

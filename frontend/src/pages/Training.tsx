@@ -468,7 +468,7 @@ export default function TrainingPage() {
         header: t('training.enrollments.columns.progress'),
         render: (e) => (
           <div className="space-y-1">
-            <div className="relative h-2 w-32 rounded-full bg-white/[0.06] overflow-hidden">
+            <div className="relative h-2 w-32 rounded-full bg-slate-200 overflow-hidden">
               <span
                 aria-hidden
                 className="absolute inset-y-0 left-0 bg-brand-500/70"
@@ -525,7 +525,7 @@ export default function TrainingPage() {
     <div className="grid gap-4 lg:grid-cols-12">
       <div className="lg:col-span-4 space-y-3">
         <GlassPanel>
-          <header className="p-3 border-b border-white/10 flex items-center justify-between">
+          <header className="p-3 border-b border-slate-200 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink-50">{t('training.programs.title')}</h3>
             <Button size="sm" onClick={openProgramCreate}>
               {t('training.programs.create')}
@@ -547,7 +547,7 @@ export default function TrainingPage() {
                       type="button"
                       onClick={() => setSelectedProgram(p)}
                       className={`w-full text-left p-3 transition-colors ${
-                        selected ? 'bg-white/[0.06]' : 'hover:bg-white/[0.04]'
+                        selected ? 'bg-slate-100' : 'hover:bg-slate-50'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -568,7 +568,7 @@ export default function TrainingPage() {
 
       <div className="lg:col-span-4 space-y-3">
         <GlassPanel>
-          <header className="p-3 border-b border-white/10 flex items-center justify-between">
+          <header className="p-3 border-b border-slate-200 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink-50">{t('training.modules.title')}</h3>
             <div className="flex items-center gap-2">
               {selectedProgram && (
@@ -605,7 +605,7 @@ export default function TrainingPage() {
                         type="button"
                         onClick={() => setSelectedModule(m)}
                         className={`w-full text-left p-3 transition-colors ${
-                          selected ? 'bg-white/[0.06]' : 'hover:bg-white/[0.04]'
+                          selected ? 'bg-slate-100' : 'hover:bg-slate-50'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
@@ -624,7 +624,7 @@ export default function TrainingPage() {
 
       <div className="lg:col-span-4 space-y-3">
         <GlassPanel>
-          <header className="p-3 border-b border-white/10 flex items-center justify-between">
+          <header className="p-3 border-b border-slate-200 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink-50">{t('training.materials.title')}</h3>
             <div className="flex items-center gap-2">
               {selectedModule && (
@@ -652,7 +652,7 @@ export default function TrainingPage() {
                   <button
                     type="button"
                     onClick={() => openMaterialEdit(mat)}
-                    className="w-full text-left p-3 hover:bg-white/[0.04] transition-colors"
+                    className="w-full text-left p-3 hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <p className="font-medium text-ink-50 truncate">{mat.title}</p>
@@ -754,7 +754,7 @@ export default function TrainingPage() {
                 onChange={(e) =>
                   setProgramForm({ ...programForm, is_active: e.target.checked })
                 }
-                className="h-4 w-4 rounded border-white/20 bg-white/[0.04]"
+                className="h-4 w-4 rounded border-slate-300 bg-white"
               />
               {t('training.programs.fields.active')}
             </label>

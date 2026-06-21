@@ -396,7 +396,7 @@ export default function RiskAssessmentsPage() {
               return (
                 <li
                   key={entry.assessment_id}
-                  className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10"
+                  className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200"
                 >
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-ink-50 truncate">
@@ -623,7 +623,7 @@ function StoplightCard({
         </div>
         <Badge tone={tone}>{formatPercent(pct, 0)}</Badge>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-white/[0.04] overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
         <div
           className={`h-full ${barClass}`}
           style={{ width: `${Math.min(100, pct).toFixed(1)}%` }}
@@ -646,7 +646,7 @@ function QuestionRow({
 }) {
   const { t } = useTranslation()
   return (
-    <div className="flex items-start justify-between gap-3 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/10">
+    <div className="flex items-start justify-between gap-3 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
       <div className="min-w-0">
         <p className="text-sm text-ink-100">{question}</p>
         {gateway && (

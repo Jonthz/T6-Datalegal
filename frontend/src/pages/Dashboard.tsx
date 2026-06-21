@@ -312,7 +312,7 @@ function AlertsPanel({
   const { t } = useTranslation()
   return (
     <GlassCard padded={false} className="flex flex-col">
-      <header className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+      <header className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
         <h2 className="text-base font-semibold text-ink-50">{t('dashboard.alerts.title')}</h2>
         <Link to="/alerts" className="text-xs text-brand-200 hover:text-brand-100">
           {t('dashboard.alerts.viewAll')}
@@ -377,17 +377,17 @@ function QuickActions() {
 
   return (
     <GlassPanel>
-      <header className="px-5 py-4 border-b border-white/10">
+      <header className="px-5 py-4 border-b border-slate-200">
         <h2 className="text-base font-semibold text-ink-50">
           {t('dashboard.quickActions.title')}
         </h2>
       </header>
       <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
         {actions.map((action) => (
-          <li key={action.to} className="border-b sm:border-r last:border-r-0 xl:last:border-r border-white/5">
+          <li key={action.to} className="border-b sm:border-r last:border-r-0 xl:last:border-r border-slate-100">
             <Link
               to={action.to}
-              className="block px-5 py-4 hover:bg-white/[0.04] transition-colors"
+              className="block px-5 py-4 hover:bg-slate-50 transition-colors"
             >
               <p className="text-sm font-semibold text-ink-50">{action.title}</p>
               <p className="text-xs text-ink-300 mt-0.5">{action.hint}</p>

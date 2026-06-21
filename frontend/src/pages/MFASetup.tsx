@@ -55,7 +55,7 @@ export default function MFASetupPage() {
           )}
 
           {secret && (
-            <div className="rounded-lg bg-white/[0.04] border border-white/10 p-3 mb-5 text-center">
+            <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 mb-5 text-center">
               <p className="text-[10px] uppercase tracking-wide text-ink-400">
                 {t('auth.mfaSetupManualKey')}
               </p>
@@ -79,7 +79,7 @@ export default function MFASetupPage() {
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   required
                   maxLength={6}
-                  className="w-full h-14 bg-white/[0.04] border border-white/10 rounded-lg px-4 text-center text-2xl tracking-[0.5em] text-ink-50 focus:bg-white/[0.06] focus:border-brand-400/60"
+                  className="w-full h-14 bg-white border border-slate-300 rounded-lg px-4 text-center text-2xl tracking-[0.5em] text-ink-50 focus:bg-white focus:border-brand-500/70"
                   placeholder="000000"
                 />
               </div>

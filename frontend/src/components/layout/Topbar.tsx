@@ -40,13 +40,13 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
     <header
       className={cn(
         'sticky top-0 z-20 flex items-center gap-3 px-4 lg:px-6 h-16',
-        'glass-surface border-b border-white/10'
+        'glass-surface border-b border-slate-200'
       )}
     >
       <button
         type="button"
         onClick={onMenuClick}
-        className="lg:hidden h-9 w-9 rounded-md glass-surface-light flex items-center justify-center text-ink-100"
+        className="lg:hidden h-9 w-9 rounded-md bg-white border border-slate-300 flex items-center justify-center text-ink-100 hover:bg-slate-100"
         aria-label={t('nav.openSidebar')}
       >
         <span aria-hidden>☰</span>
@@ -61,7 +61,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
             type="search"
             placeholder={t('common.searchPlaceholder')}
             aria-label={t('common.search')}
-            className="w-full h-9 pl-9 pr-3 text-sm rounded-md bg-white/[0.04] border border-white/10 text-ink-50 placeholder:text-ink-400 focus:bg-white/[0.06] focus:border-brand-400/60"
+            className="w-full h-9 pl-9 pr-3 text-sm rounded-md bg-white border border-slate-300 text-ink-50 placeholder:text-ink-400 focus:bg-white focus:border-brand-500/70"
           />
         </label>
       </div>
@@ -71,7 +71,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
       <Link
         to="/alerts"
         aria-label={t('nav.alerts')}
-        className="relative h-9 w-9 rounded-md glass-surface-light flex items-center justify-center text-ink-100 hover:text-white"
+        className="relative h-9 w-9 rounded-md bg-white border border-slate-300 flex items-center justify-center text-ink-100 hover:bg-slate-100 hover:text-ink-50"
       >
         <span aria-hidden>🔔</span>
         {unreadAlerts > 0 && (
@@ -85,7 +85,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
         <button
           type="button"
           onClick={() => setMenuOpen((v) => !v)}
-          className="flex items-center gap-2 h-9 pl-1.5 pr-3 rounded-full glass-surface-light text-sm text-ink-100"
+          className="flex items-center gap-2 h-9 pl-1.5 pr-3 rounded-full bg-white border border-slate-300 text-sm text-ink-100 hover:bg-slate-100"
           aria-haspopup="menu"
           aria-expanded={menuOpen}
         >
@@ -99,7 +99,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
             role="menu"
             className="absolute right-0 mt-2 w-60 glass-surface rounded-glass p-2 shadow-glass-lg"
           >
-            <div className="px-3 py-2 border-b border-white/10 mb-2">
+            <div className="px-3 py-2 border-b border-slate-200 mb-2">
               <p className="text-xs text-ink-400">{t('topbar.signedInAs')}</p>
               <p className="text-sm text-ink-50 font-semibold">{role ?? '—'}</p>
               {tenantId != null && (
@@ -111,7 +111,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
             <Link
               to="/settings"
               role="menuitem"
-              className="block px-3 h-8 text-sm rounded-md text-ink-100 hover:bg-white/[0.06] flex items-center"
+              className="block px-3 h-8 text-sm rounded-md text-ink-100 hover:bg-slate-100 flex items-center"
               onClick={() => setMenuOpen(false)}
             >
               {t('nav.settings')}
@@ -119,12 +119,12 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
             <Link
               to="/mfa-setup"
               role="menuitem"
-              className="block px-3 h-8 text-sm rounded-md text-ink-100 hover:bg-white/[0.06] flex items-center"
+              className="block px-3 h-8 text-sm rounded-md text-ink-100 hover:bg-slate-100 flex items-center"
               onClick={() => setMenuOpen(false)}
             >
               {t('topbar.manageMfa')}
             </Link>
-            <div className="my-1 border-t border-white/10" />
+            <div className="my-1 border-t border-slate-200" />
             <div className="px-1">
               <Button variant="ghost" fullWidth onClick={handleLogout}>
                 {t('nav.logout')}

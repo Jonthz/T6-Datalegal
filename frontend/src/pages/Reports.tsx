@@ -323,7 +323,7 @@ interface AlertRowProps {
 
 function AlertRow({ tone, label, value }: AlertRowProps) {
   return (
-    <div className="glass-surface-light rounded-lg p-3 flex items-center justify-between">
+    <div className="rounded-lg p-3 flex items-center justify-between bg-slate-50 border border-slate-200">
       <span className="text-sm text-ink-200">{label}</span>
       <Badge tone={tone === 'neutral' ? 'success' : tone}>{value}</Badge>
     </div>
@@ -373,7 +373,7 @@ function TrendsTable({ points, t }: TrendsTableProps) {
     <div className="overflow-x-auto scrollbar-thin">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="text-xs uppercase tracking-wide text-ink-300 border-b border-white/10">
+          <tr className="text-xs uppercase tracking-wide text-ink-300 border-b border-slate-200">
             <th className="px-3 py-2 text-left">{t('reports.trends.month')}</th>
             <th className="px-3 py-2 text-right">{t('reports.trends.activities')}</th>
             <th className="px-3 py-2 text-right">{t('reports.trends.risks')}</th>
@@ -404,7 +404,7 @@ function TrendCell({ value, max, tone }: { value: number; max: number; tone: str
   return (
     <td className="px-3 py-2">
       <div className="flex items-center gap-2 justify-end">
-        <div className="relative w-24 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+        <div className="relative w-24 h-2 rounded-full bg-slate-200 overflow-hidden">
           <span
             aria-hidden
             className={`absolute inset-y-0 left-0 ${tone}`}

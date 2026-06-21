@@ -16,12 +16,12 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const toneClasses: Record<BadgeTone, string> = {
-  neutral: 'bg-white/[0.06] text-ink-100 border border-white/10',
-  brand: 'bg-brand-500/15 text-brand-200 border border-brand-400/30',
-  success: 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/30',
-  warning: 'bg-amber-500/15 text-amber-200 border border-amber-400/30',
-  danger: 'bg-rose-500/15 text-rose-200 border border-rose-400/30',
-  info: 'bg-sky-500/15 text-sky-200 border border-sky-400/30',
+  neutral: 'bg-slate-100 text-ink-100 border border-slate-200',
+  brand: 'bg-brand-50 text-brand-700 border border-brand-200',
+  success: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  warning: 'bg-amber-50 text-amber-700 border border-amber-200',
+  danger: 'bg-rose-50 text-rose-700 border border-rose-200',
+  info: 'bg-sky-50 text-sky-700 border border-sky-200',
 }
 
 export function Badge({ tone = 'neutral', icon, className, children, ...rest }: BadgeProps) {

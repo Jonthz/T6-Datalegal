@@ -476,7 +476,7 @@ export default function IncidentsPage() {
               ]}
             />
           </div>
-          <label className="flex items-start gap-2 text-sm text-ink-200 bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2">
+          <label className="flex items-start gap-2 text-sm text-ink-200 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
             <input
               type="checkbox"
               className="mt-0.5"
@@ -623,7 +623,7 @@ export default function IncidentsPage() {
                 })),
               ]}
             />
-            <label className="flex items-start gap-2 text-sm text-ink-200 bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2">
+            <label className="flex items-start gap-2 text-sm text-ink-200 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
               <input
                 type="checkbox"
                 className="mt-0.5"

@@ -76,7 +76,7 @@ export default function SettingsPage() {
                 </Link>
               </div>
             </div>
-            <div className="border-t border-white/10 pt-4">
+            <div className="border-t border-slate-200 pt-4">
               <p className="text-sm font-medium text-ink-100">
                 {t('settings.security.signOutTitle')}
               </p>

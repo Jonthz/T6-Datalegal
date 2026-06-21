@@ -20,7 +20,7 @@ export function Tabs({ tabs, initial, onChange, className }: TabsProps) {
 
   return (
     <div className={cn('space-y-4', className)}>
-      <div role="tablist" className="flex items-center gap-1 glass-surface-light rounded-lg p-1 w-fit">
+      <div role="tablist" className="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-lg p-1 w-fit">
         {tabs.map((tab) => {
           const selected = tab.id === active
           return (
@@ -36,8 +36,8 @@ export function Tabs({ tabs, initial, onChange, className }: TabsProps) {
               className={cn(
                 'px-3 h-8 rounded-md text-sm font-medium transition-colors flex items-center gap-2',
                 selected
-                  ? 'bg-brand-500/20 text-white border border-brand-400/30'
-                  : 'text-ink-300 hover:text-ink-50 hover:bg-white/[0.06] border border-transparent'
+                  ? 'bg-brand-50 text-brand-700 border border-brand-200'
+                  : 'text-ink-300 hover:text-ink-50 hover:bg-slate-100 border border-transparent'
               )}
             >
               {tab.label}

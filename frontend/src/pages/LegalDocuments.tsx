@@ -267,7 +267,7 @@ export default function LegalDocumentsPage() {
               {templateTypes.map((tp) => (
                 <li
                   key={tp.doc_type}
-                  className="glass-surface-light rounded-lg p-3 flex flex-col gap-2"
+                  className="rounded-lg p-3 flex flex-col gap-2 bg-slate-50 border border-slate-200"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-medium text-ink-50">{tp.doc_type}</p>
@@ -299,7 +299,7 @@ export default function LegalDocumentsPage() {
               type="checkbox"
               checked={onlyCurrent}
               onChange={(e) => setOnlyCurrent(e.target.checked)}
-              className="h-4 w-4 rounded border-white/20 bg-white/[0.04]"
+              className="h-4 w-4 rounded border-slate-300 bg-white"
             />
             {t('legalDocuments.onlyCurrent')}
           </label>

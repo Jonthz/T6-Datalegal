@@ -486,7 +486,7 @@ export default function ActionPlansPage() {
           ) : (
             <ul className="grid gap-3 md:grid-cols-2">
               {templates.map((tp) => (
-                <li key={tp.id} className="glass-surface-light rounded-lg p-3 space-y-2">
+                <li key={tp.id} className="rounded-lg p-3 space-y-2 bg-slate-50 border border-slate-200">
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-medium text-ink-50">{tp.name}</p>
                     <Badge tone="brand">{tp.applies_to_level}</Badge>
@@ -711,7 +711,7 @@ function TaskEditor({ tasks, onAdd, onRemove, onChange, t }: TaskEditorProps) {
       ) : (
         <ul className="space-y-2">
           {tasks.map((task, idx) => (
-            <li key={idx} className="glass-surface-light rounded-lg p-3 space-y-2">
+            <li key={idx} className="rounded-lg p-3 space-y-2 bg-slate-50 border border-slate-200">
               <div className="grid gap-2 md:grid-cols-3">
                 <Input
                   label={t('actionPlans.fields.taskTitle')}

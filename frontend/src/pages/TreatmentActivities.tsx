@@ -445,7 +445,7 @@ function WizardModal({
             key={n}
             className={cn(
               'h-1.5 flex-1 rounded-full',
-              n <= step ? 'bg-brand-500' : 'bg-white/10'
+              n <= step ? 'bg-brand-500' : 'bg-slate-200'
             )}
           />
         ))}
@@ -576,7 +576,7 @@ function WizardModal({
 
 function ReviewLine({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 text-sm py-1 border-b border-white/5">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 text-sm py-1 border-b border-slate-100">
       <span className="text-xs uppercase text-ink-400">{label}</span>
       <span className="sm:col-span-2 text-ink-100 break-words">{value}</span>
     </div>

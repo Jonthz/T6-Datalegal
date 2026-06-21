@@ -7,7 +7,7 @@ import { PROTECTED_ROUTES, PUBLIC_ROUTES } from './routes/routes'
 
 function ShellFallback() {
   return (
-    <div className="min-h-screen w-full bg-shell-gradient flex items-center justify-center">
+    <div className="min-h-screen w-full bg-white text-ink-100 flex items-center justify-center">
       <LoadingState />
     </div>
   )
@@ -15,7 +15,7 @@ function ShellFallback() {
 
 function AuthFallback() {
   return (
-    <div className="min-h-screen w-full bg-auth-gradient flex items-center justify-center">
+    <div className="min-h-screen w-full bg-white text-ink-100 flex items-center justify-center">
       <LoadingState />
     </div>
   )

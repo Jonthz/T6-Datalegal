@@ -20,7 +20,7 @@ export function Breadcrumbs() {
     <nav aria-label={t('nav.breadcrumbs')} className="text-xs text-ink-300">
       <ol className="flex items-center gap-1.5 flex-wrap">
         <li>
-          <Link to="/dashboard" className="hover:text-white">
+          <Link to="/dashboard" className="hover:text-ink-50">
             {t('nav.dashboard')}
           </Link>
         </li>
@@ -33,7 +33,7 @@ export function Breadcrumbs() {
               {crumb.isLast ? (
                 <span className="text-ink-100 capitalize">{crumb.label}</span>
               ) : (
-                <Link to={crumb.to} className="hover:text-white capitalize">
+                <Link to={crumb.to} className="hover:text-ink-50 capitalize">
                   {crumb.label}
                 </Link>
               )}
