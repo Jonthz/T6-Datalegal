@@ -8,6 +8,7 @@ REVIEW_DECISIONS = ["RETAIN", "DELETE", "ANONYMIZE"]
 
 
 class RetentionPolicyCreate(BaseModel):
+    """RetentionPolicyCreate schema/model definition."""
     name: str
     data_category: str
     retention_days: int
@@ -16,6 +17,7 @@ class RetentionPolicyCreate(BaseModel):
 
 
 class RetentionPolicyUpdate(BaseModel):
+    """RetentionPolicyUpdate schema/model definition."""
     name: str | None = None
     data_category: str | None = None
     retention_days: int | None = None
@@ -25,6 +27,7 @@ class RetentionPolicyUpdate(BaseModel):
 
 
 class RetentionPolicyRead(BaseModel):
+    """RetentionPolicyRead schema/model definition."""
     id: int
     tenant_id: int
     name: str
@@ -38,6 +41,7 @@ class RetentionPolicyRead(BaseModel):
 
 
 class RetentionRecordCreate(BaseModel):
+    """RetentionRecordCreate schema/model definition."""
     information_asset_id: int
     policy_id: int | None = None
     expiry_date: date
@@ -46,6 +50,7 @@ class RetentionRecordCreate(BaseModel):
 
 
 class RetentionRecordUpdate(BaseModel):
+    """RetentionRecordUpdate schema/model definition."""
     status: str | None = None
     legal_hold: bool | None = None
     hold_justification: str | None = None
@@ -54,6 +59,7 @@ class RetentionRecordUpdate(BaseModel):
 
 
 class RetentionRecordRead(BaseModel):
+    """RetentionRecordRead schema/model definition."""
     id: int
     tenant_id: int
     information_asset_id: int

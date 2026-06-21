@@ -22,9 +22,7 @@ class RetentionPolicy(TenantBase):
     legal_basis: Mapped[str] = mapped_column(Text, nullable=False, default="")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    records: Mapped[list] = relationship(
-        "RetentionRecord", back_populates="policy", lazy="noload"
-    )
+    records: Mapped[list] = relationship("RetentionRecord", back_populates="policy", lazy="noload")
 
 
 class RetentionRecord(TenantBase):

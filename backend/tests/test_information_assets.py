@@ -6,6 +6,7 @@ from tests.conftest import auth_headers
 
 
 def _create_asset(client: TestClient, token: str, **overrides) -> dict:
+    """Handle create asset."""
     payload = {
         "name": "Customer DB",
         "description": "Main customer database",
@@ -22,7 +23,9 @@ def _create_asset(client: TestClient, token: str, **overrides) -> dict:
 
 # ── CRUD ──────────────────────────────────────────────────────────────────────
 
+
 def test_create_information_asset(client, dpo_token):
+    """Test that create information asset behaves as expected."""
     data = _create_asset(client, dpo_token)
     assert data["name"] == "Customer DB"
     assert data["asset_type_code"] == "SOFTWARE"
@@ -31,6 +34,7 @@ def test_create_information_asset(client, dpo_token):
 
 
 def test_list_information_assets(client, dpo_token):
+    """Test that list information assets behaves as expected."""
     _create_asset(client, dpo_token, name="Asset 1")
     _create_asset(client, dpo_token, name="Asset 2")
     resp = client.get("/api/v1/information-assets", headers=auth_headers(dpo_token))
@@ -41,7 +45,10 @@ def test_list_information_assets(client, dpo_token):
 
 
 def test_filter_by_classification(client, dpo_token):
-    _create_asset(client, dpo_token, name="Internal", classification_level_code="PUBLICA_USO_INTERNO")
+    """Test that filter by classification behaves as expected."""
+    _create_asset(
+        client, dpo_token, name="Internal", classification_level_code="PUBLICA_USO_INTERNO"
+    )
     _create_asset(client, dpo_token, name="Reserved", classification_level_code="PUBLICA_RESERVADA")
     resp = client.get(
         "/api/v1/information-assets?classification=PUBLICA_USO_INTERNO",
@@ -53,6 +60,7 @@ def test_filter_by_classification(client, dpo_token):
 
 
 def test_update_asset_metadata(client, dpo_token):
+    """Test that update asset metadata behaves as expected."""
     created = _create_asset(client, dpo_token)
     resp = client.patch(
         f"/api/v1/information-assets/{created['id']}",
@@ -66,6 +74,7 @@ def test_update_asset_metadata(client, dpo_token):
 
 
 def test_delete_asset(client, dpo_token):
+    """Test that delete asset behaves as expected."""
     created = _create_asset(client, dpo_token)
     resp = client.delete(
         f"/api/v1/information-assets/{created['id']}",
@@ -76,6 +85,7 @@ def test_delete_asset(client, dpo_token):
 
 def test_link_to_treatment_activity(client, dpo_token):
     # Create a treatment activity first
+    """Test that link to treatment activity behaves as expected."""
     ta_resp = client.post(
         "/api/v1/treatment-activities",
         json={
@@ -94,16 +104,22 @@ def test_link_to_treatment_activity(client, dpo_token):
 
 # ── US-RF38-1: Classification levels ─────────────────────────────────────────
 
+
 def test_all_classification_levels_accepted(client, dpo_token):
+    """Test that all classification levels accepted behaves as expected."""
     levels = ["PUBLICA_USO_INTERNO", "PUBLICA_CLASIFICADA", "PUBLICA_RESERVADA"]
     for level in levels:
-        data = _create_asset(client, dpo_token, name=f"Asset {level}", classification_level_code=level)
+        data = _create_asset(
+            client, dpo_token, name=f"Asset {level}", classification_level_code=level
+        )
         assert data["classification_level_code"] == level
 
 
 # ── Tenant isolation ─────────────────────────────────────────────────────────
 
+
 def test_tenant_isolation(client, dpo_token, tenant_b_token):
+    """Test that tenant isolation behaves as expected."""
     created = _create_asset(client, dpo_token, name="Tenant A Asset")
     resp = client.get("/api/v1/information-assets", headers=auth_headers(tenant_b_token))
     assert resp.status_code == 200
@@ -113,17 +129,25 @@ def test_tenant_isolation(client, dpo_token, tenant_b_token):
 
 # ── RBAC ─────────────────────────────────────────────────────────────────────
 
+
 def test_auditor_cannot_create_asset(client, auditor_token):
+    """Test that auditor cannot create asset behaves as expected."""
     resp = client.post(
         "/api/v1/information-assets",
-        json={"name": "x", "asset_type_code": "y", "format_code": "z",
-              "storage_medium_code": "q", "classification_level_code": "PUBLICA_CLASIFICADA"},
+        json={
+            "name": "x",
+            "asset_type_code": "y",
+            "format_code": "z",
+            "storage_medium_code": "q",
+            "classification_level_code": "PUBLICA_CLASIFICADA",
+        },
         headers=auth_headers(auditor_token),
     )
     assert resp.status_code == 403
 
 
 def test_auditor_can_list_assets(client, dpo_token, auditor_token):
+    """Test that auditor can list assets behaves as expected."""
     _create_asset(client, dpo_token)
     resp = client.get("/api/v1/information-assets", headers=auth_headers(auditor_token))
     assert resp.status_code == 200

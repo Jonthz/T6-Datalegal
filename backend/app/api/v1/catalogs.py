@@ -38,6 +38,7 @@ _LOPDP_AUTO_CLASSIFY: dict[str, tuple[str, str]] = {
 
 
 class CatalogEntryUpdate(BaseModel):
+    """CatalogEntryUpdate schema/model definition."""
     label: str | None = None
     description: str | None = None
     sensitivity: str | None = None
@@ -55,31 +56,52 @@ def _check_catalog_referential_integrity(db: Session, entry: CatalogEntry) -> No
     referenced = False
 
     if cat_type == "ASSET_TYPE":
-        referenced = db.query(InformationAsset).filter(
-            InformationAsset.tenant_id == entry.tenant_id,
-            InformationAsset.asset_type_code == code,
-        ).first() is not None
+        referenced = (
+            db.query(InformationAsset)
+            .filter(
+                InformationAsset.tenant_id == entry.tenant_id,
+                InformationAsset.asset_type_code == code,
+            )
+            .first()
+            is not None
+        )
     elif cat_type == "ASSET_FORMAT":
-        referenced = db.query(InformationAsset).filter(
-            InformationAsset.tenant_id == entry.tenant_id,
-            InformationAsset.format_code == code,
-        ).first() is not None
+        referenced = (
+            db.query(InformationAsset)
+            .filter(
+                InformationAsset.tenant_id == entry.tenant_id,
+                InformationAsset.format_code == code,
+            )
+            .first()
+            is not None
+        )
     elif cat_type == "STORAGE_MEDIUM":
-        referenced = db.query(InformationAsset).filter(
-            InformationAsset.tenant_id == entry.tenant_id,
-            InformationAsset.storage_medium_code == code,
-        ).first() is not None
+        referenced = (
+            db.query(InformationAsset)
+            .filter(
+                InformationAsset.tenant_id == entry.tenant_id,
+                InformationAsset.storage_medium_code == code,
+            )
+            .first()
+            is not None
+        )
     elif cat_type == "CLASSIFICATION_LEVEL":
-        referenced = db.query(InformationAsset).filter(
-            InformationAsset.tenant_id == entry.tenant_id,
-            InformationAsset.classification_level_code == code,
-        ).first() is not None
+        referenced = (
+            db.query(InformationAsset)
+            .filter(
+                InformationAsset.tenant_id == entry.tenant_id,
+                InformationAsset.classification_level_code == code,
+            )
+            .first()
+            is not None
+        )
 
     if referenced:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Cannot delete catalog entry '{code}' ({cat_type}): it is referenced by one or more information assets.",
+            detail=f"Cannot delete catalog entry '{code}' ({cat_type}): it is referenced by one or more information assets.",  # pylint: disable=line-too-long
         )
+
 
 router = APIRouter(prefix="/catalogs", tags=["catalogs"])
 
@@ -89,10 +111,13 @@ def list_catalogs(
     _: Annotated[User, Depends(require_permission("catalogs", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
-    type: str | None = Query(None, description="Filter by catalog type"),
+    type: str | None = Query(
+        None, description="Filter by catalog type"
+    ),  # pylint: disable=redefined-builtin
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
 ):
+    """List catalogs."""
     q = db.query(CatalogEntry).filter(
         CatalogEntry.tenant_id == tenant_id, CatalogEntry.is_active.is_(True)
     )
@@ -108,6 +133,7 @@ def list_catalogs_by_type(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """List catalogs by type."""
     return (
         db.query(CatalogEntry)
         .filter(
@@ -119,10 +145,12 @@ def list_catalogs_by_type(
     )
 
 
-@router.post("/bulk-load", response_model=list[CatalogEntryRead], status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/bulk-load", response_model=list[CatalogEntryRead], status_code=status.HTTP_201_CREATED
+)
 def bulk_load_catalogs(
     body: BulkLoadRequest,
-    current_user: Annotated[User, Depends(require_permission("catalogs", "c"))],
+    current_user: Annotated[User, Depends(require_permission("catalogs", "c"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
@@ -157,15 +185,21 @@ def update_catalog_entry(
     db: Session = Depends(get_db),
 ):
     """US-RF20-1: Edit catalog entry with version increment."""
-    entry = db.query(CatalogEntry).filter(
-        CatalogEntry.id == entry_id, CatalogEntry.tenant_id == tenant_id
-    ).first()
+    entry = (
+        db.query(CatalogEntry)
+        .filter(CatalogEntry.id == entry_id, CatalogEntry.tenant_id == tenant_id)
+        .first()
+    )
     if not entry:
         raise HTTPException(status_code=404, detail="Catalog entry not found.")
     if body.sensitivity and body.sensitivity not in DATA_SENSITIVITIES:
-        raise HTTPException(status_code=400, detail=f"sensitivity must be one of {DATA_SENSITIVITIES}")
+        raise HTTPException(
+            status_code=400, detail=f"sensitivity must be one of {DATA_SENSITIVITIES}"
+        )
     if body.criticality and body.criticality not in DATA_CRITICALITIES:
-        raise HTTPException(status_code=400, detail=f"criticality must be one of {DATA_CRITICALITIES}")
+        raise HTTPException(
+            status_code=400, detail=f"criticality must be one of {DATA_CRITICALITIES}"
+        )
     for field, value in body.model_dump(exclude_none=True).items():
         setattr(entry, field, value)
     # US-RF20-1: increment version on every edit
@@ -174,8 +208,11 @@ def update_catalog_entry(
     db.commit()
     db.refresh(entry)
     AuditLog.create_log(
-        db, action="catalog_entry_updated", resource="catalogs",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="catalog_entry_updated",
+        resource="catalogs",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"id={entry_id} code={entry.code} version={entry.version}",
     )
     return entry
@@ -188,11 +225,16 @@ def delete_catalog_entry(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    entry = db.query(CatalogEntry).filter(
-        CatalogEntry.id == entry_id, CatalogEntry.tenant_id == tenant_id
-    ).first()
+    """Delete catalog entry."""
+    entry = (
+        db.query(CatalogEntry)
+        .filter(CatalogEntry.id == entry_id, CatalogEntry.tenant_id == tenant_id)
+        .first()
+    )
     if not entry:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Catalog entry not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Catalog entry not found."
+        )
     # RF-40 / US-RF39-1: referential integrity check
     _check_catalog_referential_integrity(db, entry)
     entry.is_active = False

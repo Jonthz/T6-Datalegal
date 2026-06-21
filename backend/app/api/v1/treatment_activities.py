@@ -25,19 +25,23 @@ router = APIRouter(prefix="/treatment-activities", tags=["treatment-activities"]
 
 # ── US-RF04-1 Wizard inline schemas ──────────────────────────────────────────
 
+
 class WizardStartBody(BaseModel):
+    """WizardStartBody schema/model definition."""
     name: str
     purpose: str
     department_id: int | None = None
 
 
 class WizardLegalBasisBody(BaseModel):
+    """WizardLegalBasisBody schema/model definition."""
     legal_basis: str
     personal_data_types: list[str] = []
     data_subjects: list[str] = []
 
 
 class WizardTransfersBody(BaseModel):
+    """WizardTransfersBody schema/model definition."""
     is_cross_border: bool = False
     destination_countries: list[str] = []
     processor_name: str | None = None
@@ -46,7 +50,10 @@ class WizardTransfersBody(BaseModel):
 
 # ── Wizard endpoints (MUST be before /{activity_id} routes) ──────────────────
 
-@router.post("/wizard/start", response_model=TreatmentActivityRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/wizard/start", response_model=TreatmentActivityRead, status_code=status.HTTP_201_CREATED
+)
 def wizard_start(
     body: WizardStartBody,
     current_user: Annotated[User, Depends(require_permission("treatment_activities", "c"))],
@@ -79,16 +86,18 @@ def wizard_start(
 def wizard_legal_basis(
     activity_id: int,
     body: WizardLegalBasisBody,
-    current_user: Annotated[User, Depends(require_permission("treatment_activities", "u"))],
+    current_user: Annotated[User, Depends(require_permission("treatment_activities", "u"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
     """Step 2: Set legal basis, personal data types and subjects."""
     if not body.legal_basis.strip():
         raise HTTPException(status_code=422, detail="legal_basis cannot be empty.")
-    activity = db.query(TreatmentActivity).filter(
-        TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id
-    ).first()
+    activity = (
+        db.query(TreatmentActivity)
+        .filter(TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id)
+        .first()
+    )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
     activity.legal_basis = body.legal_basis
@@ -103,14 +112,16 @@ def wizard_legal_basis(
 def wizard_transfers(
     activity_id: int,
     body: WizardTransfersBody,
-    current_user: Annotated[User, Depends(require_permission("treatment_activities", "u"))],
+    current_user: Annotated[User, Depends(require_permission("treatment_activities", "u"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
     """Step 3: Set cross-border transfer details."""
-    activity = db.query(TreatmentActivity).filter(
-        TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id
-    ).first()
+    activity = (
+        db.query(TreatmentActivity)
+        .filter(TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id)
+        .first()
+    )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
     activity.is_cross_border = body.is_cross_border
@@ -130,21 +141,29 @@ def wizard_finalize(
     db: Session = Depends(get_db),
 ):
     """Step 4: Validate and activate the treatment activity."""
-    activity = db.query(TreatmentActivity).filter(
-        TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id
-    ).first()
+    activity = (
+        db.query(TreatmentActivity)
+        .filter(TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id)
+        .first()
+    )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
     if not activity.name or not activity.purpose:
         raise HTTPException(status_code=422, detail="name and purpose are required.")
     if not activity.legal_basis:
-        raise HTTPException(status_code=422, detail="legal_basis is required. Complete Step 2 first.")
+        raise HTTPException(
+            status_code=422, detail="legal_basis is required. Complete Step 2 first."
+        )
     activity.status = "ACTIVE"
     db.commit()
     db.refresh(activity)
     AuditLog.create_log(
-        db, action="treatment_activity_wizard_finalized", resource="treatment_activities",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"id={activity_id}",
+        db,
+        action="treatment_activity_wizard_finalized",
+        resource="treatment_activities",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"id={activity_id}",
     )
     return activity
 
@@ -166,6 +185,7 @@ def list_activities(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List activities."""
     q = db.query(TreatmentActivity).filter(TreatmentActivity.tenant_id == tenant_id)
     q = _apply_dept_filter(q, current_user)
     if status_filter:
@@ -183,6 +203,7 @@ def create_activity(
     db: Session = Depends(get_db),
 ):
     # US-RF01-2: DEPT_HEAD can only create for their own department
+    """Create activity."""
     dept_id = body.department_id
     if current_user.role == "DEPT_HEAD":
         dept_id = current_user.department_id
@@ -224,9 +245,12 @@ def get_activity(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    activity = db.query(TreatmentActivity).filter(
-        TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id
-    ).first()
+    """Return activity."""
+    activity = (
+        db.query(TreatmentActivity)
+        .filter(TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id)
+        .first()
+    )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
     # US-RF01-2: dept isolation
@@ -243,9 +267,12 @@ def update_activity(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    activity = db.query(TreatmentActivity).filter(
-        TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id
-    ).first()
+    """Update activity."""
+    activity = (
+        db.query(TreatmentActivity)
+        .filter(TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id)
+        .first()
+    )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
     if current_user.role == "DEPT_HEAD" and activity.department_id != current_user.department_id:
@@ -273,9 +300,12 @@ def delete_activity(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    activity = db.query(TreatmentActivity).filter(
-        TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id
-    ).first()
+    """Delete activity."""
+    activity = (
+        db.query(TreatmentActivity)
+        .filter(TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id)
+        .first()
+    )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
     activity.status = "ARCHIVED"

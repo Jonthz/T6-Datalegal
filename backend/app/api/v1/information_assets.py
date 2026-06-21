@@ -35,6 +35,7 @@ def list_assets(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List assets."""
     q = db.query(InformationAsset).filter(InformationAsset.tenant_id == tenant_id)
     q = _apply_dept_filter(q, current_user)
     if classification:
@@ -51,6 +52,7 @@ def create_asset(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create asset."""
     dept_id = body.department_id
     if current_user.role == "DEPT_HEAD":
         dept_id = current_user.department_id
@@ -88,9 +90,12 @@ def get_asset(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    asset = db.query(InformationAsset).filter(
-        InformationAsset.id == asset_id, InformationAsset.tenant_id == tenant_id
-    ).first()
+    """Return asset."""
+    asset = (
+        db.query(InformationAsset)
+        .filter(InformationAsset.id == asset_id, InformationAsset.tenant_id == tenant_id)
+        .first()
+    )
     if not asset:
         raise HTTPException(status_code=404, detail="Information asset not found.")
     if current_user.role == "DEPT_HEAD" and asset.department_id != current_user.department_id:
@@ -106,9 +111,12 @@ def update_asset(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    asset = db.query(InformationAsset).filter(
-        InformationAsset.id == asset_id, InformationAsset.tenant_id == tenant_id
-    ).first()
+    """Update asset."""
+    asset = (
+        db.query(InformationAsset)
+        .filter(InformationAsset.id == asset_id, InformationAsset.tenant_id == tenant_id)
+        .first()
+    )
     if not asset:
         raise HTTPException(status_code=404, detail="Information asset not found.")
     if current_user.role == "DEPT_HEAD" and asset.department_id != current_user.department_id:
@@ -136,9 +144,12 @@ def delete_asset(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    asset = db.query(InformationAsset).filter(
-        InformationAsset.id == asset_id, InformationAsset.tenant_id == tenant_id
-    ).first()
+    """Delete asset."""
+    asset = (
+        db.query(InformationAsset)
+        .filter(InformationAsset.id == asset_id, InformationAsset.tenant_id == tenant_id)
+        .first()
+    )
     if not asset:
         raise HTTPException(status_code=404, detail="Information asset not found.")
     db.delete(asset)

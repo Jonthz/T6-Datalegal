@@ -26,6 +26,7 @@ def list_incidents(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List incidents."""
     q = db.query(Incident).filter(Incident.tenant_id == tenant_id)
     if current_user.role == "DEPT_HEAD" and current_user.department_id:
         q = q.filter(Incident.department_id == current_user.department_id)
@@ -43,6 +44,7 @@ def create_incident(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create incident."""
     incident = Incident(
         tenant_id=tenant_id,
         reporter_id=current_user.id,
@@ -93,9 +95,12 @@ def get_incident(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    incident = db.query(Incident).filter(
-        Incident.id == incident_id, Incident.tenant_id == tenant_id
-    ).first()
+    """Return incident."""
+    incident = (
+        db.query(Incident)
+        .filter(Incident.id == incident_id, Incident.tenant_id == tenant_id)
+        .first()
+    )
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found.")
     if current_user.role == "DEPT_HEAD" and incident.department_id != current_user.department_id:
@@ -111,9 +116,12 @@ def update_incident(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    incident = db.query(Incident).filter(
-        Incident.id == incident_id, Incident.tenant_id == tenant_id
-    ).first()
+    """Update incident."""
+    incident = (
+        db.query(Incident)
+        .filter(Incident.id == incident_id, Incident.tenant_id == tenant_id)
+        .first()
+    )
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found.")
 
@@ -145,9 +153,11 @@ def mark_regulatory_notification(
     db: Session = Depends(get_db),
 ):
     """Mark that regulatory authority has been notified (US-RF08-1)."""
-    incident = db.query(Incident).filter(
-        Incident.id == incident_id, Incident.tenant_id == tenant_id
-    ).first()
+    incident = (
+        db.query(Incident)
+        .filter(Incident.id == incident_id, Incident.tenant_id == tenant_id)
+        .first()
+    )
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found.")
     incident.regulatory_notification_required = True

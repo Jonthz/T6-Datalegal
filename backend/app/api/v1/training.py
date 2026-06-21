@@ -27,6 +27,7 @@ router = APIRouter(prefix="/training", tags=["training"])
 
 # --- Programs ---
 
+
 @router.get("/programs", response_model=list[ProgramRead])
 def list_programs(
     _: Annotated[User, Depends(require_permission("training", "r"))],
@@ -35,6 +36,7 @@ def list_programs(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
 ):
+    """List programs."""
     return (
         db.query(TrainingProgram)
         .filter(TrainingProgram.tenant_id == tenant_id)
@@ -51,6 +53,7 @@ def create_program(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create program."""
     program = TrainingProgram(tenant_id=tenant_id, title=body.title, description=body.description)
     db.add(program)
     db.commit()
@@ -65,9 +68,12 @@ def get_program(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    program = db.query(TrainingProgram).filter(
-        TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id
-    ).first()
+    """Return program."""
+    program = (
+        db.query(TrainingProgram)
+        .filter(TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id)
+        .first()
+    )
     if not program:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Program not found.")
     return program
@@ -81,9 +87,12 @@ def update_program(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    program = db.query(TrainingProgram).filter(
-        TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id
-    ).first()
+    """Update program."""
+    program = (
+        db.query(TrainingProgram)
+        .filter(TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id)
+        .first()
+    )
     if not program:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Program not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -100,9 +109,12 @@ def delete_program(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    program = db.query(TrainingProgram).filter(
-        TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id
-    ).first()
+    """Delete program."""
+    program = (
+        db.query(TrainingProgram)
+        .filter(TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id)
+        .first()
+    )
     if not program:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Program not found.")
     db.delete(program)
@@ -111,6 +123,7 @@ def delete_program(
 
 # --- Modules ---
 
+
 @router.get("/programs/{program_id}/modules", response_model=list[ModuleRead])
 def list_modules(
     program_id: int,
@@ -118,6 +131,7 @@ def list_modules(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """List modules."""
     return (
         db.query(TrainingModule)
         .filter(TrainingModule.program_id == program_id, TrainingModule.tenant_id == tenant_id)
@@ -126,7 +140,9 @@ def list_modules(
     )
 
 
-@router.post("/programs/{program_id}/modules", response_model=ModuleRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/programs/{program_id}/modules", response_model=ModuleRead, status_code=status.HTTP_201_CREATED
+)
 def create_module(
     program_id: int,
     body: ModuleCreate,
@@ -134,9 +150,12 @@ def create_module(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    program = db.query(TrainingProgram).filter(
-        TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id
-    ).first()
+    """Create module."""
+    program = (
+        db.query(TrainingProgram)
+        .filter(TrainingProgram.id == program_id, TrainingProgram.tenant_id == tenant_id)
+        .first()
+    )
     if not program:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Program not found.")
     module = TrainingModule(
@@ -160,9 +179,12 @@ def update_module(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    module = db.query(TrainingModule).filter(
-        TrainingModule.id == module_id, TrainingModule.tenant_id == tenant_id
-    ).first()
+    """Update module."""
+    module = (
+        db.query(TrainingModule)
+        .filter(TrainingModule.id == module_id, TrainingModule.tenant_id == tenant_id)
+        .first()
+    )
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -174,6 +196,7 @@ def update_module(
 
 # --- Materials ---
 
+
 @router.get("/modules/{module_id}/materials", response_model=list[MaterialRead])
 def list_materials(
     module_id: int,
@@ -181,6 +204,7 @@ def list_materials(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """List materials."""
     return (
         db.query(TrainingMaterial)
         .filter(TrainingMaterial.module_id == module_id, TrainingMaterial.tenant_id == tenant_id)
@@ -188,7 +212,11 @@ def list_materials(
     )
 
 
-@router.post("/modules/{module_id}/materials", response_model=MaterialRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/modules/{module_id}/materials",
+    response_model=MaterialRead,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_material(
     module_id: int,
     body: MaterialCreate,
@@ -196,9 +224,12 @@ def create_material(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    module = db.query(TrainingModule).filter(
-        TrainingModule.id == module_id, TrainingModule.tenant_id == tenant_id
-    ).first()
+    """Create material."""
+    module = (
+        db.query(TrainingModule)
+        .filter(TrainingModule.id == module_id, TrainingModule.tenant_id == tenant_id)
+        .first()
+    )
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found.")
     material = TrainingMaterial(
@@ -223,9 +254,12 @@ def update_material(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    material = db.query(TrainingMaterial).filter(
-        TrainingMaterial.id == material_id, TrainingMaterial.tenant_id == tenant_id
-    ).first()
+    """Update material."""
+    material = (
+        db.query(TrainingMaterial)
+        .filter(TrainingMaterial.id == material_id, TrainingMaterial.tenant_id == tenant_id)
+        .first()
+    )
     if not material:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Material not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -237,6 +271,7 @@ def update_material(
 
 # --- Enrollments ---
 
+
 @router.get("/enrollments", response_model=list[EnrollmentRead])
 def list_enrollments(
     _: Annotated[User, Depends(require_permission("training", "r"))],
@@ -245,6 +280,7 @@ def list_enrollments(
     user_id: int | None = Query(None),
     program_id: int | None = Query(None),
 ):
+    """List enrollments."""
     q = db.query(Enrollment).filter(Enrollment.tenant_id == tenant_id)
     if user_id:
         q = q.filter(Enrollment.user_id == user_id)
@@ -260,6 +296,7 @@ def create_enrollment(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create enrollment."""
     enrollment = Enrollment(
         tenant_id=tenant_id,
         user_id=body.user_id,
@@ -281,9 +318,12 @@ def update_enrollment(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    enrollment = db.query(Enrollment).filter(
-        Enrollment.id == enrollment_id, Enrollment.tenant_id == tenant_id
-    ).first()
+    """Update enrollment."""
+    enrollment = (
+        db.query(Enrollment)
+        .filter(Enrollment.id == enrollment_id, Enrollment.tenant_id == tenant_id)
+        .first()
+    )
     if not enrollment:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Enrollment not found.")
     for field, value in body.model_dump(exclude_none=True).items():

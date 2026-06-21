@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class TreatmentActivityCreate(BaseModel):
+    """TreatmentActivityCreate schema/model definition."""
     name: str
     purpose: str
     legal_basis: str
@@ -17,6 +18,7 @@ class TreatmentActivityCreate(BaseModel):
 
 
 class TreatmentActivityUpdate(BaseModel):
+    """TreatmentActivityUpdate schema/model definition."""
     name: str | None = None
     purpose: str | None = None
     legal_basis: str | None = None
@@ -32,6 +34,7 @@ class TreatmentActivityUpdate(BaseModel):
 
 
 class TreatmentActivityRead(BaseModel):
+    """TreatmentActivityRead schema/model definition."""
     id: int
     tenant_id: int
     name: str

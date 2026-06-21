@@ -12,7 +12,9 @@ SAMPLE_ENTRIES = [
 
 
 class TestCatalogs:
+    """TestCatalogs schema/model definition."""
     def test_bulk_load_catalogs(self, client: TestClient, dpo_token):
+        """Test that bulk load catalogs behaves as expected."""
         resp = client.post(
             "/api/v1/catalogs/bulk-load",
             json={"entries": SAMPLE_ENTRIES},
@@ -24,6 +26,7 @@ class TestCatalogs:
         assert data[0]["type"] == "sector"
 
     def test_list_all_catalogs(self, client: TestClient, dpo_token):
+        """Test that list all catalogs behaves as expected."""
         client.post(
             "/api/v1/catalogs/bulk-load",
             json={"entries": SAMPLE_ENTRIES},
@@ -34,6 +37,7 @@ class TestCatalogs:
         assert len(resp.json()) >= 3
 
     def test_filter_by_type(self, client: TestClient, dpo_token):
+        """Test that filter by type behaves as expected."""
         client.post(
             "/api/v1/catalogs/bulk-load",
             json={"entries": SAMPLE_ENTRIES},
@@ -45,6 +49,7 @@ class TestCatalogs:
         assert all(r["type"] == "sector" for r in results)
 
     def test_get_catalogs_by_type_path(self, client: TestClient, dpo_token):
+        """Test that get catalogs by type path behaves as expected."""
         client.post(
             "/api/v1/catalogs/bulk-load",
             json={"entries": SAMPLE_ENTRIES},
@@ -56,9 +61,12 @@ class TestCatalogs:
         assert all(r["type"] == "country" for r in results)
 
     def test_delete_catalog_entry(self, client: TestClient, dpo_token):
+        """Test that delete catalog entry behaves as expected."""
         resp = client.post(
             "/api/v1/catalogs/bulk-load",
-            json={"entries": [{"type": "temp", "code": "T001", "label": "Temp", "description": ""}]},
+            json={
+                "entries": [{"type": "temp", "code": "T001", "label": "Temp", "description": ""}]
+            },
             headers=auth_headers(dpo_token),
         )
         entry_id = resp.json()[0]["id"]
@@ -66,6 +74,7 @@ class TestCatalogs:
         assert del_resp.status_code == 204
 
     def test_bulk_load_empty_list(self, client: TestClient, dpo_token):
+        """Test that bulk load empty list behaves as expected."""
         resp = client.post(
             "/api/v1/catalogs/bulk-load",
             json={"entries": []},
@@ -75,6 +84,7 @@ class TestCatalogs:
         assert resp.json() == []
 
     def test_auditor_cannot_bulk_load(self, client: TestClient, auditor_token):
+        """Test that auditor cannot bulk load behaves as expected."""
         resp = client.post(
             "/api/v1/catalogs/bulk-load",
             json={"entries": SAMPLE_ENTRIES},

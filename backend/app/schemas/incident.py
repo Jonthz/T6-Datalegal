@@ -14,6 +14,7 @@ INCIDENT_STATUSES = ["OPEN", "INVESTIGATING", "RESOLVED", "CLOSED"]
 
 
 class IncidentCreate(BaseModel):
+    """IncidentCreate schema/model definition."""
     title: str
     description: str
     incident_type: str
@@ -25,6 +26,7 @@ class IncidentCreate(BaseModel):
 
 
 class IncidentUpdate(BaseModel):
+    """IncidentUpdate schema/model definition."""
     title: str | None = None
     description: str | None = None
     incident_type: str | None = None
@@ -38,6 +40,7 @@ class IncidentUpdate(BaseModel):
 
 
 class IncidentRead(BaseModel):
+    """IncidentRead schema/model definition."""
     id: int
     tenant_id: int
     title: str

@@ -27,15 +27,19 @@ router = APIRouter(prefix="/retention", tags=["retention"])
 
 # ── Policies ─────────────────────────────────────────────────────────────────
 
+
 @router.get("/policies", response_model=list[RetentionPolicyRead])
 def list_policies(
     _: Annotated[User, Depends(require_permission("retention", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    return db.query(RetentionPolicy).filter(
-        RetentionPolicy.tenant_id == tenant_id, RetentionPolicy.is_active.is_(True)
-    ).all()
+    """List policies."""
+    return (
+        db.query(RetentionPolicy)
+        .filter(RetentionPolicy.tenant_id == tenant_id, RetentionPolicy.is_active.is_(True))
+        .all()
+    )
 
 
 @router.post("/policies", response_model=RetentionPolicyRead, status_code=status.HTTP_201_CREATED)
@@ -45,6 +49,7 @@ def create_policy(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create policy."""
     policy = RetentionPolicy(
         tenant_id=tenant_id,
         name=body.name,
@@ -71,13 +76,16 @@ def create_policy(
 def update_policy(
     policy_id: int,
     body: RetentionPolicyUpdate,
-    current_user: Annotated[User, Depends(require_permission("retention", "u"))],
+    current_user: Annotated[User, Depends(require_permission("retention", "u"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    policy = db.query(RetentionPolicy).filter(
-        RetentionPolicy.id == policy_id, RetentionPolicy.tenant_id == tenant_id
-    ).first()
+    """Update policy."""
+    policy = (
+        db.query(RetentionPolicy)
+        .filter(RetentionPolicy.id == policy_id, RetentionPolicy.tenant_id == tenant_id)
+        .first()
+    )
     if not policy:
         raise HTTPException(status_code=404, detail="Retention policy not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -89,6 +97,7 @@ def update_policy(
 
 # ── Records ───────────────────────────────────────────────────────────────────
 
+
 @router.get("/records", response_model=list[RetentionRecordRead])
 def list_records(
     _: Annotated[User, Depends(require_permission("retention", "r"))],
@@ -97,6 +106,7 @@ def list_records(
     record_status: str | None = None,
     legal_hold: bool | None = None,
 ):
+    """List records."""
     q = db.query(RetentionRecord).filter(RetentionRecord.tenant_id == tenant_id)
     if record_status:
         q = q.filter(RetentionRecord.status == record_status)
@@ -108,10 +118,11 @@ def list_records(
 @router.post("/records", response_model=RetentionRecordRead, status_code=status.HTTP_201_CREATED)
 def create_record(
     body: RetentionRecordCreate,
-    current_user: Annotated[User, Depends(require_permission("retention", "c"))],
+    current_user: Annotated[User, Depends(require_permission("retention", "c"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create record."""
     record = RetentionRecord(
         tenant_id=tenant_id,
         information_asset_id=body.information_asset_id,
@@ -134,9 +145,12 @@ def update_record(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    record = db.query(RetentionRecord).filter(
-        RetentionRecord.id == record_id, RetentionRecord.tenant_id == tenant_id
-    ).first()
+    """Update record."""
+    record = (
+        db.query(RetentionRecord)
+        .filter(RetentionRecord.id == record_id, RetentionRecord.tenant_id == tenant_id)
+        .first()
+    )
     if not record:
         raise HTTPException(status_code=404, detail="Retention record not found.")
 
@@ -162,13 +176,14 @@ def update_record(
 
 # ── US-RF29-1: Expired-under-review report ───────────────────────────────────
 
+
 @router.get("/expired-under-review", response_model=ExpiredUnderReviewReport)
 def expired_under_review_report(
     _: Annotated[User, Depends(require_permission("retention", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Return all records where expiry_date has passed AND legal_hold=True, requiring DPO decision."""
+    """Return all records where expiry_date has passed AND legal_hold=True, requiring DPO decision."""  # pylint: disable=line-too-long
     today = date.today()
     records = (
         db.query(RetentionRecord)
@@ -197,11 +212,14 @@ def expired_under_review_report(
 
 
 class RetentionExecuteBody(BaseModel):
+    """RetentionExecuteBody schema/model definition."""
     policy_id: int | None = None
     run_type: str = "MANUAL"
 
 
-@router.post("/execute", response_model=RetentionExecutionLogRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/execute", response_model=RetentionExecutionLogRead, status_code=status.HTTP_201_CREATED
+)
 def execute_retention(
     body: RetentionExecuteBody,
     current_user: Annotated[User, Depends(require_permission("retention", "c"))],
@@ -213,7 +231,7 @@ def execute_retention(
 
     policies_q = db.query(RetentionPolicy).filter(
         RetentionPolicy.tenant_id == tenant_id,
-        RetentionPolicy.is_active == True,  # noqa: E712
+        RetentionPolicy.is_active.is_(True),  # noqa: E712
     )
     if body.policy_id:
         policies_q = policies_q.filter(RetentionPolicy.id == body.policy_id)
@@ -239,7 +257,7 @@ def execute_retention(
                 record.status = "UNDER_REVIEW"
                 processed += 1
                 log_details["processed_ids"].append(record.id)
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 exceptions += 1
                 log_details["exception_ids"].append(record.id)
 
@@ -264,7 +282,7 @@ def execute_retention(
 
 @router.get("/execution-logs", response_model=list[RetentionExecutionLogRead])
 def list_execution_logs(
-    current_user: Annotated[User, Depends(require_permission("retention", "r"))],
+    current_user: Annotated[User, Depends(require_permission("retention", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):

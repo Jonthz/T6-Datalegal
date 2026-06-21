@@ -9,6 +9,7 @@ from app.db.base import TenantBase
 
 
 class Incident(TenantBase):
+    """Incident schema/model definition."""
     __tablename__ = "incidents"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -26,15 +27,11 @@ class Incident(TenantBase):
     regulatory_notified_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
-    reporter_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=True
-    )
+    reporter_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     assigned_to_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=True
     )
-    resolved_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     affected_data_types: Mapped[str] = mapped_column(Text, nullable=False, default="")
     department_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("departments.id"), nullable=True, index=True

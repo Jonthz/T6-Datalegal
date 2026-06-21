@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class CatalogEntryCreate(BaseModel):
+    """CatalogEntryCreate schema/model definition."""
     type: str
     code: str
     label: str
@@ -11,6 +12,7 @@ class CatalogEntryCreate(BaseModel):
 
 
 class CatalogEntryRead(BaseModel):
+    """CatalogEntryRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int
@@ -29,4 +31,5 @@ class CatalogEntryRead(BaseModel):
 
 
 class BulkLoadRequest(BaseModel):
+    """BulkLoadRequest schema/model definition."""
     entries: list[CatalogEntryCreate]

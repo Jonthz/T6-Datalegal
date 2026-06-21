@@ -1,10 +1,10 @@
 """Tests for US-RF37-1: Risk Assessment Questionnaire Integration."""
 
-
 from tests.conftest import auth_headers
 
 
 def _create_ta(client, token):
+    """Handle create ta."""
     resp = client.post(
         "/api/v1/treatment-activities",
         json={"name": "TA for risk", "purpose": "testing", "legal_basis": "CONSENT"},
@@ -15,6 +15,7 @@ def _create_ta(client, token):
 
 
 def _create_assessment(client, token, ta_id, responses=None) -> dict:
+    """Handle create assessment."""
     if responses is None:
         responses = {
             "q1": True,
@@ -39,7 +40,9 @@ def _create_assessment(client, token, ta_id, responses=None) -> dict:
 
 # ── Questionnaire structure ───────────────────────────────────────────────────
 
+
 def test_get_questionnaire(client, dpo_token):
+    """Test that get questionnaire behaves as expected."""
     resp = client.get("/api/v1/risk-assessments/questionnaire", headers=auth_headers(dpo_token))
     assert resp.status_code == 200
     data = resp.json()
@@ -53,7 +56,9 @@ def test_get_questionnaire(client, dpo_token):
 
 # ── Score computation ─────────────────────────────────────────────────────────
 
+
 def test_score_low_risk(client, dpo_token):
+    """Test that score low risk behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     responses = {f"q{i}": (i == 1) for i in range(1, 11)}  # only q1=True, rest False → no controls
     data = _create_assessment(client, dpo_token, ta_id, responses)
@@ -64,11 +69,19 @@ def test_score_low_risk(client, dpo_token):
 
 
 def test_score_high_risk(client, dpo_token):
+    """Test that score high risk behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     responses = {
-        "q1": True, "q2": True, "q3": True, "q4": True,
-        "q5": True, "q6": True, "q7": True,
-        "q8": False, "q9": False, "q10": False,
+        "q1": True,
+        "q2": True,
+        "q3": True,
+        "q4": True,
+        "q5": True,
+        "q6": True,
+        "q7": True,
+        "q8": False,
+        "q9": False,
+        "q10": False,
     }
     data = _create_assessment(client, dpo_token, ta_id, responses)
     assert data["risk_level"] == "HIGH"
@@ -76,6 +89,7 @@ def test_score_high_risk(client, dpo_token):
 
 
 def test_score_formula(client, dpo_token):
+    """Test that score formula behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     responses = {f"q{i}": True for i in range(1, 11)}
     data = _create_assessment(client, dpo_token, ta_id, responses)
@@ -84,7 +98,9 @@ def test_score_formula(client, dpo_token):
 
 # ── Gateway check ─────────────────────────────────────────────────────────────
 
+
 def test_gateway_q1_false_rejected(client, dpo_token):
+    """Test that gateway q1 false rejected behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     resp = client.post(
         "/api/v1/risk-assessments",
@@ -96,7 +112,9 @@ def test_gateway_q1_false_rejected(client, dpo_token):
 
 # ── CRUD ──────────────────────────────────────────────────────────────────────
 
+
 def test_list_assessments(client, dpo_token):
+    """Test that list assessments behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     _create_assessment(client, dpo_token, ta_id)
     resp = client.get("/api/v1/risk-assessments", headers=auth_headers(dpo_token))
@@ -105,6 +123,7 @@ def test_list_assessments(client, dpo_token):
 
 
 def test_filter_by_activity(client, dpo_token):
+    """Test that filter by activity behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     _create_assessment(client, dpo_token, ta_id)
     resp = client.get(
@@ -117,6 +136,7 @@ def test_filter_by_activity(client, dpo_token):
 
 
 def test_update_assessment_notes(client, dpo_token):
+    """Test that update assessment notes behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     created = _create_assessment(client, dpo_token, ta_id)
     resp = client.patch(
@@ -130,7 +150,9 @@ def test_update_assessment_notes(client, dpo_token):
 
 # ── Tenant isolation ─────────────────────────────────────────────────────────
 
+
 def test_cross_tenant_activity_rejected(client, dpo_token, tenant_b_token):
+    """Test that cross tenant activity rejected behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     responses = {f"q{i}": True for i in range(1, 11)}
     resp = client.post(
@@ -143,7 +165,9 @@ def test_cross_tenant_activity_rejected(client, dpo_token, tenant_b_token):
 
 # ── RBAC ─────────────────────────────────────────────────────────────────────
 
+
 def test_auditor_can_read_not_create(client, dpo_token, auditor_token):
+    """Test that auditor can read not create behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
     _create_assessment(client, dpo_token, ta_id)
     resp = client.get("/api/v1/risk-assessments", headers=auth_headers(auditor_token))

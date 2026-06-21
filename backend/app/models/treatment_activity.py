@@ -7,6 +7,7 @@ from app.db.base import TenantBase
 
 
 class TreatmentActivity(TenantBase):
+    """TreatmentActivity schema/model definition."""
     __tablename__ = "treatment_activities"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -23,9 +24,7 @@ class TreatmentActivity(TenantBase):
     department_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("departments.id"), nullable=True, index=True
     )
-    owner_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=True
-    )
+    owner_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     status: Mapped[str] = mapped_column(String(50), default="DRAFT", nullable=False)
     # DRAFT, ACTIVE, ARCHIVED
 

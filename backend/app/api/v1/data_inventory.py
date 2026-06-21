@@ -17,6 +17,7 @@ router = APIRouter(prefix="/data-inventory", tags=["data-inventory"])
 
 
 class TreatmentActivityProgress(BaseModel):
+    """TreatmentActivityProgress schema/model definition."""
     total: int
     draft: int
     active: int
@@ -44,9 +45,7 @@ def get_inventory_progress(
 ):
     """US-RF28-1: Returns automatic progress and reports for data inventory."""
     # Treatment activities breakdown
-    activities = db.query(TreatmentActivity).filter(
-        TreatmentActivity.tenant_id == tenant_id
-    ).all()
+    activities = db.query(TreatmentActivity).filter(TreatmentActivity.tenant_id == tenant_id).all()
     total = len(activities)
     draft = sum(1 for a in activities if a.status == "DRAFT")
     active = sum(1 for a in activities if a.status == "ACTIVE")

@@ -6,6 +6,7 @@ from tests.conftest import auth_headers
 
 
 def _create_incident(client: TestClient, token: str, **overrides) -> dict:
+    """Handle create incident."""
     payload = {
         "title": "Data breach in HR system",
         "description": "Unauthorized access to HR records detected.",
@@ -22,7 +23,9 @@ def _create_incident(client: TestClient, token: str, **overrides) -> dict:
 
 # ── CRUD ──────────────────────────────────────────────────────────────────────
 
+
 def test_create_incident(client, dpo_token):
+    """Test that create incident behaves as expected."""
     data = _create_incident(client, dpo_token)
     assert data["title"] == "Data breach in HR system"
     assert data["incident_type"] == "DATA_BREACH"
@@ -31,6 +34,7 @@ def test_create_incident(client, dpo_token):
 
 
 def test_list_incidents(client, dpo_token):
+    """Test that list incidents behaves as expected."""
     _create_incident(client, dpo_token, title="Incident 1")
     _create_incident(client, dpo_token, title="Incident 2")
     resp = client.get("/api/v1/incidents", headers=auth_headers(dpo_token))
@@ -41,6 +45,7 @@ def test_list_incidents(client, dpo_token):
 
 
 def test_get_incident(client, dpo_token):
+    """Test that get incident behaves as expected."""
     created = _create_incident(client, dpo_token)
     resp = client.get(f"/api/v1/incidents/{created['id']}", headers=auth_headers(dpo_token))
     assert resp.status_code == 200
@@ -48,6 +53,7 @@ def test_get_incident(client, dpo_token):
 
 
 def test_update_incident_status(client, dpo_token):
+    """Test that update incident status behaves as expected."""
     created = _create_incident(client, dpo_token)
     resp = client.patch(
         f"/api/v1/incidents/{created['id']}",
@@ -59,6 +65,7 @@ def test_update_incident_status(client, dpo_token):
 
 
 def test_filter_by_status(client, dpo_token):
+    """Test that filter by status behaves as expected."""
     _create_incident(client, dpo_token, title="Open Inc")
     resp = client.get("/api/v1/incidents?status=OPEN", headers=auth_headers(dpo_token))
     assert resp.status_code == 200
@@ -67,6 +74,7 @@ def test_filter_by_status(client, dpo_token):
 
 
 def test_filter_by_severity(client, dpo_token):
+    """Test that filter by severity behaves as expected."""
     _create_incident(client, dpo_token, severity="CRITICAL", title="Critical one")
     resp = client.get("/api/v1/incidents?severity=CRITICAL", headers=auth_headers(dpo_token))
     assert resp.status_code == 200
@@ -75,7 +83,9 @@ def test_filter_by_severity(client, dpo_token):
 
 # ── US-RF08-1: Regulatory notification ───────────────────────────────────────
 
+
 def test_mark_regulatory_notification(client, dpo_token):
+    """Test that mark regulatory notification behaves as expected."""
     created = _create_incident(client, dpo_token, regulatory_notification_required=False)
     assert created["regulatory_notified_at"] is None
 
@@ -90,13 +100,16 @@ def test_mark_regulatory_notification(client, dpo_token):
 
 
 def test_create_incident_with_regulatory_flag(client, dpo_token):
+    """Test that create incident with regulatory flag behaves as expected."""
     data = _create_incident(client, dpo_token, regulatory_notification_required=True)
     assert data["regulatory_notification_required"] is True
 
 
 # ── Tenant isolation ─────────────────────────────────────────────────────────
 
+
 def test_tenant_isolation(client, dpo_token, tenant_b_token):
+    """Test that tenant isolation behaves as expected."""
     created = _create_incident(client, dpo_token, title="Tenant A incident")
     resp = client.get("/api/v1/incidents", headers=auth_headers(tenant_b_token))
     ids = [i["id"] for i in resp.json()]
@@ -105,7 +118,9 @@ def test_tenant_isolation(client, dpo_token, tenant_b_token):
 
 # ── RBAC ─────────────────────────────────────────────────────────────────────
 
+
 def test_auditor_can_list_not_create(client, dpo_token, auditor_token):
+    """Test that auditor can list not create behaves as expected."""
     _create_incident(client, dpo_token)
     resp = client.get("/api/v1/incidents", headers=auth_headers(auditor_token))
     assert resp.status_code == 200
@@ -119,5 +134,6 @@ def test_auditor_can_list_not_create(client, dpo_token, auditor_token):
 
 
 def test_not_found_returns_404(client, dpo_token):
+    """Test that not found returns 404 behaves as expected."""
     resp = client.get("/api/v1/incidents/99999", headers=auth_headers(dpo_token))
     assert resp.status_code == 404

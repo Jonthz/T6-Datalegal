@@ -7,6 +7,7 @@ from app.db.base import TenantBase
 
 
 class PortabilityRequest(TenantBase):
+    """PortabilityRequest schema/model definition."""
     __tablename__ = "portability_requests"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

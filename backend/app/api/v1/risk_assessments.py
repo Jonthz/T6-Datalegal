@@ -36,16 +36,12 @@ def get_questionnaire(
 
 @router.get("/dashboard")
 def get_risk_dashboard(
-    current_user: Annotated[User, Depends(require_permission("risk_assessments", "r"))],
+    current_user: Annotated[User, Depends(require_permission("risk_assessments", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
     """US-RF10-1: Risk score summary with GREEN/YELLOW/RED counts."""
-    assessments = (
-        db.query(RiskAssessment)
-        .filter(RiskAssessment.tenant_id == tenant_id)
-        .all()
-    )
+    assessments = db.query(RiskAssessment).filter(RiskAssessment.tenant_id == tenant_id).all()
     green = sum(1 for a in assessments if a.risk_level == "LOW")
     yellow = sum(1 for a in assessments if a.risk_level == "MEDIUM")
     red = sum(1 for a in assessments if a.risk_level == "HIGH")
@@ -83,10 +79,15 @@ def create_assessment(
     db: Session = Depends(get_db),
 ):
     # Verify the treatment activity belongs to this tenant
-    activity = db.query(TreatmentActivity).filter(
-        TreatmentActivity.id == body.treatment_activity_id,
-        TreatmentActivity.tenant_id == tenant_id,
-    ).first()
+    """Create assessment."""
+    activity = (
+        db.query(TreatmentActivity)
+        .filter(
+            TreatmentActivity.id == body.treatment_activity_id,
+            TreatmentActivity.tenant_id == tenant_id,
+        )
+        .first()
+    )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
 
@@ -94,7 +95,7 @@ def create_assessment(
     if not body.responses.get("q1", False):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Gateway check failed: this activity does not involve personal data (q1=false). No risk assessment required.",
+            detail="Gateway check failed: this activity does not involve personal data (q1=false). No risk assessment required.",  # pylint: disable=line-too-long
         )
 
     probability, impact, risk_score, risk_level = compute_scores(body.responses)
@@ -120,19 +121,20 @@ def create_assessment(
         resource="risk_assessments",
         tenant_id=tenant_id,
         user_id=current_user.id,
-        detail=f"id={assessment.id} activity={body.treatment_activity_id} score={risk_score} level={risk_level}",
+        detail=f"id={assessment.id} activity={body.treatment_activity_id} score={risk_score} level={risk_level}",  # pylint: disable=line-too-long
     )
     return assessment
 
 
 @router.get("", response_model=list[RiskAssessmentRead])
 def list_assessments(
-    current_user: Annotated[User, Depends(require_permission("risk_assessments", "r"))],
+    current_user: Annotated[User, Depends(require_permission("risk_assessments", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     treatment_activity_id: int | None = None,
     risk_level: str | None = None,
 ):
+    """List assessments."""
     q = db.query(RiskAssessment).filter(RiskAssessment.tenant_id == tenant_id)
     if treatment_activity_id:
         q = q.filter(RiskAssessment.treatment_activity_id == treatment_activity_id)
@@ -148,9 +150,12 @@ def get_assessment(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    assessment = db.query(RiskAssessment).filter(
-        RiskAssessment.id == assessment_id, RiskAssessment.tenant_id == tenant_id
-    ).first()
+    """Return assessment."""
+    assessment = (
+        db.query(RiskAssessment)
+        .filter(RiskAssessment.id == assessment_id, RiskAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not assessment:
         raise HTTPException(status_code=404, detail="Risk assessment not found.")
     return assessment
@@ -164,9 +169,12 @@ def update_assessment(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    assessment = db.query(RiskAssessment).filter(
-        RiskAssessment.id == assessment_id, RiskAssessment.tenant_id == tenant_id
-    ).first()
+    """Update assessment."""
+    assessment = (
+        db.query(RiskAssessment)
+        .filter(RiskAssessment.id == assessment_id, RiskAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not assessment:
         raise HTTPException(status_code=404, detail="Risk assessment not found.")
 

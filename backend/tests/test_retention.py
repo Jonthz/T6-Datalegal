@@ -8,6 +8,7 @@ from tests.conftest import auth_headers
 
 
 def _create_policy(client: TestClient, token: str, **overrides) -> dict:
+    """Handle create policy."""
     payload = {
         "name": "Customer Data Policy",
         "data_category": "CUSTOMER",
@@ -22,6 +23,7 @@ def _create_policy(client: TestClient, token: str, **overrides) -> dict:
 
 
 def _create_asset(client: TestClient, token: str) -> dict:
+    """Handle create asset."""
     resp = client.post(
         "/api/v1/information-assets",
         json={
@@ -37,7 +39,10 @@ def _create_asset(client: TestClient, token: str) -> dict:
     return resp.json()
 
 
-def _create_record(client: TestClient, token: str, asset_id: int, expiry: date, **overrides) -> dict:
+def _create_record(
+    client: TestClient, token: str, asset_id: int, expiry: date, **overrides
+) -> dict:
+    """Handle create record."""
     payload = {
         "information_asset_id": asset_id,
         "expiry_date": expiry.isoformat(),
@@ -50,7 +55,9 @@ def _create_record(client: TestClient, token: str, asset_id: int, expiry: date, 
 
 # ── Policies ─────────────────────────────────────────────────────────────────
 
+
 def test_create_retention_policy(client, dpo_token):
+    """Test that create retention policy behaves as expected."""
     data = _create_policy(client, dpo_token)
     assert data["name"] == "Customer Data Policy"
     assert data["retention_days"] == 730
@@ -59,6 +66,7 @@ def test_create_retention_policy(client, dpo_token):
 
 
 def test_list_policies(client, dpo_token):
+    """Test that list policies behaves as expected."""
     _create_policy(client, dpo_token, name="Policy A")
     _create_policy(client, dpo_token, name="Policy B")
     resp = client.get("/api/v1/retention/policies", headers=auth_headers(dpo_token))
@@ -69,6 +77,7 @@ def test_list_policies(client, dpo_token):
 
 
 def test_update_policy(client, dpo_token):
+    """Test that update policy behaves as expected."""
     policy = _create_policy(client, dpo_token)
     resp = client.patch(
         f"/api/v1/retention/policies/{policy['id']}",
@@ -81,7 +90,9 @@ def test_update_policy(client, dpo_token):
 
 # ── Records ───────────────────────────────────────────────────────────────────
 
+
 def test_create_retention_record(client, dpo_token):
+    """Test that create retention record behaves as expected."""
     asset = _create_asset(client, dpo_token)
     future = date.today() + timedelta(days=365)
     data = _create_record(client, dpo_token, asset["id"], future)
@@ -91,6 +102,7 @@ def test_create_retention_record(client, dpo_token):
 
 
 def test_list_records(client, dpo_token):
+    """Test that list records behaves as expected."""
     asset = _create_asset(client, dpo_token)
     future = date.today() + timedelta(days=365)
     _create_record(client, dpo_token, asset["id"], future)
@@ -101,11 +113,15 @@ def test_list_records(client, dpo_token):
 
 # ── US-RF29-1: Expired under review report ───────────────────────────────────
 
+
 def test_expired_under_review_report_shows_held_expired_records(client, dpo_token):
+    """Test that expired under review report shows held expired records behaves as expected."""
     asset = _create_asset(client, dpo_token)
     past = date.today() - timedelta(days=10)
     # Create expired record with legal hold
-    _create_record(client, dpo_token, asset["id"], past, legal_hold=True, hold_justification="Legal case")
+    _create_record(
+        client, dpo_token, asset["id"], past, legal_hold=True, hold_justification="Legal case"
+    )
 
     resp = client.get("/api/v1/retention/expired-under-review", headers=auth_headers(dpo_token))
     assert resp.status_code == 200
@@ -118,6 +134,7 @@ def test_expired_under_review_report_shows_held_expired_records(client, dpo_toke
 
 
 def test_expired_without_hold_not_in_report(client, dpo_token):
+    """Test that expired without hold not in report behaves as expected."""
     asset = _create_asset(client, dpo_token)
     past = date.today() - timedelta(days=10)
     # No legal_hold → should not appear
@@ -130,6 +147,7 @@ def test_expired_without_hold_not_in_report(client, dpo_token):
 
 
 def test_review_decision_closes_record(client, dpo_token):
+    """Test that review decision closes record behaves as expected."""
     asset = _create_asset(client, dpo_token)
     past = date.today() - timedelta(days=5)
     record = _create_record(client, dpo_token, asset["id"], past, legal_hold=True)
@@ -148,7 +166,9 @@ def test_review_decision_closes_record(client, dpo_token):
 
 # ── Tenant isolation ─────────────────────────────────────────────────────────
 
+
 def test_policy_tenant_isolation(client, dpo_token, tenant_b_token):
+    """Test that policy tenant isolation behaves as expected."""
     created = _create_policy(client, dpo_token, name="Tenant A Policy")
     resp = client.get("/api/v1/retention/policies", headers=auth_headers(tenant_b_token))
     ids = [p["id"] for p in resp.json()]
@@ -157,13 +177,16 @@ def test_policy_tenant_isolation(client, dpo_token, tenant_b_token):
 
 # ── RBAC ─────────────────────────────────────────────────────────────────────
 
+
 def test_auditor_can_read_retention(client, dpo_token, auditor_token):
+    """Test that auditor can read retention behaves as expected."""
     _create_policy(client, dpo_token)
     resp = client.get("/api/v1/retention/policies", headers=auth_headers(auditor_token))
     assert resp.status_code == 200
 
 
 def test_auditor_cannot_create_policy(client, auditor_token):
+    """Test that auditor cannot create policy behaves as expected."""
     resp = client.post(
         "/api/v1/retention/policies",
         json={"name": "x", "data_category": "y", "retention_days": 30},

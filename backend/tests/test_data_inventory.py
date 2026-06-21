@@ -1,11 +1,12 @@
 """Tests for US-RF28-1: Automatic progress and reports. US-RF39-1: Catalog referential integrity."""
 
-
 from tests.conftest import auth_headers
 
 # ── US-RF28-1: Data inventory progress ───────────────────────────────────────
 
+
 def test_progress_empty(client, dpo_token):
+    """Test that progress empty behaves as expected."""
     resp = client.get("/api/v1/data-inventory/progress", headers=auth_headers(dpo_token))
     assert resp.status_code == 200
     data = resp.json()
@@ -18,10 +19,16 @@ def test_progress_empty(client, dpo_token):
 
 def test_progress_counts_activities(client, dpo_token):
     # Create 2 DRAFT and 1 ACTIVE
+    """Test that progress counts activities behaves as expected."""
     for i in range(2):
         client.post(
             "/api/v1/treatment-activities",
-            json={"name": f"Draft {i}", "purpose": "test", "legal_basis": "CONSENT", "status": "DRAFT"},
+            json={
+                "name": f"Draft {i}",
+                "purpose": "test",
+                "legal_basis": "CONSENT",
+                "status": "DRAFT",
+            },
             headers=auth_headers(dpo_token),
         )
     resp1 = client.post(
@@ -40,6 +47,7 @@ def test_progress_counts_activities(client, dpo_token):
 
 
 def test_progress_completion_pct(client, dpo_token):
+    """Test that progress completion pct behaves as expected."""
     ta_resp = client.post(
         "/api/v1/treatment-activities",
         json={"name": "TA with risk", "purpose": "test", "legal_basis": "CONSENT"},
@@ -60,6 +68,7 @@ def test_progress_completion_pct(client, dpo_token):
 
 
 def test_progress_risk_distribution(client, dpo_token):
+    """Test that progress risk distribution behaves as expected."""
     ta_resp = client.post(
         "/api/v1/treatment-activities",
         json={"name": "TA risk dist", "purpose": "test", "legal_basis": "CONSENT"},
@@ -72,9 +81,16 @@ def test_progress_risk_distribution(client, dpo_token):
         json={
             "treatment_activity_id": ta_id,
             "responses": {
-                "q1": True, "q2": True, "q3": True, "q4": True,
-                "q5": True, "q6": True, "q7": True,
-                "q8": False, "q9": False, "q10": False,
+                "q1": True,
+                "q2": True,
+                "q3": True,
+                "q4": True,
+                "q5": True,
+                "q6": True,
+                "q7": True,
+                "q8": False,
+                "q9": False,
+                "q10": False,
             },
         },
         headers=auth_headers(dpo_token),
@@ -87,6 +103,7 @@ def test_progress_risk_distribution(client, dpo_token):
 
 
 def test_progress_classification_distribution(client, dpo_token):
+    """Test that progress classification distribution behaves as expected."""
     client.post(
         "/api/v1/information-assets",
         json={
@@ -105,6 +122,7 @@ def test_progress_classification_distribution(client, dpo_token):
 
 
 def test_progress_tenant_isolation(client, dpo_token, tenant_b_token):
+    """Test that progress tenant isolation behaves as expected."""
     client.post(
         "/api/v1/treatment-activities",
         json={"name": "Tenant A TA", "purpose": "test", "legal_basis": "CONSENT"},
@@ -120,11 +138,22 @@ def test_progress_tenant_isolation(client, dpo_token, tenant_b_token):
 
 # ── US-RF39-1: Catalog referential integrity ─────────────────────────────────
 
+
 def test_catalog_delete_blocked_when_referenced(client, dpo_token):
     # Create a catalog entry
+    """Test that catalog delete blocked when referenced behaves as expected."""
     bulk_resp = client.post(
         "/api/v1/catalogs/bulk-load",
-        json={"entries": [{"type": "ASSET_TYPE", "code": "SOFT_REF_TEST", "label": "Software Test", "description": ""}]},
+        json={
+            "entries": [
+                {
+                    "type": "ASSET_TYPE",
+                    "code": "SOFT_REF_TEST",
+                    "label": "Software Test",
+                    "description": "",
+                }
+            ]
+        },
         headers=auth_headers(dpo_token),
     )
     assert bulk_resp.status_code == 201
@@ -150,9 +179,19 @@ def test_catalog_delete_blocked_when_referenced(client, dpo_token):
 
 
 def test_catalog_delete_allowed_when_not_referenced(client, dpo_token):
+    """Test that catalog delete allowed when not referenced behaves as expected."""
     bulk_resp = client.post(
         "/api/v1/catalogs/bulk-load",
-        json={"entries": [{"type": "ASSET_TYPE", "code": "UNREFERENCED_TYPE", "label": "Unused", "description": ""}]},
+        json={
+            "entries": [
+                {
+                    "type": "ASSET_TYPE",
+                    "code": "UNREFERENCED_TYPE",
+                    "label": "Unused",
+                    "description": "",
+                }
+            ]
+        },
         headers=auth_headers(dpo_token),
     )
     assert bulk_resp.status_code == 201

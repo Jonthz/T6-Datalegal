@@ -11,6 +11,7 @@ DATA_CRITICALITIES = {"LOW", "MEDIUM", "HIGH"}
 
 
 class CatalogEntry(TenantBase):
+    """CatalogEntry schema/model definition."""
     __tablename__ = "catalog_entries"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -24,4 +25,6 @@ class CatalogEntry(TenantBase):
     criticality: Mapped[str | None] = mapped_column(String(20), nullable=True, index=True)
     # US-RF20-1: versioning support
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    updated_by_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    updated_by_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )

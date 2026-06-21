@@ -30,6 +30,7 @@ def list_portability_requests(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
 ):
+    """List portability requests."""
     q = db.query(PortabilityRequest).filter(PortabilityRequest.tenant_id == tenant_id)
     if status:
         q = q.filter(PortabilityRequest.status == status)
@@ -43,6 +44,7 @@ def create_portability_request(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create portability request."""
     req = PortabilityRequest(
         tenant_id=tenant_id,
         subject_name=body.subject_name,
@@ -72,11 +74,16 @@ def get_portability_request(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    req = db.query(PortabilityRequest).filter(
-        PortabilityRequest.id == request_id, PortabilityRequest.tenant_id == tenant_id
-    ).first()
+    """Return portability request."""
+    req = (
+        db.query(PortabilityRequest)
+        .filter(PortabilityRequest.id == request_id, PortabilityRequest.tenant_id == tenant_id)
+        .first()
+    )
     if not req:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Portability request not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Portability request not found."
+        )
     return req
 
 
@@ -88,11 +95,16 @@ def complete_portability_request(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    req = db.query(PortabilityRequest).filter(
-        PortabilityRequest.id == request_id, PortabilityRequest.tenant_id == tenant_id
-    ).first()
+    """Handle complete portability request."""
+    req = (
+        db.query(PortabilityRequest)
+        .filter(PortabilityRequest.id == request_id, PortabilityRequest.tenant_id == tenant_id)
+        .first()
+    )
     if not req:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Portability request not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Portability request not found."
+        )
 
     if body.status and body.status not in VALID_STATUSES:
         raise HTTPException(
@@ -130,11 +142,16 @@ def export_portability_request(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    req = db.query(PortabilityRequest).filter(
-        PortabilityRequest.id == request_id, PortabilityRequest.tenant_id == tenant_id
-    ).first()
+    """Handle export portability request."""
+    req = (
+        db.query(PortabilityRequest)
+        .filter(PortabilityRequest.id == request_id, PortabilityRequest.tenant_id == tenant_id)
+        .first()
+    )
     if not req:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Portability request not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Portability request not found."
+        )
 
     response_data = {}
     if req.response_data:

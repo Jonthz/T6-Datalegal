@@ -11,6 +11,7 @@ from app.db.base import TenantBase
 
 
 def _compute_level(score: int) -> str:
+    """Handle compute level."""
     if score <= 8:
         return "LOW"
     if score <= 16:
@@ -19,15 +20,14 @@ def _compute_level(score: int) -> str:
 
 
 class RiskAssessment(TenantBase):
+    """RiskAssessment schema/model definition."""
     __tablename__ = "risk_assessments"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     treatment_activity_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("treatment_activities.id"), nullable=False, index=True
     )
-    analyst_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=True
-    )
+    analyst_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     # Questionnaire responses: {"q1": true, "q2": false, ...}
     responses: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     probability: Mapped[int] = mapped_column(Integer, nullable=False, default=1)  # 1-5

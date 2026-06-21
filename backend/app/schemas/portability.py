@@ -5,18 +5,21 @@ from pydantic import BaseModel
 
 
 class PortabilityRequestCreate(BaseModel):
+    """PortabilityRequestCreate schema/model definition."""
     subject_name: str
     subject_email: str
     notes: str = ""
 
 
 class PortabilityRequestUpdate(BaseModel):
+    """PortabilityRequestUpdate schema/model definition."""
     status: str | None = None
     notes: str | None = None
     response_data: dict[str, Any] | None = None
 
 
 class PortabilityRequestRead(BaseModel):
+    """PortabilityRequestRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int
@@ -31,6 +34,7 @@ class PortabilityRequestRead(BaseModel):
 
 
 class PortabilityExport(BaseModel):
+    """PortabilityExport schema/model definition."""
     request_id: int
     subject: dict[str, str]
     data: dict[str, Any]
@@ -40,6 +44,7 @@ class PortabilityExport(BaseModel):
 
 
 class AuditLogRead(BaseModel):
+    """AuditLogRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int

@@ -7,6 +7,7 @@ from app.db.base import TenantBase
 
 
 class InformationAsset(TenantBase):
+    """InformationAsset schema/model definition."""
     __tablename__ = "information_assets"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -24,9 +25,7 @@ class InformationAsset(TenantBase):
     department_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("departments.id"), nullable=True, index=True
     )
-    owner_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=True
-    )
+    owner_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
 
     treatment_activity: Mapped["TreatmentActivity | None"] = relationship(  # noqa: F821
         "TreatmentActivity", back_populates="information_assets", lazy="noload"
