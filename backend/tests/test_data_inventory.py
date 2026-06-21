@@ -67,7 +67,7 @@ def test_progress_completion_pct(client, dpo_token):
     assert data["completion_pct"] > 0
 
 
-def test_progress_risk_distribution(client, dpo_token):
+def test_progress_risk_distribution(client, dpo_token, high_risk_responses):
     """Test that progress risk distribution behaves as expected."""
     ta_resp = client.post(
         "/api/v1/treatment-activities",
@@ -80,18 +80,7 @@ def test_progress_risk_distribution(client, dpo_token):
         "/api/v1/risk-assessments",
         json={
             "treatment_activity_id": ta_id,
-            "responses": {
-                "q1": True,
-                "q2": True,
-                "q3": True,
-                "q4": True,
-                "q5": True,
-                "q6": True,
-                "q7": True,
-                "q8": False,
-                "q9": False,
-                "q10": False,
-            },
+            "responses": high_risk_responses,
         },
         headers=auth_headers(dpo_token),
     )

@@ -31,6 +31,7 @@ def create_audit_plan(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create a new audit plan for the current tenant."""
     plan = AuditPlan(
         tenant_id=tenant_id,
         name=body.name,
@@ -52,13 +53,14 @@ def create_audit_plan(
 
 @router.get("", response_model=list[AuditPlanRead])
 def list_audit_plans(
-    current_user: Annotated[User, Depends(require_permission("audit_plans", "r"))],
+    _: Annotated[User, Depends(require_permission("audit_plans", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     plan_status: str | None = Query(None),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List audit plans for the current tenant, optionally filtered by status."""
     q = db.query(AuditPlan).filter(AuditPlan.tenant_id == tenant_id)
     if plan_status:
         q = q.filter(AuditPlan.status == plan_status)
@@ -68,10 +70,11 @@ def list_audit_plans(
 @router.get("/{plan_id}", response_model=AuditPlanRead)
 def get_audit_plan(
     plan_id: int,
-    current_user: Annotated[User, Depends(require_permission("audit_plans", "r"))],
+    _: Annotated[User, Depends(require_permission("audit_plans", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Retrieve a single audit plan by id within the current tenant."""
     plan = db.query(AuditPlan).filter(
         AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id
     ).first()
@@ -83,10 +86,11 @@ def get_audit_plan(
 def update_audit_plan(
     plan_id: int,
     body: AuditPlanUpdate,
-    current_user: Annotated[User, Depends(require_permission("audit_plans", "u"))],
+    _: Annotated[User, Depends(require_permission("audit_plans", "u"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Update an existing audit plan."""
     plan = db.query(AuditPlan).filter(
         AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id
     ).first()
@@ -108,6 +112,7 @@ def create_finding(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Register a new finding under an audit plan."""
     # Verify audit plan belongs to tenant
     plan = db.query(AuditPlan).filter(
         AuditPlan.id == body.audit_plan_id, AuditPlan.tenant_id == tenant_id
@@ -139,12 +144,13 @@ def create_finding(
 @router.get("/{plan_id}/findings", response_model=list[AuditFindingRead])
 def list_findings(
     plan_id: int,
-    current_user: Annotated[User, Depends(require_permission("audit_plans", "r"))],
+    _: Annotated[User, Depends(require_permission("audit_plans", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     severity: str | None = Query(None),
     finding_status: str | None = Query(None),
 ):
+    """List findings for an audit plan, optionally filtered by severity/status."""
     # Verify plan belongs to tenant
     plan = db.query(AuditPlan).filter(
         AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id
@@ -164,10 +170,11 @@ def list_findings(
 def update_finding(
     finding_id: int,
     body: AuditFindingUpdate,
-    current_user: Annotated[User, Depends(require_permission("audit_plans", "u"))],
+    _: Annotated[User, Depends(require_permission("audit_plans", "u"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Update an existing audit finding."""
     finding = db.query(AuditFinding).filter(
         AuditFinding.id == finding_id, AuditFinding.tenant_id == tenant_id
     ).first()
@@ -227,6 +234,7 @@ def _latin1(text: str) -> str:
 
 
 def _generate_audit_pdf(plan: AuditPlan, findings: list[AuditFinding]) -> bytes:
+    """Build the audit report PDF and return its raw bytes."""
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.set_margins(15, 15, 15)
@@ -277,7 +285,8 @@ def _generate_audit_pdf(plan: AuditPlan, findings: list[AuditFinding]) -> bytes:
         color = _SEVERITY_COLORS.get(finding.severity, (0, 0, 0))
         pdf.set_text_color(*color)
         pdf.set_font("Helvetica", "B", 10)
-        pdf.multi_cell(w, 6, _latin1(f"{i}. [{finding.severity}] {finding.title} - {finding.status}"))
+        header = f"{i}. [{finding.severity}] {finding.title} - {finding.status}"
+        pdf.multi_cell(w, 6, _latin1(header))
         pdf.set_text_color(0, 0, 0)
         pdf.set_font("Helvetica", size=9)
         if finding.description:

@@ -68,22 +68,10 @@ def test_score_low_risk(client, dpo_token):
     assert 1 <= data["risk_score"] <= 8
 
 
-def test_score_high_risk(client, dpo_token):
+def test_score_high_risk(client, dpo_token, high_risk_responses):
     """Test that score high risk behaves as expected."""
     ta_id = _create_ta(client, dpo_token)
-    responses = {
-        "q1": True,
-        "q2": True,
-        "q3": True,
-        "q4": True,
-        "q5": True,
-        "q6": True,
-        "q7": True,
-        "q8": False,
-        "q9": False,
-        "q10": False,
-    }
-    data = _create_assessment(client, dpo_token, ta_id, responses)
+    data = _create_assessment(client, dpo_token, ta_id, high_risk_responses)
     assert data["risk_level"] == "HIGH"
     assert data["risk_score"] >= 17
 

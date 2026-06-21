@@ -111,9 +111,9 @@ def list_catalogs(
     _: Annotated[User, Depends(require_permission("catalogs", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
-    type: str | None = Query(
-        None, description="Filter by catalog type"
-    ),  # pylint: disable=redefined-builtin
+    type_filter: str | None = Query(
+        None, alias="type", description="Filter by catalog type"
+    ),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
 ):
@@ -121,8 +121,8 @@ def list_catalogs(
     q = db.query(CatalogEntry).filter(
         CatalogEntry.tenant_id == tenant_id, CatalogEntry.is_active.is_(True)
     )
-    if type:
-        q = q.filter(CatalogEntry.type == type)
+    if type_filter:
+        q = q.filter(CatalogEntry.type == type_filter)
     return q.offset(skip).limit(limit).all()
 
 
