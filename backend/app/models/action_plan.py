@@ -44,4 +44,3 @@ class ActionPlan(TenantBase):
         Integer, ForeignKey("users.id"), nullable=True
     )
     auto_generated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-

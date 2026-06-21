@@ -33,4 +33,6 @@ class LegalDocument(TenantBase):
     # Rendered text content (not the binary PDF — that is generated on demand)
     content: Mapped[str] = mapped_column(Text, nullable=False, default="")
     is_current: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
-    created_by_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    created_by_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 
 class LegalDocumentCreate(BaseModel):
+    """LegalDocumentCreate schema/model definition."""
     doc_type: str
     title: str
     version: str
@@ -15,6 +16,7 @@ class LegalDocumentCreate(BaseModel):
 
 
 class LegalDocumentRead(BaseModel):
+    """LegalDocumentRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int

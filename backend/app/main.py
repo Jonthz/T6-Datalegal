@@ -51,4 +51,5 @@ app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/health")
 def health_check():
+    """Handle health check."""
     return {"status": "ok", "version": "0.1.0", "environment": settings.ENVIRONMENT}

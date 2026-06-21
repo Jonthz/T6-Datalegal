@@ -6,7 +6,9 @@ from pydantic import BaseModel
 
 # ── Alert ─────────────────────────────────────────────────────────────────────
 
+
 class AlertCreate(BaseModel):
+    """AlertCreate schema/model definition."""
     alert_type: str
     title: str
     message: str
@@ -21,6 +23,7 @@ class AlertMarkRead(BaseModel):
 
 
 class AlertRead(BaseModel):
+    """AlertRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int

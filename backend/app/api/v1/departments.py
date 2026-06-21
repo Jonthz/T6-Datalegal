@@ -20,7 +20,14 @@ def list_departments(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
 ):
-    return db.query(Department).filter(Department.tenant_id == tenant_id).offset(skip).limit(limit).all()
+    """List departments."""
+    return (
+        db.query(Department)
+        .filter(Department.tenant_id == tenant_id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 
 @router.post("", response_model=DepartmentRead, status_code=status.HTTP_201_CREATED)
@@ -30,6 +37,7 @@ def create_department(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create department."""
     dept = Department(tenant_id=tenant_id, name=body.name, head_user_id=body.head_user_id)
     db.add(dept)
     db.commit()
@@ -52,7 +60,12 @@ def get_department(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    dept = db.query(Department).filter(Department.id == dept_id, Department.tenant_id == tenant_id).first()
+    """Return department."""
+    dept = (
+        db.query(Department)
+        .filter(Department.id == dept_id, Department.tenant_id == tenant_id)
+        .first()
+    )
     if not dept:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Department not found.")
     return dept
@@ -62,11 +75,16 @@ def get_department(
 def update_department(
     dept_id: int,
     body: DepartmentUpdate,
-    current_user: Annotated[User, Depends(require_permission("departments", "u"))],
+    current_user: Annotated[User, Depends(require_permission("departments", "u"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    dept = db.query(Department).filter(Department.id == dept_id, Department.tenant_id == tenant_id).first()
+    """Update department."""
+    dept = (
+        db.query(Department)
+        .filter(Department.id == dept_id, Department.tenant_id == tenant_id)
+        .first()
+    )
     if not dept:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Department not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -79,11 +97,16 @@ def update_department(
 @router.delete("/{dept_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_department(
     dept_id: int,
-    current_user: Annotated[User, Depends(require_permission("departments", "d"))],
+    current_user: Annotated[User, Depends(require_permission("departments", "d"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    dept = db.query(Department).filter(Department.id == dept_id, Department.tenant_id == tenant_id).first()
+    """Delete department."""
+    dept = (
+        db.query(Department)
+        .filter(Department.id == dept_id, Department.tenant_id == tenant_id)
+        .first()
+    )
     if not dept:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Department not found.")
     db.delete(dept)

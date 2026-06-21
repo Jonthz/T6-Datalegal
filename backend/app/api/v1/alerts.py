@@ -26,8 +26,8 @@ def get_unread_count(
         db.query(Alert)
         .filter(
             Alert.tenant_id == tenant_id,
-            Alert.is_read == False,  # noqa: E712
-            (Alert.recipient_id == current_user.id) | (Alert.recipient_id == None),  # noqa: E711
+            Alert.is_read.is_(False),  # noqa: E712
+            (Alert.recipient_id == current_user.id) | (Alert.recipient_id.is_(None)),  # noqa: E711
         )
         .count()
     )
@@ -49,7 +49,7 @@ def list_alerts(
     if current_user.role not in ("ADMIN", "DPO", "SUPER_ADMIN"):
         # Non-privileged users: only their personal alerts and broadcasts
         q = q.filter(
-            (Alert.recipient_id == current_user.id) | (Alert.recipient_id == None)  # noqa: E711
+            (Alert.recipient_id == current_user.id) | (Alert.recipient_id.is_(None))  # noqa: E711
         )
 
     if is_read is not None:
@@ -85,7 +85,7 @@ def create_alert(
         resource="alerts",
         tenant_id=tenant_id,
         user_id=current_user.id,
-        detail=f"id={alert.id} type={alert.alert_type} severity={alert.severity} recipient={alert.recipient_id}",
+        detail=f"id={alert.id} type={alert.alert_type} severity={alert.severity} recipient={alert.recipient_id}",  # pylint: disable=line-too-long
     )
     return alert
 
@@ -98,9 +98,7 @@ def mark_alert_read(
     db: Session = Depends(get_db),
 ):
     """Mark an alert as read (recipient or DPO/Admin)."""
-    alert = db.query(Alert).filter(
-        Alert.id == alert_id, Alert.tenant_id == tenant_id
-    ).first()
+    alert = db.query(Alert).filter(Alert.id == alert_id, Alert.tenant_id == tenant_id).first()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
 
@@ -135,9 +133,7 @@ def delete_alert(
     db: Session = Depends(get_db),
 ):
     """Delete an alert. Only ADMIN/DPO or the owning user may delete."""
-    alert = db.query(Alert).filter(
-        Alert.id == alert_id, Alert.tenant_id == tenant_id
-    ).first()
+    alert = db.query(Alert).filter(Alert.id == alert_id, Alert.tenant_id == tenant_id).first()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
 
