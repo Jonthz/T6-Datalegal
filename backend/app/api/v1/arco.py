@@ -25,7 +25,7 @@ def _generate_ticket(tenant_id: int, db: Session) -> str:
 
 @router.get("/dashboard")
 def get_arco_dashboard(
-    current_user: Annotated[User, Depends(require_permission("arco", "r"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("arco", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
@@ -59,7 +59,7 @@ def create_arco_request(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Create arco request."""
+    """Create an ARCO rights request and notify DPO."""
     if body.request_type not in ("ACCESS", "RECTIFICATION", "CANCELLATION", "OPPOSITION"):
         raise HTTPException(status_code=400, detail="Invalid request_type.")
     today = date.today()
@@ -106,13 +106,13 @@ def create_arco_request(
 
 @router.get("", response_model=list[ARCORequestRead])
 def list_arco_requests(
-    current_user: Annotated[User, Depends(require_permission("arco", "r"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("arco", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     request_type: str | None = Query(None),
     request_status: str | None = Query(None, alias="status"),
 ):
-    """List arco requests."""
+    """List ARCO requests with optional type and status filters."""
     q = db.query(ARCORequest).filter(ARCORequest.tenant_id == tenant_id)
     if request_type:
         q = q.filter(ARCORequest.request_type == request_type)
@@ -124,16 +124,14 @@ def list_arco_requests(
 @router.get("/{request_id}", response_model=ARCORequestRead)
 def get_arco_request(
     request_id: int,
-    current_user: Annotated[User, Depends(require_permission("arco", "r"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("arco", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Return arco request."""
-    req = (
-        db.query(ARCORequest)
-        .filter(ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id)
-        .first()
-    )
+    """Retrieve a single ARCO request by ID."""
+    req = db.query(ARCORequest).filter(
+        ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id
+    ).first()
     if not req:
         raise HTTPException(status_code=404, detail="ARCO request not found.")
     return req
@@ -147,12 +145,10 @@ def update_arco_request(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Update arco request."""
-    req = (
-        db.query(ARCORequest)
-        .filter(ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id)
-        .first()
-    )
+    """Update status, assignee, or response of an ARCO request."""
+    req = db.query(ARCORequest).filter(
+        ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id
+    ).first()
     if not req:
         raise HTTPException(status_code=404, detail="ARCO request not found.")
 
@@ -183,7 +179,7 @@ def update_arco_request(
 @router.get("/{request_id}/sla-status")
 def get_sla_status(
     request_id: int,
-    current_user: Annotated[User, Depends(require_permission("arco", "r"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("arco", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ) -> dict:

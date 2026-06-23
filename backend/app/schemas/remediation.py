@@ -6,7 +6,8 @@ from pydantic import BaseModel
 
 
 class RemediationCreate(BaseModel):
-    """RemediationCreate schema/model definition."""
+    """Fields required to create a remediation."""
+
     risk_assessment_id: int
     title: str
     description: str = ""
@@ -15,7 +16,8 @@ class RemediationCreate(BaseModel):
 
 
 class RemediationUpdate(BaseModel):
-    """RemediationUpdate schema/model definition."""
+    """Partial update fields for a remediation."""
+
     title: str | None = None
     description: str | None = None
     responsible_id: int | None = None
@@ -27,7 +29,8 @@ class RemediationUpdate(BaseModel):
 
 
 class RemediationRead(BaseModel):
-    """RemediationRead schema/model definition."""
+    """Remediation as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int

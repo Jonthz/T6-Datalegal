@@ -1,6 +1,7 @@
 """Sprint 4 tests: US-RF05-1, US-RF12-1, US-RF13-1, US-RF14-1, US-RF20-1,
 US-RF25-1, US-RF32-1, US-RF33-1, US-RF34-1, US-RF42-1.
 """
+# pylint: disable=missing-class-docstring,missing-function-docstring,unused-argument,line-too-long
 
 from fastapi.testclient import TestClient
 

@@ -168,7 +168,8 @@ SECTOR_CATALOG: dict[str, dict] = {
 
 
 class SectorSuggestions(BaseModel):
-    """SectorSuggestions schema/model definition."""
+    """Sector catalog entry with auto-suggested data types, activities, and templates."""
+
     sector_code: str
     label: str
     suggested_data_types: list[str]
@@ -177,7 +178,8 @@ class SectorSuggestions(BaseModel):
 
 
 class SectorUpdate(BaseModel):
-    """SectorUpdate schema/model definition."""
+    """Request body for updating the company's economic sector."""
+
     sector: str
 
 
@@ -216,7 +218,8 @@ def update_company_sector(
     sector_code = body.sector.upper()
     if sector_code not in SECTOR_CATALOG:
         raise HTTPException(
-            status_code=400, detail=f"Unknown sector '{sector_code}'. Valid: {list(SECTOR_CATALOG)}"
+            status_code=400,
+            detail=f"Unknown sector '{sector_code}'. Valid: {list(SECTOR_CATALOG)}",
         )
 
     tenant = db.get(Tenant, tenant_id)

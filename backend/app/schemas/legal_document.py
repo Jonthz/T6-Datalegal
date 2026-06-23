@@ -6,7 +6,8 @@ from pydantic import BaseModel
 
 
 class LegalDocumentCreate(BaseModel):
-    """LegalDocumentCreate schema/model definition."""
+    """Fields required to create a legal document."""
+
     doc_type: str
     title: str
     version: str
@@ -16,7 +17,8 @@ class LegalDocumentCreate(BaseModel):
 
 
 class LegalDocumentRead(BaseModel):
-    """LegalDocumentRead schema/model definition."""
+    """Legal document as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int

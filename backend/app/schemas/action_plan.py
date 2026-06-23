@@ -6,7 +6,8 @@ from pydantic import BaseModel
 
 
 class ActionPlanTemplateCreate(BaseModel):
-    """ActionPlanTemplateCreate schema/model definition."""
+    """Fields required to create an action plan template."""
+
     name: str
     description: str = ""
     applies_to_level: str = "ANY"  # HIGH | MEDIUM | ANY
@@ -14,7 +15,8 @@ class ActionPlanTemplateCreate(BaseModel):
 
 
 class ActionPlanTemplateRead(BaseModel):
-    """ActionPlanTemplateRead schema/model definition."""
+    """Action plan template as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int
@@ -27,7 +29,8 @@ class ActionPlanTemplateRead(BaseModel):
 
 
 class ActionPlanCreate(BaseModel):
-    """ActionPlanCreate schema/model definition."""
+    """Fields required to create an action plan."""
+
     risk_assessment_id: int | None = None
     template_id: int | None = None
     title: str
@@ -37,7 +40,8 @@ class ActionPlanCreate(BaseModel):
 
 
 class ActionPlanUpdate(BaseModel):
-    """ActionPlanUpdate schema/model definition."""
+    """Partial update fields for an action plan."""
+
     title: str | None = None
     description: str | None = None
     status: str | None = None
@@ -46,7 +50,8 @@ class ActionPlanUpdate(BaseModel):
 
 
 class ActionPlanRead(BaseModel):
-    """ActionPlanRead schema/model definition."""
+    """Action plan as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int

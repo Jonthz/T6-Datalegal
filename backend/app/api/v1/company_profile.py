@@ -16,7 +16,7 @@ router = APIRouter(prefix="/company-profile", tags=["company-profile"])
 
 @router.get("", response_model=TenantRead)
 def get_company_profile(
-    current_user: Annotated[User, Depends(get_current_user)],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(get_current_user)],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):

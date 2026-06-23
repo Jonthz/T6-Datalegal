@@ -6,7 +6,8 @@ from pydantic import BaseModel
 
 
 class AuditPlanCreate(BaseModel):
-    """AuditPlanCreate schema/model definition."""
+    """Fields required to create an audit plan."""
+
     name: str
     scope: str = ""
     period_start: date | None = None
@@ -16,7 +17,8 @@ class AuditPlanCreate(BaseModel):
 
 
 class AuditPlanUpdate(BaseModel):
-    """AuditPlanUpdate schema/model definition."""
+    """Partial update fields for an audit plan."""
+
     name: str | None = None
     scope: str | None = None
     period_start: date | None = None
@@ -27,7 +29,8 @@ class AuditPlanUpdate(BaseModel):
 
 
 class AuditPlanRead(BaseModel):
-    """AuditPlanRead schema/model definition."""
+    """Audit plan as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int
@@ -43,7 +46,8 @@ class AuditPlanRead(BaseModel):
 
 
 class AuditFindingCreate(BaseModel):
-    """AuditFindingCreate schema/model definition."""
+    """Fields required to create an audit finding."""
+
     audit_plan_id: int
     title: str
     description: str = ""
@@ -54,7 +58,8 @@ class AuditFindingCreate(BaseModel):
 
 
 class AuditFindingUpdate(BaseModel):
-    """AuditFindingUpdate schema/model definition."""
+    """Partial update fields for an audit finding."""
+
     title: str | None = None
     description: str | None = None
     evidence: str | None = None
@@ -65,7 +70,8 @@ class AuditFindingUpdate(BaseModel):
 
 
 class AuditFindingRead(BaseModel):
-    """AuditFindingRead schema/model definition."""
+    """Audit finding as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int

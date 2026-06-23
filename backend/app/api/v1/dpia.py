@@ -19,24 +19,26 @@ router = APIRouter(prefix="/dpias", tags=["dpias"])
 
 
 def _generate_dpia_pdf(dpia: DPIAssessment) -> bytes:
-    """Handle generate dpia pdf."""
+    """Render a DPIAssessment to PDF bytes using fpdf2."""
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 16)
     pdf.cell(
-        0, 10, "Data Protection Impact Assessment (DPIA)", new_x="LMARGIN", new_y="NEXT", align="C"
+        0, 10,
+        "Data Protection Impact Assessment (DPIA)",
+        new_x="LMARGIN", new_y="NEXT", align="C",
     )
     pdf.set_font("Helvetica", "", 12)
     pdf.ln(3)
     pdf.cell(
-        0,
-        8,
+        0, 8,
         f"DPIA ID: {dpia.id}  Version: {dpia.version}  Status: {dpia.status}",
-        new_x="LMARGIN",
-        new_y="NEXT",
+        new_x="LMARGIN", new_y="NEXT",
     )
     pdf.cell(
-        0, 8, f"Treatment Activity ID: {dpia.treatment_activity_id}", new_x="LMARGIN", new_y="NEXT"
+        0, 8,
+        f"Treatment Activity ID: {dpia.treatment_activity_id}",
+        new_x="LMARGIN", new_y="NEXT",
     )
     pdf.ln(4)
     pdf.set_font("Helvetica", "B", 13)
@@ -57,11 +59,9 @@ def _generate_dpia_pdf(dpia: DPIAssessment) -> bytes:
     if dpia.signed_at:
         pdf.set_font("Helvetica", "I", 10)
         pdf.cell(
-            0,
-            7,
+            0, 7,
             f"Signed by DPO (user id={dpia.signed_by_id}) at {dpia.signed_at.isoformat()}",
-            new_x="LMARGIN",
-            new_y="NEXT",
+            new_x="LMARGIN", new_y="NEXT",
         )
     return pdf.output()
 
@@ -73,7 +73,7 @@ def create_dpia(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Create dpia."""
+    """Create a new DPIA for a treatment activity."""
     dpia = DPIAssessment(
         tenant_id=tenant_id,
         treatment_activity_id=body.treatment_activity_id,
@@ -97,27 +97,25 @@ def create_dpia(
 
 @router.get("", response_model=list[DPIARead])
 def list_dpias(
-    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("dpias", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """List dpias."""
+    """List all DPIAs for the current tenant."""
     return db.query(DPIAssessment).filter(DPIAssessment.tenant_id == tenant_id).all()
 
 
 @router.get("/{dpia_id}", response_model=DPIARead)
 def get_dpia(
     dpia_id: int,
-    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("dpias", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Return dpia."""
-    dpia = (
-        db.query(DPIAssessment)
-        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
-        .first()
-    )
+    """Retrieve a single DPIA by ID."""
+    dpia = db.query(DPIAssessment).filter(
+        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
+    ).first()
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
     return dpia
@@ -127,16 +125,14 @@ def get_dpia(
 def update_dpia(
     dpia_id: int,
     body: DPIAUpdate,
-    current_user: Annotated[User, Depends(require_permission("dpias", "u"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("dpias", "u"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Update dpia."""
-    dpia = (
-        db.query(DPIAssessment)
-        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
-        .first()
-    )
+    """Update DPIA steps or status."""
+    dpia = db.query(DPIAssessment).filter(
+        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
+    ).first()
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -173,11 +169,8 @@ def sign_dpia(
     db.refresh(dpia)
 
     AuditLog.create_log(
-        db,
-        action="dpia_signed",
-        resource="dpias",
-        tenant_id=tenant_id,
-        user_id=current_user.id,
+        db, action="dpia_signed", resource="dpias",
+        tenant_id=tenant_id, user_id=current_user.id,
         detail=f"id={dpia_id} version={dpia.version}",
     )
     return dpia
@@ -186,7 +179,7 @@ def sign_dpia(
 @router.get("/{dpia_id}/pdf")
 def get_dpia_pdf(
     dpia_id: int,
-    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],  # pylint: disable=unused-argument
+    _: Annotated[User, Depends(require_permission("dpias", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
@@ -203,5 +196,7 @@ def get_dpia_pdf(
     return StreamingResponse(
         BytesIO(dpia.pdf_bytes),
         media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename=dpia_{dpia_id}_v{dpia.version}.pdf"},
+        headers={
+            "Content-Disposition": f"attachment; filename=dpia_{dpia_id}_v{dpia.version}.pdf"
+        },
     )

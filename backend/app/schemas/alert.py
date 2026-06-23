@@ -8,7 +8,8 @@ from pydantic import BaseModel
 
 
 class AlertCreate(BaseModel):
-    """AlertCreate schema/model definition."""
+    """Fields required to create an internal alert."""
+
     alert_type: str
     title: str
     message: str
@@ -23,7 +24,8 @@ class AlertMarkRead(BaseModel):
 
 
 class AlertRead(BaseModel):
-    """AlertRead schema/model definition."""
+    """Alert as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int

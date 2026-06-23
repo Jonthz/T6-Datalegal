@@ -8,7 +8,8 @@ from pydantic import BaseModel
 
 
 class ConsentRecordCreate(BaseModel):
-    """ConsentRecordCreate schema/model definition."""
+    """Fields required to register a new consent record."""
+
     treatment_activity_id: int | None = None
     data_subject_token: str
     legal_basis: str
@@ -17,12 +18,14 @@ class ConsentRecordCreate(BaseModel):
 
 
 class ConsentRevoke(BaseModel):
-    """ConsentRevoke schema/model definition."""
+    """Request body for revoking a consent record."""
+
     revocation_reason: str = ""
 
 
 class ConsentRecordRead(BaseModel):
-    """ConsentRecordRead schema/model definition."""
+    """Consent record as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int
@@ -42,20 +45,23 @@ class ConsentRecordRead(BaseModel):
 
 
 class CookieBannerCreate(BaseModel):
-    """CookieBannerCreate schema/model definition."""
+    """Fields required to create a versioned cookie consent banner."""
+
     version: str
     content: str
     effective_date: datetime
 
 
 class CookieBannerUpdate(BaseModel):
-    """CookieBannerUpdate schema/model definition."""
+    """Partial update fields for a cookie banner."""
+
     content: str | None = None
     is_active: bool | None = None
 
 
 class CookieBannerRead(BaseModel):
-    """CookieBannerRead schema/model definition."""
+    """Cookie banner as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int
@@ -71,13 +77,15 @@ class CookieBannerRead(BaseModel):
 
 
 class CookieConsentCreate(BaseModel):
-    """CookieConsentCreate schema/model definition."""
+    """Fields required to record a cookie consent acceptance."""
+
     banner_id: int
     data_subject_token: str
 
 
 class CookieConsentRead(BaseModel):
-    """CookieConsentRead schema/model definition."""
+    """Cookie consent record as returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int

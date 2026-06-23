@@ -1,4 +1,5 @@
 """Sprint 3 test suite — US-RF03-1, RF04-1, RF09-1, RF10-1, RF11-1, RF30-1, RF31-1, RF43-1."""
+# pylint: disable=missing-class-docstring,missing-function-docstring,unused-argument,line-too-long
 
 from datetime import date
 
