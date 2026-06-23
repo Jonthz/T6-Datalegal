@@ -37,11 +37,13 @@ def list_template_types(
     """List all supported document template types (US-RF14-1 + US-RF33-1)."""
     result = []
     for dt in sorted(ALL_TEMPLATE_TYPES):
-        result.append(TemplateTypeInfo(
-            doc_type=dt,
-            category="CORE" if dt in CORE_TEMPLATE_TYPES else "EXPANDED",
-            description=_TEMPLATE_DESCRIPTIONS.get(dt, ""),
-        ))
+        result.append(
+            TemplateTypeInfo(
+                doc_type=dt,
+                category="CORE" if dt in CORE_TEMPLATE_TYPES else "EXPANDED",
+                description=_TEMPLATE_DESCRIPTIONS.get(dt, ""),
+            )
+        )
     return result
 
 
@@ -79,8 +81,11 @@ def create_document(
     db.commit()
     db.refresh(doc)
     AuditLog.create_log(
-        db, action="legal_document_created", resource="legal_documents",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="legal_document_created",
+        resource="legal_documents",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"type={body.doc_type} version={body.version}",
     )
     return doc
@@ -129,15 +134,21 @@ def download_pdf(
     db: Session = Depends(get_db),
 ):
     """Generate and download a PDF for the legal document (US-RF14-1)."""
-    doc = db.query(LegalDocument).filter(
-        LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id
-    ).first()
+    doc = (
+        db.query(LegalDocument)
+        .filter(LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id)
+        .first()
+    )
     if not doc:
         raise HTTPException(status_code=404, detail="Legal document not found.")
     pdf_bytes = _generate_pdf(doc)
     AuditLog.create_log(
-        db, action="legal_document_pdf_downloaded", resource="legal_documents",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"doc_id={doc_id}",
+        db,
+        action="legal_document_pdf_downloaded",
+        resource="legal_documents",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"doc_id={doc_id}",
     )
     filename = f"{doc.doc_type.lower()}_v{doc.version}.pdf"
     return Response(
@@ -148,6 +159,7 @@ def download_pdf(
 
 
 # ── Helpers ───
+
 
 def _render_default_content(doc_type: str, params: dict) -> str:
     """Render default text content for a legal document type using provided parameters."""

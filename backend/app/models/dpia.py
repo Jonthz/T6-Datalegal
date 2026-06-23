@@ -23,8 +23,6 @@ class DPIAssessment(TenantBase):
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="DRAFT", index=True)
     # DRAFT | COMPLETED | SIGNED
     signed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    signed_by_id: Mapped[int | None] = mapped_column(
-        Integer, ForeignKey("users.id"), nullable=True
-    )
+    signed_by_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     pdf_bytes: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)

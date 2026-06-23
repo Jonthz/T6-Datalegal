@@ -28,6 +28,7 @@ router = APIRouter(tags=["consents"])
 
 # ── Consent Statistics (US-RF06-1) ───────────────────────────────────────────
 
+
 @router.get("/consents/stats")
 def get_consent_stats(
     _: Annotated[User, Depends(require_permission("consents", "r"))],
@@ -63,6 +64,7 @@ def get_consent_stats(
 
 # ── Consent Records (US-RF32-1) ──────────────────────────────────────────────
 
+
 @router.post("/consents", response_model=ConsentRecordRead, status_code=status.HTTP_201_CREATED)
 def create_consent(
     body: ConsentRecordCreate,
@@ -84,8 +86,11 @@ def create_consent(
     db.commit()
     db.refresh(record)
     AuditLog.create_log(
-        db, action="consent_created", resource="consents",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="consent_created",
+        resource="consents",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"id={record.id} token={body.data_subject_token[:8]}***",
     )
     return record
@@ -135,9 +140,11 @@ def revoke_consent(
     db: Session = Depends(get_db),
 ):
     """Explicitly and immutably revoke a consent. Once revoked, cannot be un-revoked."""
-    record = db.query(ConsentRecord).filter(
-        ConsentRecord.id == record_id, ConsentRecord.tenant_id == tenant_id
-    ).first()
+    record = (
+        db.query(ConsentRecord)
+        .filter(ConsentRecord.id == record_id, ConsentRecord.tenant_id == tenant_id)
+        .first()
+    )
     if not record:
         raise HTTPException(status_code=404, detail="Consent record not found.")
     if record.is_revoked:
@@ -148,8 +155,11 @@ def revoke_consent(
     db.commit()
     db.refresh(record)
     AuditLog.create_log(
-        db, action="consent_revoked", resource="consents",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="consent_revoked",
+        resource="consents",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"id={record_id} reason={body.revocation_reason[:50]}",
     )
     return record
@@ -180,8 +190,12 @@ def create_banner(
     db.commit()
     db.refresh(banner)
     AuditLog.create_log(
-        db, action="cookie_banner_created", resource="cookie_banners",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"version={body.version}",
+        db,
+        action="cookie_banner_created",
+        resource="cookie_banners",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"version={body.version}",
     )
     return banner
 

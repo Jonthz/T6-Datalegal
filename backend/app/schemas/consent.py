@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 # ── ConsentRecord ───
 
+
 class ConsentRecordCreate(BaseModel):
     """Fields required to register a new consent record."""
 
@@ -42,6 +43,7 @@ class ConsentRecordRead(BaseModel):
 
 # ── CookieBanner ───
 
+
 class CookieBannerCreate(BaseModel):
     """Fields required to create a versioned cookie consent banner."""
 
@@ -72,6 +74,7 @@ class CookieBannerRead(BaseModel):
 
 
 # ── CookieConsent ───
+
 
 class CookieConsentCreate(BaseModel):
     """Fields required to record a cookie consent acceptance."""

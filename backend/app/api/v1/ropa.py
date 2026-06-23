@@ -15,6 +15,7 @@ from app.models.user import User
 
 router = APIRouter(prefix="/ropa", tags=["ropa"])
 
+
 def _build_ropa_data(tenant_id: int, db: Session) -> dict:
     """Build the ROPA data structure grouped by legal basis."""
     activities = (
@@ -48,6 +49,7 @@ def _build_ropa_data(tenant_id: int, db: Session) -> dict:
         "activities_by_legal_basis": activities_by_basis,
     }
 
+
 def _generate_ropa_pdf(ropa_data: dict) -> bytes:
     """Render the ROPA data dict to PDF bytes using fpdf2."""
     pdf = FPDF()
@@ -63,9 +65,15 @@ def _generate_ropa_pdf(ropa_data: dict) -> bytes:
         new_x="LMARGIN", new_y="NEXT", align="C",
     )
     pdf.cell(
-        0, 8,
+        0, 8, f"Generated: {ropa_data['generated_at']}", new_x="LMARGIN", new_y="NEXT", align="C"
+    )
+    pdf.cell(
+        0,
+        8,
         f"Tenant ID: {ropa_data['tenant_id']}  Total activities: {ropa_data['total_activities']}",
-        new_x="LMARGIN", new_y="NEXT", align="C",
+        new_x="LMARGIN",
+        new_y="NEXT",
+        align="C",
     )
     pdf.ln(6)
 
@@ -73,9 +81,12 @@ def _generate_ropa_pdf(ropa_data: dict) -> bytes:
         pdf.set_font("Helvetica", "B", 13)
         pdf.set_fill_color(220, 220, 220)
         pdf.cell(
-            0, 9,
+            0,
+            9,
             f"Legal Basis: {legal_basis} ({len(entries)} activities)",
-            new_x="LMARGIN", new_y="NEXT", fill=True,
+            new_x="LMARGIN",
+            new_y="NEXT",
+            fill=True,
         )
         pdf.ln(2)
 
@@ -106,9 +117,11 @@ def _generate_ropa_pdf(ropa_data: dict) -> bytes:
                 )
             if act["processor_name"]:
                 pdf.cell(
-                    0, 6,
+                    0,
+                    6,
                     f"Processor: {act['processor_name']} ({act['processor_country'] or 'N/A'})",
-                    new_x="LMARGIN", new_y="NEXT",
+                    new_x="LMARGIN",
+                    new_y="NEXT",
                 )
             pdf.ln(3)
         pdf.ln(4)

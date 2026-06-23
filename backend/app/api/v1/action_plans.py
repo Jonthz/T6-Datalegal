@@ -120,8 +120,12 @@ def auto_generate_plans(
         db.refresh(p)
 
     AuditLog.create_log(
-        db, action="action_plans_auto_generated", resource="action_plans",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"created={len(created)}",
+        db,
+        action="action_plans_auto_generated",
+        resource="action_plans",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"created={len(created)}",
     )
     return created
 

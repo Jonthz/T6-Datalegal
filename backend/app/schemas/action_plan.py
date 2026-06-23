@@ -4,6 +4,7 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
+
 class ActionPlanTemplateCreate(BaseModel):
     """Fields required to create an action plan template."""
 
@@ -11,6 +12,7 @@ class ActionPlanTemplateCreate(BaseModel):
     description: str = ""
     applies_to_level: str = "ANY"  # HIGH | MEDIUM | ANY
     default_tasks: list[dict] = []
+
 
 class ActionPlanTemplateRead(BaseModel):
     """Action plan template as returned by the API."""
@@ -25,6 +27,7 @@ class ActionPlanTemplateRead(BaseModel):
     default_tasks: list
     is_active: bool
 
+
 class ActionPlanCreate(BaseModel):
     """Fields required to create an action plan."""
 
@@ -35,6 +38,7 @@ class ActionPlanCreate(BaseModel):
     tasks: list[dict] = []
     target_date: date | None = None
 
+
 class ActionPlanUpdate(BaseModel):
     """Partial update fields for an action plan."""
 
@@ -43,6 +47,7 @@ class ActionPlanUpdate(BaseModel):
     status: str | None = None
     tasks: list[dict] | None = None
     target_date: date | None = None
+
 
 class ActionPlanRead(BaseModel):
     """Action plan as returned by the API."""

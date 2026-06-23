@@ -18,23 +18,37 @@ SECTOR_CATALOG: dict[str, dict] = {
     "HEALTH": {
         "label": "Healthcare / Clinic",
         "suggested_data_types": [
-            "National ID", "Medical Record", "Health Data", "Insurance Number",
-            "Emergency Contact", "Blood Type", "Prescription Data",
+            "National ID",
+            "Medical Record",
+            "Health Data",
+            "Insurance Number",
+            "Emergency Contact",
+            "Blood Type",
+            "Prescription Data",
         ],
         "suggested_activities": [
-            "Patient registration", "Medical history processing", "Insurance billing",
-            "Appointment scheduling", "Clinical trial data",
+            "Patient registration",
+            "Medical history processing",
+            "Insurance billing",
+            "Appointment scheduling",
+            "Clinical trial data",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "CUSTOMER_NOTICE", "PROCESSOR_CONTRACT"],
     },
     "EDUCATION": {
         "label": "Education",
         "suggested_data_types": [
-            "National ID", "Student ID", "Academic Records", "Parent/Guardian Data",
-            "Enrollment Data", "Financial Aid Data",
+            "National ID",
+            "Student ID",
+            "Academic Records",
+            "Parent/Guardian Data",
+            "Enrollment Data",
+            "Financial Aid Data",
         ],
         "suggested_activities": [
-            "Student enrollment", "Academic performance tracking", "Financial aid processing",
+            "Student enrollment",
+            "Academic performance tracking",
+            "Financial aid processing",
             "Alumni communications",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "CUSTOMER_NOTICE"],
@@ -42,35 +56,57 @@ SECTOR_CATALOG: dict[str, dict] = {
     "FINANCE": {
         "label": "Financial Services / Banking",
         "suggested_data_types": [
-            "National ID", "Credit Card Number", "Bank Account", "Tax ID (RUC)",
-            "Income Data", "Credit Score", "Transaction History",
+            "National ID",
+            "Credit Card Number",
+            "Bank Account",
+            "Tax ID (RUC)",
+            "Income Data",
+            "Credit Score",
+            "Transaction History",
         ],
         "suggested_activities": [
-            "Credit assessment", "Transaction processing", "KYC/AML compliance",
-            "Insurance underwriting", "Investment portfolio management",
+            "Credit assessment",
+            "Transaction processing",
+            "KYC/AML compliance",
+            "Insurance underwriting",
+            "Investment portfolio management",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "CONTRACTUAL_CLAUSE", "PROCESSOR_CONTRACT"],
     },
     "RETAIL": {
         "label": "Retail / E-commerce",
         "suggested_data_types": [
-            "Name", "Email", "Phone", "Purchase History", "Shipping Address",
-            "Payment Method", "Cookie Identifier",
+            "Name",
+            "Email",
+            "Phone",
+            "Purchase History",
+            "Shipping Address",
+            "Payment Method",
+            "Cookie Identifier",
         ],
         "suggested_activities": [
-            "Order processing", "Loyalty program", "Marketing communications",
-            "Customer support", "Fraud detection",
+            "Order processing",
+            "Loyalty program",
+            "Marketing communications",
+            "Customer support",
+            "Fraud detection",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "COOKIE_NOTICE", "CUSTOMER_NOTICE"],
     },
     "MARKETING": {
         "label": "Marketing / Advertising",
         "suggested_data_types": [
-            "Email", "Phone", "Behavioral Data", "Cookie Identifier",
-            "Location Data", "Social Media Identifier",
+            "Email",
+            "Phone",
+            "Behavioral Data",
+            "Cookie Identifier",
+            "Location Data",
+            "Social Media Identifier",
         ],
         "suggested_activities": [
-            "Email marketing", "Behavioral profiling", "Targeted advertising",
+            "Email marketing",
+            "Behavioral profiling",
+            "Targeted advertising",
             "Campaign analytics",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "COOKIE_NOTICE"],
@@ -78,11 +114,16 @@ SECTOR_CATALOG: dict[str, dict] = {
     "LEGAL": {
         "label": "Legal / Law Firm",
         "suggested_data_types": [
-            "National ID", "Legal Case Data", "Financial Data",
-            "Judicial Records", "Contract Data",
+            "National ID",
+            "Legal Case Data",
+            "Financial Data",
+            "Judicial Records",
+            "Contract Data",
         ],
         "suggested_activities": [
-            "Client representation", "Contract management", "Litigation support",
+            "Client representation",
+            "Contract management",
+            "Litigation support",
             "Due diligence",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "CONTRACTUAL_CLAUSE", "PROCESSOR_CONTRACT"],
@@ -90,11 +131,17 @@ SECTOR_CATALOG: dict[str, dict] = {
     "GOVERNMENT": {
         "label": "Government / Public Sector",
         "suggested_data_types": [
-            "National ID", "Tax Records", "Social Security", "Civil Registry",
-            "Property Records", "Criminal Records",
+            "National ID",
+            "Tax Records",
+            "Social Security",
+            "Civil Registry",
+            "Property Records",
+            "Criminal Records",
         ],
         "suggested_activities": [
-            "Public service delivery", "Tax administration", "Social benefits",
+            "Public service delivery",
+            "Tax administration",
+            "Social benefits",
             "Regulatory enforcement",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "CUSTOMER_NOTICE"],
@@ -102,11 +149,17 @@ SECTOR_CATALOG: dict[str, dict] = {
     "TECHNOLOGY": {
         "label": "Technology / SaaS",
         "suggested_data_types": [
-            "Email", "Usage Logs", "IP Address", "Device Identifier",
-            "Cookie Identifier", "API Keys",
+            "Email",
+            "Usage Logs",
+            "IP Address",
+            "Device Identifier",
+            "Cookie Identifier",
+            "API Keys",
         ],
         "suggested_activities": [
-            "User account management", "Product analytics", "Customer support",
+            "User account management",
+            "Product analytics",
+            "Customer support",
             "Cloud data processing",
         ],
         "suggested_templates": ["PRIVACY_POLICY", "COOKIE_NOTICE", "PROCESSOR_CONTRACT"],
@@ -135,10 +188,7 @@ def list_sectors(
     _: Annotated[User, Depends(require_permission("sectors", "r"))],
 ):
     """List all economic sectors with suggestions (US-RF34-1)."""
-    return [
-        SectorSuggestions(sector_code=code, **data)
-        for code, data in SECTOR_CATALOG.items()
-    ]
+    return [SectorSuggestions(sector_code=code, **data) for code, data in SECTOR_CATALOG.items()]
 
 
 @router.get("/{sector_code}", response_model=SectorSuggestions)
@@ -179,8 +229,12 @@ def update_company_sector(
     db.commit()
 
     AuditLog.create_log(
-        db, action="company_sector_updated", resource="sectors",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"sector={sector_code}",
+        db,
+        action="company_sector_updated",
+        resource="sectors",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"sector={sector_code}",
     )
     suggestions = SECTOR_CATALOG[sector_code]
     return {
@@ -188,6 +242,6 @@ def update_company_sector(
         "label": suggestions["label"],
         "suggestions": suggestions,
         "message": f"Sector updated. {len(suggestions['suggested_data_types'])} data types, "
-                   f"{len(suggestions['suggested_activities'])} activities, and "
-                   f"{len(suggestions['suggested_templates'])} document templates pre-selected.",
+        f"{len(suggestions['suggested_activities'])} activities, and "
+        f"{len(suggestions['suggested_templates'])} document templates pre-selected.",
     }

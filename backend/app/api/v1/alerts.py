@@ -101,9 +101,7 @@ def mark_alert_read(
     db: Session = Depends(get_db),
 ):
     """Mark an alert as read (recipient or DPO/Admin)."""
-    alert = db.query(Alert).filter(
-        Alert.id == alert_id, Alert.tenant_id == tenant_id
-    ).first()
+    alert = db.query(Alert).filter(Alert.id == alert_id, Alert.tenant_id == tenant_id).first()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
 
@@ -138,9 +136,7 @@ def delete_alert(
     db: Session = Depends(get_db),
 ):
     """Delete an alert. Only ADMIN/DPO or the owning user may delete."""
-    alert = db.query(Alert).filter(
-        Alert.id == alert_id, Alert.tenant_id == tenant_id
-    ).first()
+    alert = db.query(Alert).filter(Alert.id == alert_id, Alert.tenant_id == tenant_id).first()
     if not alert:
         raise HTTPException(status_code=404, detail="Alert not found.")
 

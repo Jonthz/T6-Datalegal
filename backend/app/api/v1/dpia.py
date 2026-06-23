@@ -85,8 +85,12 @@ def create_dpia(
     db.commit()
     db.refresh(dpia)
     AuditLog.create_log(
-        db, action="dpia_created", resource="dpias",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"id={dpia.id}",
+        db,
+        action="dpia_created",
+        resource="dpias",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"id={dpia.id}",
     )
     return dpia
 
@@ -148,9 +152,11 @@ def sign_dpia(
     """DPO or SUPER_ADMIN signs the DPIA, generates and stores the PDF."""
     if current_user.role not in ("DPO", "SUPER_ADMIN"):
         raise HTTPException(status_code=403, detail="Only DPO or SUPER_ADMIN can sign a DPIA.")
-    dpia = db.query(DPIAssessment).filter(
-        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
-    ).first()
+    dpia = (
+        db.query(DPIAssessment)
+        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
 
@@ -178,9 +184,11 @@ def get_dpia_pdf(
     db: Session = Depends(get_db),
 ):
     """Return the stored DPIA PDF bytes."""
-    dpia = db.query(DPIAssessment).filter(
-        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
-    ).first()
+    dpia = (
+        db.query(DPIAssessment)
+        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
     if not dpia.pdf_bytes:

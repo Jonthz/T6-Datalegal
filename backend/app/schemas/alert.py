@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 # ── Alert ─────────────────────────────────────────────────────────────────────
 
+
 class AlertCreate(BaseModel):
     """Fields required to create an internal alert."""
 

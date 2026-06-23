@@ -6,11 +6,13 @@ from fastapi.testclient import TestClient
 
 from tests.conftest import auth_headers
 
-
 # US-RF06-1: Consent registration stats
 
+
 class TestConsentStats:
+    """TestConsentStats schema/model definition."""
     def _create_consent(self, client, token, *, legal_basis="CONSENT", is_sensitive=False):
+        """Handle create consent."""
         return client.post(
             "/api/v1/consents",
             json={
@@ -23,6 +25,7 @@ class TestConsentStats:
         )
 
     def test_stats_empty(self, client: TestClient, dpo_token: str):
+        """Test that stats empty behaves as expected."""
         resp = client.get("/api/v1/consents/stats", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         data = resp.json()
@@ -32,6 +35,7 @@ class TestConsentStats:
         assert "by_legal_basis" in data
 
     def test_stats_reflect_new_consent(self, client: TestClient, dpo_token: str):
+        """Test that stats reflect new consent behaves as expected."""
         before = client.get("/api/v1/consents/stats", headers=auth_headers(dpo_token)).json()
         self._create_consent(client, dpo_token)
         after = client.get("/api/v1/consents/stats", headers=auth_headers(dpo_token)).json()
@@ -40,6 +44,7 @@ class TestConsentStats:
 
     def test_stats_revocation_rate_increases(self, client: TestClient, dpo_token: str):
         # Create and revoke a consent
+        """Test that stats revocation rate increases behaves as expected."""
         r = self._create_consent(client, dpo_token)
         assert r.status_code == 201
         record_id = r.json()["id"]
@@ -53,11 +58,13 @@ class TestConsentStats:
         assert stats["revocation_rate"] >= 0
 
 
-
 # US-RF07-1: Comprehensive ARCO management with legal SLA
 
+
 class TestARCOSLA:
+    """TestARCOSLA schema/model definition."""
     def _create_arco(self, client, token):
+        """Handle create arco."""
         return client.post(
             "/api/v1/arco-requests",
             json={
@@ -71,6 +78,7 @@ class TestARCOSLA:
         )
 
     def test_create_arco_returns_ticket(self, client: TestClient, dpo_token: str):
+        """Test that create arco returns ticket behaves as expected."""
         resp = self._create_arco(client, dpo_token)
         assert resp.status_code == 201
         data = resp.json()
@@ -101,6 +109,7 @@ class TestARCOSLA:
         assert data["days_remaining"] >= 29  # 30-day deadline
 
     def test_sla_status_grey_for_closed_request(self, client: TestClient, dpo_token: str):
+        """Test that sla status grey for closed request behaves as expected."""
         arco_id = self._create_arco(client, dpo_token).json()["id"]
         client.patch(
             f"/api/v1/arco-requests/{arco_id}",
@@ -115,13 +124,17 @@ class TestARCOSLA:
         assert resp.json()["stoplight"] == "GREY"
 
     def test_arco_sla_status_404_on_unknown(self, client: TestClient, dpo_token: str):
+        """Test that arco sla status 404 on unknown behaves as expected."""
         resp = client.get(
             "/api/v1/arco-requests/99999/sla-status",
             headers=auth_headers(dpo_token),
         )
         assert resp.status_code == 404
 
-    def test_immutable_log_on_status_update(self, client: TestClient, dpo_token: str, admin_token: str):
+    def test_immutable_log_on_status_update(
+        self, client: TestClient, dpo_token: str, admin_token: str
+    ):
+        """Test that immutable log on status update behaves as expected."""
         arco_id = self._create_arco(client, dpo_token).json()["id"]
         client.patch(
             f"/api/v1/arco-requests/{arco_id}",
@@ -137,11 +150,13 @@ class TestARCOSLA:
         assert "arco_request_updated" in log_actions
 
 
-
 # US-RF15-1: Filterable reports to PDF/CSV
 
+
 class TestReportExports:
+    """TestReportExports schema/model definition."""
     def test_summary_json(self, client: TestClient, dpo_token: str):
+        """Test that summary json behaves as expected."""
         resp = client.get("/api/v1/reports/summary", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         data = resp.json()
@@ -151,12 +166,14 @@ class TestReportExports:
         assert "consents" in data
 
     def test_summary_pdf_returns_pdf(self, client: TestClient, dpo_token: str):
+        """Test that summary pdf returns pdf behaves as expected."""
         resp = client.get("/api/v1/reports/summary/pdf", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         assert resp.headers["content-type"] == "application/pdf"
         assert resp.content[:4] == b"%PDF"
 
     def test_summary_csv_returns_csv(self, client: TestClient, dpo_token: str):
+        """Test that summary csv returns csv behaves as expected."""
         resp = client.get("/api/v1/reports/summary/csv", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         assert "text/csv" in resp.headers["content-type"]
@@ -165,19 +182,23 @@ class TestReportExports:
         assert len(lines) > 1
 
     def test_summary_pdf_requires_auth(self, client: TestClient):
+        """Test that summary pdf requires auth behaves as expected."""
         resp = client.get("/api/v1/reports/summary/pdf")
         assert resp.status_code == 401
 
     def test_summary_csv_requires_auth(self, client: TestClient):
+        """Test that summary csv requires auth behaves as expected."""
         resp = client.get("/api/v1/reports/summary/csv")
         assert resp.status_code == 401
 
 
-
 # US-RF16-1: KPIs, trends, and alerts with performance
 
+
 class TestKPIsAndTrends:
+    """TestKPIsAndTrends schema/model definition."""
     def test_kpis_shape(self, client: TestClient, dpo_token: str):
+        """Test that kpis shape behaves as expected."""
         resp = client.get("/api/v1/reports/kpis", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         data = resp.json()
@@ -192,6 +213,7 @@ class TestKPIsAndTrends:
         assert "open_high_risk_assessments" in alerts
 
     def test_kpis_on_time_100pct_when_no_arco(self, client: TestClient, dpo_token: str):
+        """Test that kpis on time 100pct when no arco behaves as expected."""
         resp = client.get("/api/v1/reports/kpis", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         # When no ARCO requests are closed/responded, on_time defaults to 100%
@@ -199,6 +221,7 @@ class TestKPIsAndTrends:
         assert data["pct_arco_on_time"] >= 0
 
     def test_trends_default_6_months(self, client: TestClient, dpo_token: str):
+        """Test that trends default 6 months behaves as expected."""
         resp = client.get("/api/v1/reports/trends", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         data = resp.json()
@@ -206,12 +229,14 @@ class TestKPIsAndTrends:
         assert len(data["trends"]) == 6
 
     def test_trends_custom_months(self, client: TestClient, dpo_token: str):
+        """Test that trends custom months behaves as expected."""
         resp = client.get("/api/v1/reports/trends?months=3", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         assert resp.json()["months"] == 3
         assert len(resp.json()["trends"]) == 3
 
     def test_trends_shape(self, client: TestClient, dpo_token: str):
+        """Test that trends shape behaves as expected."""
         resp = client.get("/api/v1/reports/trends", headers=auth_headers(dpo_token))
         for entry in resp.json()["trends"]:
             assert "month" in entry
@@ -222,17 +247,23 @@ class TestKPIsAndTrends:
             assert "new_risk_assessments" in entry
 
     def test_kpis_require_auth(self, client: TestClient):
+        """Test that kpis require auth behaves as expected."""
         assert client.get("/api/v1/reports/kpis").status_code == 401
 
     def test_trends_require_auth(self, client: TestClient):
+        """Test that trends require auth behaves as expected."""
         assert client.get("/api/v1/reports/trends").status_code == 401
-
 
 
 # US-RF18-1: Internal alerts for critical events
 
+
 class TestAlerts:
-    def _create_alert(self, client, token, *, alert_type="GENERAL", severity="INFO", recipient_id=None):
+    """TestAlerts schema/model definition."""
+    def _create_alert(
+        self, client, token, *, alert_type="GENERAL", severity="INFO", recipient_id=None
+    ):
+        """Handle create alert."""
         body = {
             "alert_type": alert_type,
             "title": f"Test {alert_type} alert",
@@ -244,6 +275,7 @@ class TestAlerts:
         return client.post("/api/v1/alerts", json=body, headers=auth_headers(token))
 
     def test_create_alert(self, client: TestClient, dpo_token: str):
+        """Test that create alert behaves as expected."""
         resp = self._create_alert(client, dpo_token)
         assert resp.status_code == 201
         data = resp.json()
@@ -251,18 +283,25 @@ class TestAlerts:
         assert data["is_read"] is False
 
     def test_list_alerts(self, client: TestClient, dpo_token: str):
+        """Test that list alerts behaves as expected."""
         self._create_alert(client, dpo_token)
         resp = client.get("/api/v1/alerts", headers=auth_headers(dpo_token))
         assert resp.status_code == 200
         assert isinstance(resp.json(), list)
 
     def test_unread_count(self, client: TestClient, dpo_token: str):
-        before = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()["unread_count"]
+        """Test that unread count behaves as expected."""
+        before = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()[
+            "unread_count"
+        ]
         self._create_alert(client, dpo_token)  # broadcast alert
-        after = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()["unread_count"]
+        after = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()[
+            "unread_count"
+        ]
         assert after == before + 1
 
     def test_mark_alert_read(self, client: TestClient, dpo_token: str):
+        """Test that mark alert read behaves as expected."""
         alert_id = self._create_alert(client, dpo_token).json()["id"]
         resp = client.patch(
             f"/api/v1/alerts/{alert_id}/read",
@@ -273,12 +312,16 @@ class TestAlerts:
         assert resp.json()["read_at"] is not None
 
     def test_delete_alert(self, client: TestClient, dpo_token: str):
+        """Test that delete alert behaves as expected."""
         alert_id = self._create_alert(client, dpo_token).json()["id"]
         resp = client.delete(f"/api/v1/alerts/{alert_id}", headers=auth_headers(dpo_token))
         assert resp.status_code == 204
 
     def test_critical_incident_creates_alert(self, client: TestClient, dpo_token: str):
-        before = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()["unread_count"]
+        """Test that critical incident creates alert behaves as expected."""
+        before = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()[
+            "unread_count"
+        ]
         client.post(
             "/api/v1/incidents",
             json={
@@ -291,11 +334,16 @@ class TestAlerts:
             },
             headers=auth_headers(dpo_token),
         )
-        after = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()["unread_count"]
+        after = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()[
+            "unread_count"
+        ]
         assert after > before
 
     def test_low_severity_incident_no_alert(self, client: TestClient, dpo_token: str):
-        before = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()["unread_count"]
+        """Test that low severity incident no alert behaves as expected."""
+        before = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()[
+            "unread_count"
+        ]
         client.post(
             "/api/v1/incidents",
             json={
@@ -308,15 +356,19 @@ class TestAlerts:
             },
             headers=auth_headers(dpo_token),
         )
-        after = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()["unread_count"]
+        after = client.get("/api/v1/alerts/unread-count", headers=auth_headers(dpo_token)).json()[
+            "unread_count"
+        ]
         assert after == before
-
 
 
 # US-RF21-1: Standard Import/Export
 
+
 class TestImportExport:
+    """TestImportExport schema/model definition."""
     def test_import_treatment_activities(self, client: TestClient, dpo_token: str):
+        """Test that import treatment activities behaves as expected."""
         resp = client.post(
             "/api/v1/import/treatment-activities",
             json={
@@ -347,6 +399,7 @@ class TestImportExport:
         assert data["errors"] == []
 
     def test_import_with_invalid_row(self, client: TestClient, dpo_token: str):
+        """Test that import with invalid row behaves as expected."""
         resp = client.post(
             "/api/v1/import/treatment-activities",
             json={
@@ -364,9 +417,12 @@ class TestImportExport:
 
     def test_export_treatment_activities_csv(self, client: TestClient, dpo_token: str):
         # Create at least one activity first
+        """Test that export treatment activities csv behaves as expected."""
         client.post(
             "/api/v1/import/treatment-activities",
-            json={"activities": [{"name": "Export Test", "purpose": "export", "legal_basis": "LAW"}]},
+            json={
+                "activities": [{"name": "Export Test", "purpose": "export", "legal_basis": "LAW"}]
+            },
             headers=auth_headers(dpo_token),
         )
         resp = client.get(
@@ -376,10 +432,14 @@ class TestImportExport:
         assert resp.status_code == 200
         assert "text/csv" in resp.headers["content-type"]
         lines = resp.text.strip().splitlines()
-        assert lines[0] == "id,name,purpose,legal_basis,status,retention_period_days,is_cross_border,department_id"
+        assert (
+            lines[0]
+            == "id,name,purpose,legal_basis,status,retention_period_days,is_cross_border,department_id"  # pylint: disable=line-too-long
+        )
         assert len(lines) >= 2
 
     def test_export_compliance_report_json(self, client: TestClient, dpo_token: str):
+        """Test that export compliance report json behaves as expected."""
         resp = client.get(
             "/api/v1/export/compliance-report",
             headers=auth_headers(dpo_token),
@@ -393,6 +453,7 @@ class TestImportExport:
         assert "incidents" in data
 
     def test_import_requires_auth(self, client: TestClient):
+        """Test that import requires auth behaves as expected."""
         resp = client.post(
             "/api/v1/import/treatment-activities",
             json={"activities": []},
@@ -400,12 +461,13 @@ class TestImportExport:
         assert resp.status_code == 401
 
 
-
 # US-RF23-1: Daily backups with RPO/RTO
 
 
 class TestBackups:
+    """TestBackups schema/model definition."""
     def test_create_backup(self, client: TestClient, super_admin_token: str):
+        """Test that create backup behaves as expected."""
         resp = client.post("/api/v1/backups/create", headers=auth_headers(super_admin_token))
         assert resp.status_code == 200
         data = resp.json()
@@ -415,22 +477,19 @@ class TestBackups:
         if data["status"] == "COMPLETED":
             assert len(data["checksum_sha256"]) == 64  # sha256 hex digest
 
-    def test_create_backup_rejects_admin_on_sqlite(
-        self, client: TestClient, admin_token: str
-    ):
+    def test_create_backup_rejects_admin_on_sqlite(self, client: TestClient, admin_token: str):
         """Sprint 6 / C-3: SQLite snapshot is cross-tenant — only SUPER_ADMIN."""
         resp = client.post("/api/v1/backups/create", headers=auth_headers(admin_token))
         assert resp.status_code == 403, resp.text
         assert "SUPER_ADMIN" in resp.json()["detail"]
 
-    def test_create_backup_rejects_dpo_on_sqlite(
-        self, client: TestClient, dpo_token: str
-    ):
+    def test_create_backup_rejects_dpo_on_sqlite(self, client: TestClient, dpo_token: str):
         """Even DPOs can't trigger a global SQLite snapshot."""
         resp = client.post("/api/v1/backups/create", headers=auth_headers(dpo_token))
         assert resp.status_code == 403
 
     def test_list_backups(self, client: TestClient, super_admin_token: str, admin_token: str):
+        """Test that list backups behaves as expected."""
         client.post("/api/v1/backups/create", headers=auth_headers(super_admin_token))
         # Reads are still allowed for ADMIN/DPO within their tenant.
         resp = client.get("/api/v1/backups", headers=auth_headers(admin_token))
@@ -438,16 +497,16 @@ class TestBackups:
         assert isinstance(resp.json(), list)
 
     def test_get_backup_by_id(self, client: TestClient, super_admin_token: str):
+        """Test that get backup by id behaves as expected."""
         backup_id = client.post(
             "/api/v1/backups/create", headers=auth_headers(super_admin_token)
         ).json()["id"]
-        resp = client.get(
-            f"/api/v1/backups/{backup_id}", headers=auth_headers(super_admin_token)
-        )
+        resp = client.get(f"/api/v1/backups/{backup_id}", headers=auth_headers(super_admin_token))
         assert resp.status_code == 200
         assert resp.json()["id"] == backup_id
 
     def test_verify_backup(self, client: TestClient, super_admin_token: str):
+        """Test that verify backup behaves as expected."""
         backup = client.post(
             "/api/v1/backups/create", headers=auth_headers(super_admin_token)
         ).json()
@@ -464,11 +523,11 @@ class TestBackups:
         assert data["expected_checksum"] == data["actual_checksum"]
 
     def test_backup_requires_auth(self, client: TestClient):
+        """Test that backup requires auth behaves as expected."""
         resp = client.post("/api/v1/backups/create")
         assert resp.status_code == 401
 
     def test_backup_404_unknown(self, client: TestClient, super_admin_token: str):
-        resp = client.get(
-            "/api/v1/backups/99999", headers=auth_headers(super_admin_token)
-        )
+        """Test that backup 404 unknown behaves as expected."""
+        resp = client.get("/api/v1/backups/99999", headers=auth_headers(super_admin_token))
         assert resp.status_code == 404

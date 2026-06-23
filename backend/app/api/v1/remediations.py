@@ -46,8 +46,11 @@ def create_remediation(
     db.commit()
     db.refresh(remediation)
     AuditLog.create_log(
-        db, action="remediation_created", resource="remediations",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="remediation_created",
+        resource="remediations",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"id={remediation.id} ra_id={body.risk_assessment_id} risk_before={ra.risk_score}",
     )
     return remediation
@@ -107,8 +110,11 @@ def update_remediation(
     db.commit()
     db.refresh(rem)
     AuditLog.create_log(
-        db, action="remediation_updated", resource="remediations",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="remediation_updated",
+        resource="remediations",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"id={remediation_id} status={rem.status}",
     )
     return rem

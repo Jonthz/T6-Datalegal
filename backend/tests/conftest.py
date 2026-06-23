@@ -221,3 +221,9 @@ def tenant_b_token(tenant_b_user) -> str:
 def auth_headers(token: str) -> dict:
     """Handle auth headers."""
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def high_risk_responses() -> dict:
+    """Questionnaire answers that yield a HIGH risk classification."""
+    return {f"q{i}": i <= 7 for i in range(1, 11)}
