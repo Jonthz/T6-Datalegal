@@ -32,7 +32,7 @@ export function Sidebar({ open, onClose, unreadAlerts = 0 }: SidebarProps) {
         tabIndex={-1}
         onClick={onClose}
         className={cn(
-          'fixed inset-0 z-30 bg-ink-950/60 backdrop-blur-sm transition-opacity lg:hidden',
+          'fixed inset-0 z-30 bg-slate-900/20 backdrop-blur-sm transition-opacity lg:hidden',
           open ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
       />
@@ -40,11 +40,11 @@ export function Sidebar({ open, onClose, unreadAlerts = 0 }: SidebarProps) {
         aria-label={t('nav.sidebar')}
         className={cn(
           'fixed lg:static inset-y-0 left-0 z-40 w-72 shrink-0 transform transition-transform duration-200',
-          'glass-surface border-r border-white/10 lg:translate-x-0 flex flex-col',
+          'glass-surface border-r border-slate-200 lg:translate-x-0 flex flex-col',
           open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
-        <div className="px-5 py-5 flex items-center gap-3 border-b border-white/10">
+        <div className="px-5 py-5 flex items-center gap-3 border-b border-slate-200">
           <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-brand-400 to-sky-400 flex items-center justify-center font-bold text-ink-950">
             DL
           </div>
@@ -76,7 +76,7 @@ export function Sidebar({ open, onClose, unreadAlerts = 0 }: SidebarProps) {
             </div>
           ))}
         </nav>
-        <div className="px-4 py-3 border-t border-white/10 text-xs text-ink-400">
+        <div className="px-4 py-3 border-t border-slate-200 text-xs text-ink-400">
           <p>{t('app.environment')}</p>
         </div>
       </aside>
@@ -100,8 +100,8 @@ function SidebarLink({ to, label, onClick, badge }: SidebarLinkProps) {
         cn(
           'flex items-center justify-between px-3 h-9 rounded-md text-sm transition-colors',
           isActive
-            ? 'bg-brand-500/15 text-white border border-brand-400/30'
-            : 'text-ink-200 hover:text-white hover:bg-white/[0.05] border border-transparent'
+            ? 'bg-brand-50 text-brand-700 border border-brand-200'
+            : 'text-ink-200 hover:text-ink-50 hover:bg-slate-100 border border-transparent'
         )
       }
     >

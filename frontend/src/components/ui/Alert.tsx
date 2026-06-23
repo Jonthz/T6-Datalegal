@@ -4,10 +4,10 @@ import { cn } from '../../lib/cn'
 type AlertTone = 'info' | 'success' | 'warning' | 'danger'
 
 const toneClasses: Record<AlertTone, string> = {
-  info: 'bg-sky-500/10 border-sky-400/30 text-sky-100',
-  success: 'bg-emerald-500/10 border-emerald-400/30 text-emerald-100',
-  warning: 'bg-amber-500/10 border-amber-400/30 text-amber-100',
-  danger: 'bg-rose-500/10 border-rose-400/30 text-rose-100',
+  info: 'bg-sky-50 border-sky-200 text-sky-800',
+  success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+  warning: 'bg-amber-50 border-amber-200 text-amber-800',
+  danger: 'bg-rose-50 border-rose-200 text-rose-800',
 }
 
 interface AlertProps {

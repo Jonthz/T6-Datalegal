@@ -644,7 +644,7 @@ export default function ConsentsPage() {
               onChange={(e) =>
                 setRecordForm({ ...recordForm, is_sensitive: e.target.checked })
               }
-              className="h-4 w-4 rounded border-white/20 bg-white/[0.04]"
+              className="h-4 w-4 rounded border-slate-300 bg-white"
             />
             {t('consents.records.fields.sensitive')}
           </label>

@@ -17,13 +17,13 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary:
     'bg-brand-500 text-white hover:bg-brand-400 active:bg-brand-600 shadow-glass disabled:bg-brand-500/40',
   secondary:
-    'glass-surface-light text-ink-50 hover:bg-white/10 active:bg-white/[0.12] disabled:opacity-50',
+    'bg-slate-100 text-ink-50 border border-slate-300 hover:bg-slate-200 active:bg-slate-300 disabled:opacity-50',
   ghost:
-    'text-ink-100 hover:bg-white/[0.06] active:bg-white/10 disabled:opacity-50',
+    'bg-white text-ink-100 border border-slate-200 hover:bg-slate-100 active:bg-slate-200 disabled:opacity-50',
   danger:
     'bg-rose-500 text-white hover:bg-rose-400 active:bg-rose-600 shadow-glass disabled:bg-rose-500/40',
   subtle:
-    'bg-white/[0.04] text-ink-100 border border-white/10 hover:bg-white/[0.08] disabled:opacity-50',
+    'bg-slate-50 text-ink-100 border border-slate-300 hover:bg-slate-100 active:bg-slate-200 disabled:opacity-50',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -61,7 +61,7 @@ export function Button({
       aria-busy={loading || undefined}
     >
       {loading ? (
-        <span className="inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+        <span className="inline-block h-4 w-4 rounded-full border-2 border-current/30 border-t-current animate-spin" />
       ) : (
         iconLeft
       )}

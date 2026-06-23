@@ -63,7 +63,7 @@ export function DataTable<T>({
       <table className="min-w-full text-sm">
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead>
-          <tr className="text-xs uppercase tracking-wide text-ink-300 border-b border-white/10">
+          <tr className="text-xs uppercase tracking-wide text-ink-300 border-b border-slate-200">
             {columns.map((col) => (
               <th
                 key={col.key}
@@ -80,13 +80,13 @@ export function DataTable<T>({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5">
+        <tbody className="divide-y divide-slate-100">
           {rows.map((row, idx) => (
             <tr
               key={rowKey(row, idx)}
               className={cn(
                 'transition-colors',
-                onRowClick && 'cursor-pointer hover:bg-white/[0.04]'
+                onRowClick && 'cursor-pointer hover:bg-slate-50'
               )}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
             >

@@ -166,14 +166,14 @@ export default function ImportExportPage() {
                           </span>
                         </div>
                         {previewRows.length > 0 && (
-                          <div className="overflow-x-auto scrollbar-thin rounded-lg border border-white/10">
+                          <div className="overflow-x-auto scrollbar-thin rounded-lg border border-slate-200">
                             <table className="min-w-full text-xs">
-                              <thead className="bg-white/[0.04] text-ink-300">
+                              <thead className="bg-slate-50 text-ink-300">
                                 <tr>
                                   {previewCols.map((col) => (
                                     <th
                                       key={col}
-                                      className="px-3 py-2 text-left font-medium border-b border-white/10"
+                                      className="px-3 py-2 text-left font-medium border-b border-slate-200"
                                     >
                                       {col}
                                     </th>
@@ -184,7 +184,7 @@ export default function ImportExportPage() {
                                 {previewRows.map((row, idx) => (
                                   <tr
                                     key={idx}
-                                    className="border-b border-white/5 last:border-b-0"
+                                    className="border-b border-slate-100 last:border-b-0"
                                   >
                                     {previewCols.map((col) => (
                                       <td

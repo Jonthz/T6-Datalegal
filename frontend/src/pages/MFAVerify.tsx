@@ -55,7 +55,7 @@ export default function MFAVerifyPage() {
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 required
                 maxLength={6}
-                className="w-full h-14 bg-white/[0.04] border border-white/10 rounded-lg px-4 text-center text-2xl tracking-[0.5em] text-ink-50 focus:bg-white/[0.06] focus:border-brand-400/60"
+                className="w-full h-14 bg-white border border-slate-300 rounded-lg px-4 text-center text-2xl tracking-[0.5em] text-ink-50 focus:bg-white focus:border-brand-500/70"
                 placeholder="000000"
                 autoFocus
               />

@@ -369,7 +369,7 @@ export default function DPIAsPage() {
               key={n}
               className={cn(
                 'h-1.5 flex-1 rounded-full',
-                n <= wizardStep ? 'bg-brand-500' : 'bg-white/10'
+                n <= wizardStep ? 'bg-brand-500' : 'bg-slate-200'
               )}
             />
           ))}

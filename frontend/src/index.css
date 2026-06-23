@@ -25,35 +25,35 @@
   }
 
   *:focus-visible {
-    @apply outline-none ring-2 ring-brand-400/70 ring-offset-2 ring-offset-ink-950 rounded-md;
+    @apply outline-none ring-2 ring-brand-500/70 ring-offset-2 ring-offset-white rounded-md;
   }
 }
 
 @layer components {
   .glass-surface {
-    background-color: rgba(15, 23, 42, 0.55);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(18px) saturate(120%);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     box-shadow:
-      0 10px 30px -10px rgba(2, 6, 23, 0.55),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      0 10px 30px -16px rgba(15, 23, 42, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
   .glass-surface-light {
-    background-color: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(248, 250, 252, 0.88);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    border: 1px solid rgba(15, 23, 42, 0.10);
   }
 
   .skeleton {
-    @apply rounded-md bg-white/5;
+    @apply rounded-md bg-slate-100;
     background-image: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0.12) 50%,
-      rgba(255, 255, 255, 0.04) 100%
+      rgba(15, 23, 42, 0.03) 0%,
+      rgba(15, 23, 42, 0.09) 50%,
+      rgba(15, 23, 42, 0.03) 100%
     );
     background-size: 200% 100%;
     animation: shimmer 1.6s linear infinite;
@@ -64,7 +64,7 @@
     height: 8px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.18);
     border-radius: 9999px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {

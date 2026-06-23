@@ -128,7 +128,7 @@ export default function ROPAPage() {
             <div className="space-y-4">
               {groups.map(({ basis, activities }) => (
                 <GlassPanel key={basis}>
-                  <header className="p-4 border-b border-white/10 flex items-center justify-between">
+                  <header className="p-4 border-b border-slate-200 flex items-center justify-between">
                     <div>
                       <h3 className="text-sm font-semibold text-ink-50">
                         {t('ropa.section.legalBasis')}: {basis}

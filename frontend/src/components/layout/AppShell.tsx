@@ -37,7 +37,7 @@ export function AppShell({ children }: AppShellProps) {
   }, [])
 
   return (
-    <div className="min-h-screen w-full bg-shell-gradient flex">
+    <div className="min-h-screen w-full bg-white text-ink-100 flex">
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -45,7 +45,7 @@ export function AppShell({ children }: AppShellProps) {
       />
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar onMenuClick={() => setSidebarOpen(true)} unreadAlerts={unread} />
-        <main className="flex-1 px-4 lg:px-8 py-6 overflow-x-hidden">
+        <main className="flex-1 px-4 lg:px-8 py-6 overflow-x-hidden bg-white">
           <div className="max-w-7xl mx-auto space-y-6">
             <Breadcrumbs />
             {children}

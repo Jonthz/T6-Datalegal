@@ -3,8 +3,8 @@ import { useId } from 'react'
 import { cn } from '../../lib/cn'
 
 const baseField =
-  'w-full rounded-lg bg-white/[0.04] border border-white/10 text-ink-50 placeholder:text-ink-400 ' +
-  'focus:bg-white/[0.06] focus:border-brand-400/60 disabled:opacity-50 disabled:cursor-not-allowed'
+  'w-full rounded-lg bg-white border border-slate-300 text-ink-50 placeholder:text-ink-400 ' +
+  'focus:bg-white focus:border-brand-500/70 disabled:opacity-50 disabled:cursor-not-allowed'
 
 interface FieldShellProps {
   label?: string
@@ -120,7 +120,7 @@ export function Select({
         aria-invalid={error ? 'true' : undefined}
         className={cn(
           baseField,
-          'h-10 px-3 text-sm appearance-none bg-ink-900/60',
+          'h-10 px-3 text-sm appearance-none bg-white',
           error && 'border-rose-400/60',
           className
         )}
@@ -131,7 +131,7 @@ export function Select({
           </option>
         )}
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value} className="bg-ink-900 text-ink-50">
+          <option key={opt.value} value={opt.value} className="bg-white text-ink-50">
             {opt.label}
           </option>
         ))}

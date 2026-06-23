@@ -42,14 +42,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-auth-gradient flex items-center justify-center p-6">
+    <div className="min-h-screen bg-white text-ink-100 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <header className="text-center mb-6">
           <div className="h-12 w-12 mx-auto rounded-xl bg-gradient-to-br from-brand-400 to-sky-400 flex items-center justify-center font-bold text-ink-950 text-lg shadow-glass">
             DL
           </div>
-          <h1 className="mt-4 text-2xl font-semibold text-white">{t('app.title')}</h1>
-          <p className="text-sm text-ink-200 mt-1">{t('auth.tagline')}</p>
+          <h1 className="mt-4 text-2xl font-semibold text-ink-50">{t('app.title')}</h1>
+          <p className="text-sm text-ink-300 mt-1">{t('auth.tagline')}</p>
         </header>
         <GlassCard className="shadow-glass-lg">
           <h2 className="text-lg font-semibold text-ink-50">{t('auth.login')}</h2>
