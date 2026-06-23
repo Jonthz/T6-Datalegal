@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 
 class AuditPlanCreate(BaseModel):
+    """AuditPlanCreate schema/model definition."""
     name: str
     scope: str = ""
     period_start: date | None = None
@@ -15,6 +16,7 @@ class AuditPlanCreate(BaseModel):
 
 
 class AuditPlanUpdate(BaseModel):
+    """AuditPlanUpdate schema/model definition."""
     name: str | None = None
     scope: str | None = None
     period_start: date | None = None
@@ -25,6 +27,7 @@ class AuditPlanUpdate(BaseModel):
 
 
 class AuditPlanRead(BaseModel):
+    """AuditPlanRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int
@@ -40,6 +43,7 @@ class AuditPlanRead(BaseModel):
 
 
 class AuditFindingCreate(BaseModel):
+    """AuditFindingCreate schema/model definition."""
     audit_plan_id: int
     title: str
     description: str = ""
@@ -50,6 +54,7 @@ class AuditFindingCreate(BaseModel):
 
 
 class AuditFindingUpdate(BaseModel):
+    """AuditFindingUpdate schema/model definition."""
     title: str | None = None
     description: str | None = None
     evidence: str | None = None
@@ -60,6 +65,7 @@ class AuditFindingUpdate(BaseModel):
 
 
 class AuditFindingRead(BaseModel):
+    """AuditFindingRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int

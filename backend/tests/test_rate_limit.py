@@ -1,6 +1,5 @@
 """Sprint 6: IP-based rate limiting on /auth/login and /auth/mfa-verify (H-2)."""
 
-
 from app.core.config import settings
 
 
@@ -10,6 +9,7 @@ def _parse_limit(spec: str) -> int:
 
 
 class TestLoginRateLimit:
+    """TestLoginRateLimit schema/model definition."""
     def test_login_returns_429_after_threshold(self, client, tenant_a, session):
         """The 21st login from the same IP within a minute is rejected with 429."""
         from tests.conftest import _make_user
@@ -42,6 +42,7 @@ class TestLoginRateLimit:
 
 
 class TestMFAVerifyRateLimit:
+    """TestMFAVerifyRateLimit schema/model definition."""
     def test_mfa_verify_returns_429_after_threshold(self, client):
         """mfa-verify is bucketed independently of login but uses same limit."""
         threshold = _parse_limit(settings.MFA_RATE_LIMIT)
@@ -63,6 +64,7 @@ class TestMFAVerifyRateLimit:
 
 
 class TestRateLimitReset:
+    """TestRateLimitReset schema/model definition."""
     def test_counters_isolated_between_tests(self, client):
         """Sanity check: the autouse `_reset_rate_limiter` fixture works."""
         from app.core.rate_limit import limiter

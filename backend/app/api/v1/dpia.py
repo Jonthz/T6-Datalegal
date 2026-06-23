@@ -19,14 +19,25 @@ router = APIRouter(prefix="/dpias", tags=["dpias"])
 
 
 def _generate_dpia_pdf(dpia: DPIAssessment) -> bytes:
+    """Handle generate dpia pdf."""
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 16)
-    pdf.cell(0, 10, "Data Protection Impact Assessment (DPIA)", new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.cell(
+        0, 10, "Data Protection Impact Assessment (DPIA)", new_x="LMARGIN", new_y="NEXT", align="C"
+    )
     pdf.set_font("Helvetica", "", 12)
     pdf.ln(3)
-    pdf.cell(0, 8, f"DPIA ID: {dpia.id}  Version: {dpia.version}  Status: {dpia.status}", new_x="LMARGIN", new_y="NEXT")
-    pdf.cell(0, 8, f"Treatment Activity ID: {dpia.treatment_activity_id}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(
+        0,
+        8,
+        f"DPIA ID: {dpia.id}  Version: {dpia.version}  Status: {dpia.status}",
+        new_x="LMARGIN",
+        new_y="NEXT",
+    )
+    pdf.cell(
+        0, 8, f"Treatment Activity ID: {dpia.treatment_activity_id}", new_x="LMARGIN", new_y="NEXT"
+    )
     pdf.ln(4)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Step 1: Description of Processing", new_x="LMARGIN", new_y="NEXT")
@@ -45,7 +56,13 @@ def _generate_dpia_pdf(dpia: DPIAssessment) -> bytes:
     pdf.ln(5)
     if dpia.signed_at:
         pdf.set_font("Helvetica", "I", 10)
-        pdf.cell(0, 7, f"Signed by DPO (user id={dpia.signed_by_id}) at {dpia.signed_at.isoformat()}", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(
+            0,
+            7,
+            f"Signed by DPO (user id={dpia.signed_by_id}) at {dpia.signed_at.isoformat()}",
+            new_x="LMARGIN",
+            new_y="NEXT",
+        )
     return pdf.output()
 
 
@@ -56,6 +73,7 @@ def create_dpia(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create dpia."""
     dpia = DPIAssessment(
         tenant_id=tenant_id,
         treatment_activity_id=body.treatment_activity_id,
@@ -67,31 +85,39 @@ def create_dpia(
     db.commit()
     db.refresh(dpia)
     AuditLog.create_log(
-        db, action="dpia_created", resource="dpias",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"id={dpia.id}",
+        db,
+        action="dpia_created",
+        resource="dpias",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"id={dpia.id}",
     )
     return dpia
 
 
 @router.get("", response_model=list[DPIARead])
 def list_dpias(
-    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],
+    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """List dpias."""
     return db.query(DPIAssessment).filter(DPIAssessment.tenant_id == tenant_id).all()
 
 
 @router.get("/{dpia_id}", response_model=DPIARead)
 def get_dpia(
     dpia_id: int,
-    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],
+    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    dpia = db.query(DPIAssessment).filter(
-        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
-    ).first()
+    """Return dpia."""
+    dpia = (
+        db.query(DPIAssessment)
+        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
     return dpia
@@ -101,13 +127,16 @@ def get_dpia(
 def update_dpia(
     dpia_id: int,
     body: DPIAUpdate,
-    current_user: Annotated[User, Depends(require_permission("dpias", "u"))],
+    current_user: Annotated[User, Depends(require_permission("dpias", "u"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    dpia = db.query(DPIAssessment).filter(
-        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
-    ).first()
+    """Update dpia."""
+    dpia = (
+        db.query(DPIAssessment)
+        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -127,9 +156,11 @@ def sign_dpia(
     """DPO or SUPER_ADMIN signs the DPIA, generates and stores the PDF."""
     if current_user.role not in ("DPO", "SUPER_ADMIN"):
         raise HTTPException(status_code=403, detail="Only DPO or SUPER_ADMIN can sign a DPIA.")
-    dpia = db.query(DPIAssessment).filter(
-        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
-    ).first()
+    dpia = (
+        db.query(DPIAssessment)
+        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
 
@@ -142,8 +173,12 @@ def sign_dpia(
     db.refresh(dpia)
 
     AuditLog.create_log(
-        db, action="dpia_signed", resource="dpias",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"id={dpia_id} version={dpia.version}",
+        db,
+        action="dpia_signed",
+        resource="dpias",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"id={dpia_id} version={dpia.version}",
     )
     return dpia
 
@@ -151,14 +186,16 @@ def sign_dpia(
 @router.get("/{dpia_id}/pdf")
 def get_dpia_pdf(
     dpia_id: int,
-    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],
+    current_user: Annotated[User, Depends(require_permission("dpias", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
     """Return the stored DPIA PDF bytes."""
-    dpia = db.query(DPIAssessment).filter(
-        DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id
-    ).first()
+    dpia = (
+        db.query(DPIAssessment)
+        .filter(DPIAssessment.id == dpia_id, DPIAssessment.tenant_id == tenant_id)
+        .first()
+    )
     if not dpia:
         raise HTTPException(status_code=404, detail="DPIA not found.")
     if not dpia.pdf_bytes:

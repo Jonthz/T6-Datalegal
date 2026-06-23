@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 
 class DPIACreate(BaseModel):
+    """DPIACreate schema/model definition."""
     treatment_activity_id: int
     step1_description: str = ""
     step2_risk_analysis: str = ""
@@ -13,6 +14,7 @@ class DPIACreate(BaseModel):
 
 
 class DPIAUpdate(BaseModel):
+    """DPIAUpdate schema/model definition."""
     step1_description: str | None = None
     step2_risk_analysis: str | None = None
     step3_mitigations: str | None = None
@@ -20,6 +22,7 @@ class DPIAUpdate(BaseModel):
 
 
 class DPIARead(BaseModel):
+    """DPIARead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int

@@ -8,6 +8,7 @@ VALID_ROLES = {"SUPER_ADMIN", "DPO", "ADMIN", "DEPT_HEAD", "AUDITOR"}
 
 
 class UserCreate(BaseModel):
+    """UserCreate schema/model definition."""
     email: str
     password: str
     full_name: str
@@ -17,6 +18,7 @@ class UserCreate(BaseModel):
     @field_validator("role")
     @classmethod
     def validate_role(cls, v: str) -> str:
+        """Handle validate role."""
         if v not in VALID_ROLES:
             raise ValueError(f"Role must be one of {sorted(VALID_ROLES)}")
         return v
@@ -24,6 +26,7 @@ class UserCreate(BaseModel):
     @field_validator("password")
     @classmethod
     def validate_password(cls, v: str) -> str:
+        """Handle validate password."""
         is_valid, error = validate_password_strength(v)
         if not is_valid:
             raise ValueError(error)
@@ -31,6 +34,7 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    """UserUpdate schema/model definition."""
     email: str | None = None
     full_name: str | None = None
     role: str | None = None
@@ -41,6 +45,7 @@ class UserUpdate(BaseModel):
     @field_validator("role")
     @classmethod
     def validate_role(cls, v: str | None) -> str | None:
+        """Handle validate role."""
         if v is not None and v not in VALID_ROLES:
             raise ValueError(f"Role must be one of {sorted(VALID_ROLES)}")
         return v
@@ -48,6 +53,7 @@ class UserUpdate(BaseModel):
     @field_validator("password")
     @classmethod
     def validate_password(cls, v: str | None) -> str | None:
+        """Handle validate password."""
         if v is not None:
             is_valid, error = validate_password_strength(v)
             if not is_valid:
@@ -56,6 +62,7 @@ class UserUpdate(BaseModel):
 
 
 class UserRead(BaseModel):
+    """UserRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int

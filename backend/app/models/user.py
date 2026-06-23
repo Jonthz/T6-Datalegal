@@ -7,6 +7,7 @@ from app.db.base import TenantBase
 
 
 class User(TenantBase):
+    """User schema/model definition."""
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -25,7 +26,9 @@ class User(TenantBase):
     mfa_secret: Mapped[str | None] = mapped_column(String(255), nullable=True)
     mfa_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     # US-RF02-2: server-side inactivity tracking
-    last_activity_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_activity_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     # Relationships
     department: Mapped["Department | None"] = relationship(  # noqa: F821
@@ -39,6 +42,4 @@ class User(TenantBase):
         back_populates="head_user",
     )
     audit_logs: Mapped[list] = relationship("AuditLog", back_populates="user", lazy="noload")
-    enrollments: Mapped[list] = relationship(
-        "Enrollment", back_populates="user", lazy="noload"
-    )
+    enrollments: Mapped[list] = relationship("Enrollment", back_populates="user", lazy="noload")

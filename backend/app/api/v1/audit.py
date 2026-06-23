@@ -26,6 +26,7 @@ def list_audit_logs(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
 ):
+    """List audit logs."""
     q = db.query(AuditLog).filter(AuditLog.tenant_id == tenant_id)
     if action:
         q = q.filter(AuditLog.action == action)
@@ -47,6 +48,7 @@ def export_audit_csv(
     from_date: datetime | None = Query(None),
     to_date: datetime | None = Query(None),
 ):
+    """Handle export audit csv."""
     q = db.query(AuditLog).filter(AuditLog.tenant_id == tenant_id)
     if action:
         q = q.filter(AuditLog.action == action)
@@ -58,18 +60,22 @@ def export_audit_csv(
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["id", "tenant_id", "user_id", "action", "resource", "detail", "ip_address", "created_at"])
+    writer.writerow(
+        ["id", "tenant_id", "user_id", "action", "resource", "detail", "ip_address", "created_at"]
+    )
     for log in logs:
-        writer.writerow([
-            log.id,
-            log.tenant_id,
-            log.user_id,
-            log.action,
-            log.resource,
-            log.detail,
-            log.ip_address,
-            log.created_at.isoformat() if log.created_at else "",
-        ])
+        writer.writerow(
+            [
+                log.id,
+                log.tenant_id,
+                log.user_id,
+                log.action,
+                log.resource,
+                log.detail,
+                log.ip_address,
+                log.created_at.isoformat() if log.created_at else "",
+            ]
+        )
 
     csv_content = output.getvalue()
     return Response(

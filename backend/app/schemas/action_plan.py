@@ -4,13 +4,17 @@ from datetime import date, datetime
 
 from pydantic import BaseModel
 
+
 class ActionPlanTemplateCreate(BaseModel):
+    """ActionPlanTemplateCreate schema/model definition."""
     name: str
     description: str = ""
     applies_to_level: str = "ANY"  # HIGH | MEDIUM | ANY
     default_tasks: list[dict] = []
 
+
 class ActionPlanTemplateRead(BaseModel):
+    """ActionPlanTemplateRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int
@@ -21,7 +25,9 @@ class ActionPlanTemplateRead(BaseModel):
     default_tasks: list
     is_active: bool
 
+
 class ActionPlanCreate(BaseModel):
+    """ActionPlanCreate schema/model definition."""
     risk_assessment_id: int | None = None
     template_id: int | None = None
     title: str
@@ -29,14 +35,18 @@ class ActionPlanCreate(BaseModel):
     tasks: list[dict] = []
     target_date: date | None = None
 
+
 class ActionPlanUpdate(BaseModel):
+    """ActionPlanUpdate schema/model definition."""
     title: str | None = None
     description: str | None = None
     status: str | None = None
     tasks: list[dict] | None = None
     target_date: date | None = None
 
+
 class ActionPlanRead(BaseModel):
+    """ActionPlanRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int
