@@ -10,7 +10,8 @@ RTO: ≤4 hours (restore from latest VERIFIED backup)
 Retention: keeps last 30 backups, removes older ones automatically.
 
 Example crontab entry (daily at 02:00 UTC):
-    0 2 * * * cd /path/to/backend && /path/to/venv/bin/python scripts/backup.py >> /var/log/datalegal-backup.log 2>&1
+    0 2 * * * cd /path/to/backend && /path/to/venv/bin/python scripts/backup.py \
+        >> /var/log/datalegal-backup.log 2>&1
 """
 
 import hashlib
@@ -21,6 +22,8 @@ from pathlib import Path
 
 
 def compute_sha256(path: Path) -> str:
+    """Return the SHA-256 hex digest for a file."""
+
     h = hashlib.sha256()
     with path.open("rb") as fh:
         for chunk in iter(lambda: fh.read(65536), b""):
@@ -29,6 +32,8 @@ def compute_sha256(path: Path) -> str:
 
 
 def run_backup(db_path: Path, backup_dir: Path, retention_days: int = 30) -> int:
+    """Create, verify, and prune SQLite database backups."""
+
     if not db_path.exists():
         print(f"ERROR: Database file not found: {db_path.resolve()}", file=sys.stderr)
         return 1
@@ -66,6 +71,8 @@ def run_backup(db_path: Path, backup_dir: Path, retention_days: int = 30) -> int
 
 
 def main() -> int:
+    """Parse CLI arguments and run the backup job."""
+
     import argparse
 
     parser = argparse.ArgumentParser(description="DataLegal 2.0 — database backup (US-RF23-1)")

@@ -7,12 +7,16 @@ from pydantic import BaseModel
 # ── BackupRecord ──────────────────────────────────────────────────────────────
 
 class BackupRecordCreate(BaseModel):
+    """Payload for creating a backup record manually."""
+
     tenant_id: int | None = None
     filename: str
     notes: str = ""
 
 
 class BackupRecordRead(BaseModel):
+    """Backup record returned by the API."""
+
     model_config = {"from_attributes": True}
 
     id: int
@@ -29,6 +33,8 @@ class BackupRecordRead(BaseModel):
 # ── Verification result ───────────────────────────────────────────────────────
 
 class BackupVerifyResult(BaseModel):
+    """Result of verifying a backup checksum."""
+
     backup_id: int
     filename: str
     expected_checksum: str

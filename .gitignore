@@ -24,3 +24,5 @@ backend/backups/
 
 # Frontend lock files (not versioned in this repo)
 package-lock.json
+
+.agents

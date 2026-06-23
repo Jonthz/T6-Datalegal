@@ -38,6 +38,8 @@ _TA_CSV_COLUMNS = [
 
 
 class BulkImportRequest(BaseModel):
+    """Bulk import payload with raw treatment activity rows."""
+
     activities: list[dict]
 
 
