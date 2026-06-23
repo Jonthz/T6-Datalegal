@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from tests.conftest import auth_headers
 
 
-def test_active_session_works(client, dpo_user, dpo_token):
+def test_active_session_works(client, dpo_user, dpo_token):  # pylint: disable=unused-argument
     """A freshly-issued token with no inactivity should succeed."""
     resp = client.get("/api/v1/treatment-activities", headers=auth_headers(dpo_token))
     assert resp.status_code == 200

@@ -22,10 +22,15 @@ def create_remediation(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    ra = db.query(RiskAssessment).filter(
-        RiskAssessment.id == body.risk_assessment_id,
-        RiskAssessment.tenant_id == tenant_id,
-    ).first()
+    """Create remediation."""
+    ra = (
+        db.query(RiskAssessment)
+        .filter(
+            RiskAssessment.id == body.risk_assessment_id,
+            RiskAssessment.tenant_id == tenant_id,
+        )
+        .first()
+    )
     if not ra:
         raise HTTPException(status_code=404, detail="Risk assessment not found.")
 
@@ -45,8 +50,11 @@ def create_remediation(
     db.commit()
     db.refresh(remediation)
     AuditLog.create_log(
-        db, action="remediation_created", resource="remediations",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="remediation_created",
+        resource="remediations",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"id={remediation.id} ra_id={body.risk_assessment_id} risk_before={ra.risk_score}",
     )
     return remediation
@@ -54,7 +62,7 @@ def create_remediation(
 
 @router.get("", response_model=list[RemediationRead])
 def list_remediations(
-    current_user: Annotated[User, Depends(require_permission("remediations", "r"))],
+    current_user: Annotated[User, Depends(require_permission("remediations", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     risk_assessment_id: int | None = Query(None),
@@ -62,6 +70,7 @@ def list_remediations(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List remediations."""
     q = db.query(Remediation).filter(Remediation.tenant_id == tenant_id)
     if risk_assessment_id:
         q = q.filter(Remediation.risk_assessment_id == risk_assessment_id)
@@ -73,13 +82,16 @@ def list_remediations(
 @router.get("/{remediation_id}", response_model=RemediationRead)
 def get_remediation(
     remediation_id: int,
-    current_user: Annotated[User, Depends(require_permission("remediations", "r"))],
+    current_user: Annotated[User, Depends(require_permission("remediations", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    rem = db.query(Remediation).filter(
-        Remediation.id == remediation_id, Remediation.tenant_id == tenant_id
-    ).first()
+    """Return remediation."""
+    rem = (
+        db.query(Remediation)
+        .filter(Remediation.id == remediation_id, Remediation.tenant_id == tenant_id)
+        .first()
+    )
     if not rem:
         raise HTTPException(status_code=404, detail="Remediation not found.")
     return rem
@@ -93,9 +105,12 @@ def update_remediation(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    rem = db.query(Remediation).filter(
-        Remediation.id == remediation_id, Remediation.tenant_id == tenant_id
-    ).first()
+    """Update remediation."""
+    rem = (
+        db.query(Remediation)
+        .filter(Remediation.id == remediation_id, Remediation.tenant_id == tenant_id)
+        .first()
+    )
     if not rem:
         raise HTTPException(status_code=404, detail="Remediation not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -103,8 +118,11 @@ def update_remediation(
     db.commit()
     db.refresh(rem)
     AuditLog.create_log(
-        db, action="remediation_updated", resource="remediations",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="remediation_updated",
+        resource="remediations",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"id={remediation_id} status={rem.status}",
     )
     return rem

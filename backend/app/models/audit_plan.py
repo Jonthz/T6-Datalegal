@@ -51,4 +51,6 @@ class AuditFinding(TenantBase):
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="OPEN", index=True)
     remediation_notes: Mapped[str] = mapped_column(Text, nullable=False, default="")
     remediation_date: Mapped[date | None] = mapped_column(Date, nullable=True)
-    created_by_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    created_by_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )

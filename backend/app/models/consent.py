@@ -35,7 +35,9 @@ class ConsentRecord(TenantBase):
     is_revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     revocation_reason: Mapped[str] = mapped_column(Text, nullable=False, default="")
-    created_by_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    created_by_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )
 
 
 class CookieBanner(TenantBase):
@@ -48,7 +50,9 @@ class CookieBanner(TenantBase):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     effective_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_by_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    created_by_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )
 
 
 class CookieConsent(TenantBase):

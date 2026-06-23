@@ -6,7 +6,9 @@ from tests.conftest import _make_user, auth_headers
 
 
 class TestUserCRUD:
+    """TestUserCRUD schema/model definition."""
     def test_create_user_success(self, client: TestClient, admin_token, tenant_a):
+        """Test that create user success behaves as expected."""
         resp = client.post(
             "/api/v1/users",
             json={
@@ -24,15 +26,22 @@ class TestUserCRUD:
         assert data["tenant_id"] == tenant_a.id
 
     def test_create_user_duplicate_email(self, client: TestClient, admin_token, tenant_a, session):
+        """Test that create user duplicate email behaves as expected."""
         _make_user(session, tenant_id=tenant_a.id, email="dup@test.com", role="AUDITOR")
         resp = client.post(
             "/api/v1/users",
-            json={"email": "dup@test.com", "password": "Valid@Pass1!", "full_name": "Dup", "role": "AUDITOR"},
+            json={
+                "email": "dup@test.com",
+                "password": "Valid@Pass1!",
+                "full_name": "Dup",
+                "role": "AUDITOR",
+            },
             headers=auth_headers(admin_token),
         )
         assert resp.status_code == 409
 
     def test_list_users(self, client: TestClient, admin_token, tenant_a, session):
+        """Test that list users behaves as expected."""
         _make_user(session, tenant_id=tenant_a.id, email="listed1@test.com", role="AUDITOR")
         resp = client.get("/api/v1/users", headers=auth_headers(admin_token))
         assert resp.status_code == 200
@@ -40,12 +49,14 @@ class TestUserCRUD:
         assert len(resp.json()) >= 1
 
     def test_get_user(self, client: TestClient, admin_token, tenant_a, session):
+        """Test that get user behaves as expected."""
         u = _make_user(session, tenant_id=tenant_a.id, email="getuser@test.com", role="AUDITOR")
         resp = client.get(f"/api/v1/users/{u.id}", headers=auth_headers(admin_token))
         assert resp.status_code == 200
         assert resp.json()["email"] == "getuser@test.com"
 
     def test_update_user(self, client: TestClient, admin_token, tenant_a, session):
+        """Test that update user behaves as expected."""
         u = _make_user(session, tenant_id=tenant_a.id, email="update@test.com", role="AUDITOR")
         resp = client.put(
             f"/api/v1/users/{u.id}",
@@ -56,24 +67,34 @@ class TestUserCRUD:
         assert resp.json()["full_name"] == "Updated Name"
 
     def test_delete_user(self, client: TestClient, admin_token, tenant_a, session):
+        """Test that delete user behaves as expected."""
         u = _make_user(session, tenant_id=tenant_a.id, email="delete@test.com", role="AUDITOR")
         resp = client.delete(f"/api/v1/users/{u.id}", headers=auth_headers(admin_token))
         assert resp.status_code == 204
 
     def test_get_nonexistent_user(self, client: TestClient, admin_token):
+        """Test that get nonexistent user behaves as expected."""
         resp = client.get("/api/v1/users/99999", headers=auth_headers(admin_token))
         assert resp.status_code == 404
 
     def test_create_invalid_role(self, client: TestClient, admin_token):
+        """Test that create invalid role behaves as expected."""
         resp = client.post(
             "/api/v1/users",
-            json={"email": "badrole@test.com", "password": "Valid@Pass1!", "full_name": "Bad Role", "role": "GOD"},
+            json={
+                "email": "badrole@test.com",
+                "password": "Valid@Pass1!",
+                "full_name": "Bad Role",
+                "role": "GOD",
+            },
             headers=auth_headers(admin_token),
         )
         assert resp.status_code == 422
 
     def test_create_user_with_department(self, client: TestClient, admin_token, tenant_a, session):
+        """Test that create user with department behaves as expected."""
         from app.models.department import Department
+
         dept = Department(tenant_id=tenant_a.id, name="Engineering")
         session.add(dept)
         session.flush()

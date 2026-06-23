@@ -37,11 +37,13 @@ def list_template_types(
     """List all supported document template types (US-RF14-1 + US-RF33-1)."""
     result = []
     for dt in sorted(ALL_TEMPLATE_TYPES):
-        result.append(TemplateTypeInfo(
-            doc_type=dt,
-            category="CORE" if dt in CORE_TEMPLATE_TYPES else "EXPANDED",
-            description=_TEMPLATE_DESCRIPTIONS.get(dt, ""),
-        ))
+        result.append(
+            TemplateTypeInfo(
+                doc_type=dt,
+                category="CORE" if dt in CORE_TEMPLATE_TYPES else "EXPANDED",
+                description=_TEMPLATE_DESCRIPTIONS.get(dt, ""),
+            )
+        )
     return result
 
 
@@ -52,6 +54,7 @@ def create_document(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
+    """Create document."""
     if body.doc_type not in ALL_TEMPLATE_TYPES:
         raise HTTPException(
             status_code=400,
@@ -61,7 +64,7 @@ def create_document(
     db.query(LegalDocument).filter(
         LegalDocument.tenant_id == tenant_id,
         LegalDocument.doc_type == body.doc_type,
-        LegalDocument.is_current == True,  # noqa: E712
+        LegalDocument.is_current.is_(True),  # noqa: E712
     ).update({"is_current": False})
 
     doc = LegalDocument(
@@ -78,8 +81,11 @@ def create_document(
     db.commit()
     db.refresh(doc)
     AuditLog.create_log(
-        db, action="legal_document_created", resource="legal_documents",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="legal_document_created",
+        resource="legal_documents",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"type={body.doc_type} version={body.version}",
     )
     return doc
@@ -87,7 +93,7 @@ def create_document(
 
 @router.get("", response_model=list[LegalDocumentRead])
 def list_documents(
-    current_user: Annotated[User, Depends(require_permission("legal_documents", "r"))],
+    current_user: Annotated[User, Depends(require_permission("legal_documents", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
     doc_type: str | None = Query(None),
@@ -95,24 +101,28 @@ def list_documents(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
 ):
+    """List documents."""
     q = db.query(LegalDocument).filter(LegalDocument.tenant_id == tenant_id)
     if doc_type:
         q = q.filter(LegalDocument.doc_type == doc_type)
     if current_only:
-        q = q.filter(LegalDocument.is_current == True)  # noqa: E712
+        q = q.filter(LegalDocument.is_current.is_(True))  # noqa: E712
     return q.order_by(LegalDocument.id.desc()).offset(skip).limit(limit).all()
 
 
 @router.get("/{doc_id}", response_model=LegalDocumentRead)
 def get_document(
     doc_id: int,
-    current_user: Annotated[User, Depends(require_permission("legal_documents", "r"))],
+    current_user: Annotated[User, Depends(require_permission("legal_documents", "r"))],  # pylint: disable=unused-argument
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    doc = db.query(LegalDocument).filter(
-        LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id
-    ).first()
+    """Return document."""
+    doc = (
+        db.query(LegalDocument)
+        .filter(LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id)
+        .first()
+    )
     if not doc:
         raise HTTPException(status_code=404, detail="Legal document not found.")
     return doc
@@ -126,15 +136,21 @@ def download_pdf(
     db: Session = Depends(get_db),
 ):
     """Generate and download a PDF for the legal document (US-RF14-1)."""
-    doc = db.query(LegalDocument).filter(
-        LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id
-    ).first()
+    doc = (
+        db.query(LegalDocument)
+        .filter(LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id)
+        .first()
+    )
     if not doc:
         raise HTTPException(status_code=404, detail="Legal document not found.")
     pdf_bytes = _generate_pdf(doc)
     AuditLog.create_log(
-        db, action="legal_document_pdf_downloaded", resource="legal_documents",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"doc_id={doc_id}",
+        db,
+        action="legal_document_pdf_downloaded",
+        resource="legal_documents",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"doc_id={doc_id}",
     )
     filename = f"{doc.doc_type.lower()}_v{doc.version}.pdf"
     return Response(
@@ -146,7 +162,9 @@ def download_pdf(
 
 # ── Helpers ───
 
+
 def _render_default_content(doc_type: str, params: dict) -> str:
+    """Handle render default content."""
     company = params.get("company_name", "[Company]")
     dpo = params.get("dpo_name", "[DPO]")
     sector = params.get("sector", "")
@@ -157,21 +175,21 @@ def _render_default_content(doc_type: str, params: dict) -> str:
             f"PRIVACY POLICY\n\nCompany: {company}\nSector: {sector}\nDPO: {dpo}\n"
             f"Effective date: {date_str}\n\n"
             "1. Data Controller\nThis organization acts as data controller under LOPDP.\n\n"
-            "2. Purposes and Legal Basis\nPersonal data is processed for the purposes and legal bases "
+            "2. Purposes and Legal Basis\nPersonal data is processed for the purposes and legal bases "  # pylint: disable=line-too-long
             "described in the Data Registry.\n\n"
-            "3. Data Subject Rights\nData subjects may exercise ARCO rights (Access, Rectification, "
+            "3. Data Subject Rights\nData subjects may exercise ARCO rights (Access, Rectification, "  # pylint: disable=line-too-long
             "Cancellation, Opposition) as established by LOPDP Art.7.\n\n"
-            "4. Retention\nData is retained per the Retention Policy and applicable legal requirements.\n\n"
+            "4. Retention\nData is retained per the Retention Policy and applicable legal requirements.\n\n"  # pylint: disable=line-too-long
             "5. Contact\nDPO: " + dpo
         ),
         "SECURITY_POLICY": (
             f"INFORMATION SECURITY POLICY\n\nCompany: {company}\nDPO: {dpo}\n"
             f"Effective date: {date_str}\n\n"
             "1. Scope\nThis policy applies to all information assets and processing activities.\n\n"
-            "2. Classification\nInformation assets are classified by sensitivity (ORDINARY/SENSITIVE) "
+            "2. Classification\nInformation assets are classified by sensitivity (ORDINARY/SENSITIVE) "  # pylint: disable=line-too-long
             "and criticality (LOW/MEDIUM/HIGH).\n\n"
             "3. Access Control\nRole-based access control (RBAC) is enforced per LOPDP RNF-04.\n\n"
-            "4. Incident Management\nSecurity incidents are reported to SPDP within 72 hours per LOPDP Art.39.\n\n"
+            "4. Incident Management\nSecurity incidents are reported to SPDP within 72 hours per LOPDP Art.39.\n\n"  # pylint: disable=line-too-long
             "5. Review\nThis policy is reviewed annually or after significant incidents."
         ),
         "COOKIE_NOTICE": (
@@ -191,18 +209,18 @@ def _render_default_content(doc_type: str, params: dict) -> str:
         "CONTRACTUAL_CLAUSE": (
             f"DATA PROTECTION CONTRACTUAL CLAUSE\n\nParties: {company}\n"
             f"Effective date: {date_str}\n\n"
-            "Both parties agree to process personal data in accordance with LOPDP and applicable regulations. "
-            "Each party is responsible for its own processing activities and must implement appropriate "
+            "Both parties agree to process personal data in accordance with LOPDP and applicable regulations. "  # pylint: disable=line-too-long
+            "Each party is responsible for its own processing activities and must implement appropriate "  # pylint: disable=line-too-long
             "technical and organizational measures."
         ),
         "PROCESSOR_CONTRACT": (
             f"DATA PROCESSING AGREEMENT (DPA)\n\nController: {company}\nDPO: {dpo}\n"
             f"Effective date: {date_str}\n\n"
-            "1. Subject Matter\nThe Processor will process personal data on behalf of the Controller "
+            "1. Subject Matter\nThe Processor will process personal data on behalf of the Controller "  # pylint: disable=line-too-long
             "as described in Annex A.\n\n"
-            "2. Obligations\nThe Processor shall process data only on documented instructions from the Controller.\n\n"
-            "3. Security\nThe Processor shall implement appropriate technical measures per LOPDP RNF-04.\n\n"
-            "4. Sub-processors\nThe Processor shall not engage sub-processors without prior written consent.\n\n"
+            "2. Obligations\nThe Processor shall process data only on documented instructions from the Controller.\n\n"  # pylint: disable=line-too-long
+            "3. Security\nThe Processor shall implement appropriate technical measures per LOPDP RNF-04.\n\n"  # pylint: disable=line-too-long
+            "4. Sub-processors\nThe Processor shall not engage sub-processors without prior written consent.\n\n"  # pylint: disable=line-too-long
             "5. Termination\nUpon termination, all data shall be deleted or returned."
         ),
     }
@@ -227,7 +245,9 @@ def _generate_pdf(doc: LegalDocument) -> bytes:
     pdf.multi_cell(w, 10, _latin1(doc.title), align="C")
     pdf.ln(2)
     pdf.set_font("Helvetica", size=10)
-    pdf.multi_cell(w, 6, _latin1(f"Version: {doc.version}  Effective date: {doc.effective_date}"), align="C")
+    pdf.multi_cell(
+        w, 6, _latin1(f"Version: {doc.version}  Effective date: {doc.effective_date}"), align="C"
+    )
     pdf.ln(5)
 
     # Content (multi_cell handles word wrap)
@@ -245,6 +265,11 @@ def _generate_pdf(doc: LegalDocument) -> bytes:
     # Footer
     pdf.set_y(-20)
     pdf.set_font("Helvetica", "I", 8)
-    pdf.multi_cell(w, 5, _latin1(f"DataLegal 2.0 - Generated document - {doc.doc_type} v{doc.version}"), align="C")
+    pdf.multi_cell(
+        w,
+        5,
+        _latin1(f"DataLegal 2.0 - Generated document - {doc.doc_type} v{doc.version}"),
+        align="C",
+    )
 
     return bytes(pdf.output())

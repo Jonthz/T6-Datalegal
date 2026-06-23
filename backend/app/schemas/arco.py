@@ -9,6 +9,7 @@ ARCO_STATUSES = ["RECEIVED", "VERIFYING", "IN_PROGRESS", "RESPONDED", "CLOSED", 
 
 
 class ARCORequestCreate(BaseModel):
+    """ARCORequestCreate schema/model definition."""
     request_type: str
     requester_name: str
     requester_email: str
@@ -17,6 +18,7 @@ class ARCORequestCreate(BaseModel):
 
 
 class ARCORequestUpdate(BaseModel):
+    """ARCORequestUpdate schema/model definition."""
     status: str | None = None
     assigned_dpo_id: int | None = None
     response_text: str | None = None
@@ -24,6 +26,7 @@ class ARCORequestUpdate(BaseModel):
 
 
 class ARCORequestRead(BaseModel):
+    """ARCORequestRead schema/model definition."""
     model_config = {"from_attributes": True}
 
     id: int

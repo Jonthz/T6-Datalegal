@@ -19,6 +19,7 @@ def list_tenants(
     _: Annotated[User, Depends(require_super_admin)],
     db: Session = Depends(get_db),
 ):
+    """List tenants."""
     return db.query(Tenant).all()
 
 
@@ -28,6 +29,7 @@ def get_tenant(
     _: Annotated[User, Depends(require_super_admin)],
     db: Session = Depends(get_db),
 ):
+    """Return tenant."""
     tenant = db.get(Tenant, tenant_id)
     if not tenant:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tenant not found.")
@@ -68,7 +70,9 @@ def provision_tenant(
     # Check email uniqueness
     existing_user = db.query(User).filter(User.email == body.admin_user.email).first()
     if existing_user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered.")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Email already registered."
+        )
 
     # Create first admin user
     admin = User(

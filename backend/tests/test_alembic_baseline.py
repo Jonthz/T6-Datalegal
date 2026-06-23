@@ -22,6 +22,7 @@ BASELINE = Path(__file__).resolve().parents[1] / "alembic" / "versions"
 
 
 def _load_baseline_module():
+    """Handle load baseline module."""
     files = sorted(BASELINE.glob("*_baseline_schema_*.py"))
     assert files, "Expected an Alembic baseline revision in alembic/versions/"
     path = files[0]
@@ -32,7 +33,9 @@ def _load_baseline_module():
 
 
 class TestAlembicBaseline:
+    """TestAlembicBaseline schema/model definition."""
     def test_baseline_revision_present(self):
+        """Test that baseline revision present behaves as expected."""
         module = _load_baseline_module()
         assert module.down_revision is None, "Baseline must be the first revision"
         assert module.revision
