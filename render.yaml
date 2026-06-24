@@ -1,0 +1,29 @@
+services:
+  - type: web
+    runtime: docker
+    name: datalegal-backend
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SHOW_DOCS
+        value: "false"
+      - key: SEED_DEV_DATA
+        value: "false"
+      - key: SEED_MOCK_DATA
+        value: "false"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: ALGORITHM
+        value: HS256
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: MFA_ENCRYPTION_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
