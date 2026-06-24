@@ -10,9 +10,10 @@
   }
 
   body {
-    @apply bg-ink-950 text-ink-100 antialiased;
+    @apply bg-slate-50 text-ink-100 antialiased;
     font-family:
-      'Inter',
+      'Aptos',
+      'Segoe UI Variable',
       ui-sans-serif,
       system-ui,
       -apple-system,
@@ -21,7 +22,24 @@
       'Helvetica Neue',
       Arial,
       sans-serif;
+    font-feature-settings:
+      'cv02' 1,
+      'cv03' 1,
+      'cv04' 1;
     text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family:
+      'Aptos Display',
+      'Segoe UI Variable Display',
+      'Aptos',
+      'Segoe UI Variable',
+      ui-sans-serif,
+      system-ui,
+      sans-serif;
   }
 
   *:focus-visible {
@@ -31,19 +49,13 @@
 
 @layer components {
   .glass-surface {
-    background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(18px) saturate(120%);
-    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    background-color: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.10);
-    box-shadow:
-      0 10px 30px -16px rgba(15, 23, 42, 0.22),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.32);
   }
 
   .glass-surface-light {
-    background-color: rgba(248, 250, 252, 0.88);
-    backdrop-filter: blur(14px) saturate(120%);
-    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    background-color: rgba(248, 250, 252, 0.96);
     border: 1px solid rgba(15, 23, 42, 0.10);
   }
 

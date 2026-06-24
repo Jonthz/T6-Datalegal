@@ -20,7 +20,7 @@ export function GlassCard({
       className={cn(
         'glass-surface rounded-glass',
         padded && 'p-6',
-        hoverable && 'transition hover:bg-slate-50 hover:border-slate-300',
+        hoverable && 'transition hover:border-brand-200 hover:shadow-glass-lg',
         className
       )}
     >

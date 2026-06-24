@@ -302,6 +302,6 @@ def _generate_audit_pdf(plan: AuditPlan, findings: list[AuditFinding]) -> bytes:
     # Footer
     pdf.set_y(-20)
     pdf.set_font("Helvetica", "I", 8)
-    pdf.multi_cell(w, 5, "DataLegal 2.0 - Audit Report - Confidential", align="C")
+    pdf.multi_cell(w, 5, "DataLegal - Audit Report - Confidential", align="C")
 
     return bytes(pdf.output())

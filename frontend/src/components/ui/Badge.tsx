@@ -29,7 +29,7 @@ export function Badge({ tone = 'neutral', icon, className, children, ...rest }: 
     <span
       {...rest}
       className={cn(
-        'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium',
+        'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold',
         toneClasses[tone],
         className
       )}
@@ -84,5 +84,12 @@ export function StatusBadge({ status }: { status: string }) {
           : upper === 'REJECTED' || upper === 'FAILED' || upper === 'EXPIRED'
             ? 'danger'
             : 'neutral'
-  return <Badge tone={tone}>{upper.replace(/_/g, ' ')}</Badge>
+  return (
+    <Badge
+      tone={tone}
+      icon={<span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />}
+    >
+      {upper.replace(/_/g, ' ')}
+    </Badge>
+  )
 }

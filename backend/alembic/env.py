@@ -1,4 +1,4 @@
-"""Alembic environment for DataLegal 2.0.
+"""Alembic environment for DataLegal.
 
 The connection URL is sourced from ``app.core.config.settings.DATABASE_URL``
 so a single env var drives both runtime and migrations. ``target_metadata``

@@ -15,15 +15,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-brand-500 text-white hover:bg-brand-400 active:bg-brand-600 shadow-glass disabled:bg-brand-500/40',
+    'bg-brand-700 text-white hover:bg-brand-600 active:bg-brand-800 shadow-glass disabled:bg-brand-700/40',
   secondary:
-    'bg-slate-100 text-ink-50 border border-slate-300 hover:bg-slate-200 active:bg-slate-300 disabled:opacity-50',
+    'bg-white text-ink-50 border border-slate-300 hover:bg-slate-50 active:bg-slate-100 shadow-sm disabled:opacity-50',
   ghost:
-    'bg-white text-ink-100 border border-slate-200 hover:bg-slate-100 active:bg-slate-200 disabled:opacity-50',
+    'bg-white text-ink-100 border border-slate-200 hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50',
   danger:
     'bg-rose-500 text-white hover:bg-rose-400 active:bg-rose-600 shadow-glass disabled:bg-rose-500/40',
   subtle:
-    'bg-slate-50 text-ink-100 border border-slate-300 hover:bg-slate-100 active:bg-slate-200 disabled:opacity-50',
+    'bg-slate-50 text-ink-100 border border-slate-200 hover:bg-slate-100 active:bg-slate-200 disabled:opacity-50',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -51,8 +51,8 @@ export function Button({
       type={type ?? 'button'}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center font-medium rounded-lg transition-colors',
-        'disabled:cursor-not-allowed',
+        'inline-flex items-center justify-center font-semibold rounded-md transition-colors',
+        'focus:outline-none focus:ring-2 focus:ring-brand-100 focus:ring-offset-1 disabled:cursor-not-allowed',
         variantClasses[variant],
         sizeClasses[size],
         fullWidth && 'w-full',

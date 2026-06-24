@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { cn } from '../../lib/cn'
 import { EmptyState, LoadingState, ErrorState } from './states'
+import { EmptyTableIcon } from './Icons'
 
 export interface DataTableColumn<T> {
   key: string
@@ -54,23 +55,28 @@ export function DataTable<T>({
 
   if (!rows.length) {
     return (
-      <EmptyState title={emptyTitle} description={emptyDescription} action={emptyAction} />
+      <EmptyState
+        title={emptyTitle}
+        description={emptyDescription}
+        icon={<EmptyTableIcon className="h-6 w-6" />}
+        action={emptyAction}
+      />
     )
   }
 
   return (
-    <div className={cn('overflow-x-auto scrollbar-thin', className)}>
+    <div className={cn('overflow-x-auto scrollbar-thin rounded-md border border-slate-200 bg-white', className)}>
       <table className="min-w-full text-sm">
         {caption && <caption className="sr-only">{caption}</caption>}
-        <thead>
-          <tr className="text-xs uppercase tracking-wide text-ink-300 border-b border-slate-200">
+        <thead className="bg-slate-50/90">
+          <tr className="text-xs uppercase tracking-wide text-ink-200 border-b border-slate-200">
             {columns.map((col) => (
               <th
                 key={col.key}
                 scope="col"
                 style={col.width ? { width: col.width } : undefined}
                 className={cn(
-                  'px-4 py-2.5 font-medium whitespace-nowrap',
+                  'px-4 py-2.5 font-semibold whitespace-nowrap',
                   alignClass[col.align ?? 'left'],
                   col.className
                 )}
@@ -85,8 +91,8 @@ export function DataTable<T>({
             <tr
               key={rowKey(row, idx)}
               className={cn(
-                'transition-colors',
-                onRowClick && 'cursor-pointer hover:bg-slate-50'
+                'group transition-colors hover:bg-slate-50/80',
+                onRowClick && 'cursor-pointer'
               )}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
             >
@@ -94,7 +100,7 @@ export function DataTable<T>({
                 <td
                   key={col.key}
                   className={cn(
-                    'px-4 py-3 text-ink-100 align-top',
+                    'px-4 py-3 text-ink-100 align-top first:font-medium',
                     alignClass[col.align ?? 'left'],
                     col.className
                   )}

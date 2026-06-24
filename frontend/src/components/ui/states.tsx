@@ -12,7 +12,7 @@ interface LoadingStateProps {
   rows?: number
 }
 
-export function LoadingState({ label = 'Loading…', rows = 0, className }: LoadingStateProps) {
+export function LoadingState({ label = 'Loading...', rows = 0, className }: LoadingStateProps) {
   if (rows > 0) {
     return (
       <div className={cn('space-y-2', className)} role="status" aria-live="polite" aria-label={label}>
@@ -51,7 +51,7 @@ export function EmptyState({ title, description, icon, action, className }: Empt
       )}
     >
       {icon && (
-        <div className="h-12 w-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-ink-200 mb-3">
+        <div className="h-12 w-12 rounded-md bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-700 mb-3">
           {icon}
         </div>
       )}
@@ -81,11 +81,11 @@ export function ErrorState({
     <div
       role="alert"
       className={cn(
-        'flex flex-col items-center text-center py-10 px-6 rounded-glass border border-rose-400/20 bg-rose-500/5',
+        'flex flex-col items-center text-center py-10 px-6 rounded-glass border border-rose-200 bg-rose-50',
         className
       )}
     >
-      <div className="h-10 w-10 rounded-full bg-rose-50 text-rose-700 flex items-center justify-center mb-3">
+      <div className="h-10 w-10 rounded-md bg-white border border-rose-100 text-rose-700 flex items-center justify-center mb-3">
         <span aria-hidden>!</span>
       </div>
       <h3 className="text-base font-semibold text-rose-900">{title}</h3>

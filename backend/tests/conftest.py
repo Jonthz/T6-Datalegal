@@ -1,5 +1,5 @@
 """
-Test configuration and shared fixtures for DataLegal 2.0 test suite.
+Test configuration and shared fixtures for DataLegal test suite.
 Uses SQLite in-memory DB for fast, isolated tests.
 """
 

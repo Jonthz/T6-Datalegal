@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { cn } from '../../lib/cn'
 import { Button } from './Button'
+import { CloseIcon } from './Icons'
 
 interface ModalProps {
   open: boolean
@@ -52,7 +53,7 @@ export function Modal({
   return (
     <div
       role="presentation"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-950/55 backdrop-blur-[2px]"
       onClick={onClose}
     >
       <div
@@ -63,7 +64,7 @@ export function Modal({
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
         className={cn(
-          'glass-surface rounded-glass w-full p-6 shadow-glass-lg',
+          'glass-surface rounded-glass w-full p-6 shadow-glass-lg border-slate-200',
           sizeClasses[size]
         )}
       >
@@ -73,7 +74,7 @@ export function Modal({
             {description && <p className="text-sm text-ink-300 mt-0.5">{description}</p>}
           </div>
           <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close dialog">
-            ✕
+            <CloseIcon className="h-4 w-4" />
           </Button>
         </header>
         <div className="space-y-4">{children}</div>

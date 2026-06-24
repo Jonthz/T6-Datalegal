@@ -11,7 +11,7 @@ _is_prod = settings.ENVIRONMENT == "production"
 _docs_enabled = settings.SHOW_DOCS and not _is_prod
 
 app = FastAPI(
-    title="DataLegal 2.0 API",
+    title="DataLegal API",
     description="Multi-tenant LOPDP compliance platform",
     version="0.1.0",
     docs_url="/api/docs" if _docs_enabled else None,

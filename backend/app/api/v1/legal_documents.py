@@ -267,7 +267,7 @@ def _generate_pdf(doc: LegalDocument) -> bytes:
     # Footer
     pdf.set_y(-20)
     pdf.set_font("Helvetica", "I", 8)
-    footer = _latin1(f"DataLegal 2.0 - Generated document - {doc.doc_type} v{doc.version}")
+    footer = _latin1(f"DataLegal - Generated document - {doc.doc_type} v{doc.version}")
     pdf.multi_cell(w, 5, footer, align="C")
 
     return bytes(pdf.output())
