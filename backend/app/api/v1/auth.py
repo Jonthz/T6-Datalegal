@@ -89,6 +89,7 @@ def login(
     # Successful password — reset failed attempts
     user.failed_attempts = 0
     user.locked_until = None
+    user.last_activity_at = now_utc
     db.commit()
 
     if user.mfa_enabled:
@@ -159,6 +160,9 @@ def mfa_verify(
             ip_address=ip,
         )
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid TOTP code.")
+
+    user.last_activity_at = datetime.now(timezone.utc)
+    db.commit()
 
     access_token = create_access_token(
         {
