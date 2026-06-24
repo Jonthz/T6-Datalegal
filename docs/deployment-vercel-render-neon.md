@@ -41,7 +41,7 @@ ENVIRONMENT=production
 DATABASE_URL=<Neon Postgres URL con sslmode=require>
 SECRET_KEY=<random 48+ chars>
 MFA_ENCRYPTION_KEY=<Fernet key>
-CORS_ORIGINS=https://<frontend>.vercel.app
+CORS_ORIGINS=https://datalegal-frontend.vercel.app
 SHOW_DOCS=false
 SEED_DEV_DATA=false
 SEED_MOCK_DATA=false
@@ -124,7 +124,7 @@ Actualizar `frontend/vercel.json` cuando Render entregue la URL real:
 Despues del primer deploy de Vercel, volver a Render y ajustar:
 
 ```text
-CORS_ORIGINS=https://<frontend>.vercel.app
+CORS_ORIGINS=https://datalegal-frontend.vercel.app
 ```
 
 Si luego se usa dominio propio, agregarlo tambien separado por coma:

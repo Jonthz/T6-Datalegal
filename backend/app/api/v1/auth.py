@@ -189,6 +189,12 @@ def mfa_setup(
     db: Session = Depends(get_db),
 ):
     """Generate a new TOTP secret for the current user."""
+    if current_user.mfa_enabled and current_user.mfa_secret:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="MFA is already enabled for this account.",
+        )
+
     secret = generate_totp_secret()
     uri = get_totp_uri(secret, current_user.email)
     # Store but do NOT enable yet — requires confirmation.
