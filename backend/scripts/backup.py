@@ -75,7 +75,7 @@ def main() -> int:
 
     import argparse
 
-    parser = argparse.ArgumentParser(description="DataLegal 2.0 — database backup (US-RF23-1)")
+    parser = argparse.ArgumentParser(description="DataLegal - database backup (US-RF23-1)")
     parser.add_argument("--db-path", default="datalegal.db", help="Path to SQLite database file")
     parser.add_argument("--backup-dir", default="backups", help="Directory to store backups")
     parser.add_argument("--retention", type=int, default=30, help="Number of backups to retain")

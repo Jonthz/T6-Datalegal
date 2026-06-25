@@ -89,6 +89,7 @@ def login(
     # Successful password — reset failed attempts
     user.failed_attempts = 0
     user.locked_until = None
+    user.last_activity_at = now_utc
     db.commit()
 
     if user.mfa_enabled:
@@ -160,6 +161,9 @@ def mfa_verify(
         )
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid TOTP code.")
 
+    user.last_activity_at = datetime.now(timezone.utc)
+    db.commit()
+
     access_token = create_access_token(
         {
             "sub": str(user.id),
@@ -185,6 +189,12 @@ def mfa_setup(
     db: Session = Depends(get_db),
 ):
     """Generate a new TOTP secret for the current user."""
+    if current_user.mfa_enabled and current_user.mfa_secret:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="MFA is already enabled for this account.",
+        )
+
     secret = generate_totp_secret()
     uri = get_totp_uri(secret, current_user.email)
     # Store but do NOT enable yet — requires confirmation.

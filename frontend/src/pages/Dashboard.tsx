@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -20,6 +20,58 @@ import { downloadSummaryPdf, downloadSummaryCsv } from '../api/reports'
 import { cn } from '../lib/cn'
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
+
+function MetricIcon({ children }: { children: ReactNode }) {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+      {children}
+    </svg>
+  )
+}
+
+const kpiIcons = {
+  registry: (
+    <MetricIcon>
+      <path d="M6 4.75h12v14.5H6z" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M9 9h6M9 12h6M9 15h3"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </MetricIcon>
+  ),
+  risk: (
+    <MetricIcon>
+      <path
+        d="M12 3.75 19 7v4.9c0 4.1-2.9 6.9-7 8.35-4.1-1.45-7-4.25-7-8.35V7z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M12 8v4M12 15.5h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </MetricIcon>
+  ),
+  time: (
+    <MetricIcon>
+      <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M12 8v4l2.5 1.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </MetricIcon>
+  ),
+  incident: (
+    <MetricIcon>
+      <path d="M12 4 4.75 17.25h14.5z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M12 9v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </MetricIcon>
+  ),
+}
 
 interface DashboardData {
   kpis: ReportKPIs | null
@@ -161,7 +213,7 @@ function KPISection({
   return (
     <section aria-label={t('dashboard.kpis.title')}>
       {hasError && !loading && (
-        <p className="text-xs text-rose-200 mb-2" role="status">
+        <p className="text-xs text-rose-700 mb-2" role="status">
           {t('errors.loadDashboard')}
         </p>
       )}
@@ -169,26 +221,30 @@ function KPISection({
         <KPICard
           loading={loading}
           label={t('dashboard.kpis.activitiesRegistered')}
-          value={activitiesPct !== null ? formatPercent(activitiesPct, 0) : '—'}
+          value={activitiesPct !== null ? formatPercent(activitiesPct, 0) : '-'}
           hint={t('dashboard.kpis.activitiesHint')}
+          icon={kpiIcons.registry}
         />
         <KPICard
           loading={loading}
           label={t('dashboard.kpis.avgRisk')}
-          value={avgRisk !== null ? avgRisk.toFixed(1) : '—'}
+          value={avgRisk !== null ? avgRisk.toFixed(1) : '-'}
           hint={t('dashboard.kpis.avgRiskHint')}
+          icon={kpiIcons.risk}
         />
         <KPICard
           loading={loading}
           label={t('dashboard.kpis.arcoOnTime')}
-          value={arcoPct !== null ? formatPercent(arcoPct, 0) : '—'}
+          value={arcoPct !== null ? formatPercent(arcoPct, 0) : '-'}
           hint={t('dashboard.kpis.arcoHint')}
+          icon={kpiIcons.time}
         />
         <KPICard
           loading={loading}
           label={t('dashboard.kpis.breaches')}
-          value={breaches !== null ? formatNumber(breaches) : '—'}
+          value={breaches !== null ? formatNumber(breaches) : '-'}
           hint={t('dashboard.kpis.breachesHint')}
+          icon={kpiIcons.incident}
         />
       </div>
     </section>
@@ -277,14 +333,14 @@ function TrendChart({ series }: { series: TrendSeries }) {
         >
           <defs>
             <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#818cf8" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#818cf8" stopOpacity="0" />
+              <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#06b6d4" stopOpacity="0" />
             </linearGradient>
           </defs>
           <path d={areaD} fill="url(#trendFill)" />
-          <path d={pathD} fill="none" stroke="#a5b4fc" strokeWidth="2" strokeLinejoin="round" />
+          <path d={pathD} fill="none" stroke="#0891b2" strokeWidth="2.5" strokeLinejoin="round" />
           {points.map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r="3" fill="#e0e7ff" />
+            <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#0e7490" />
           ))}
         </svg>
       </div>
@@ -292,7 +348,7 @@ function TrendChart({ series }: { series: TrendSeries }) {
         {series.labels.map((label, i) => (
           <div key={label + i} className="text-center">
             <span className="block uppercase tracking-wider">{label}</span>
-            <span className="text-ink-200 font-medium">{series.points[i]?.toFixed(1) ?? '—'}</span>
+            <span className="text-ink-200 font-medium">{series.points[i]?.toFixed(1) ?? '-'}</span>
           </div>
         ))}
       </div>
@@ -314,7 +370,7 @@ function AlertsPanel({
     <GlassCard padded={false} className="flex flex-col">
       <header className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
         <h2 className="text-base font-semibold text-ink-50">{t('dashboard.alerts.title')}</h2>
-        <Link to="/alerts" className="text-xs text-brand-200 hover:text-brand-100">
+        <Link to="/alerts" className="text-xs font-semibold text-brand-700 hover:text-brand-800">
           {t('dashboard.alerts.viewAll')}
         </Link>
       </header>
@@ -329,16 +385,24 @@ function AlertsPanel({
       ) : alerts.length === 0 ? (
         <EmptyState title={t('dashboard.alerts.empty')} />
       ) : (
-        <ul className="divide-y divide-white/5">
+        <ul className="divide-y divide-slate-100">
           {alerts.map((alert) => (
-            <li key={alert.id} className="px-5 py-3">
+            <li key={alert.id} className="px-5 py-3 hover:bg-slate-50/70 transition-colors">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink-50 truncate">{alert.title}</p>
                   <p className="text-xs text-ink-300 line-clamp-2">{alert.message}</p>
                   <p className="text-[10px] text-ink-400 mt-1">{formatRelative(alert.created_at)}</p>
                 </div>
-                <Badge tone={alert.severity === 'CRITICAL' || alert.severity === 'HIGH' ? 'danger' : alert.severity === 'WARNING' ? 'warning' : 'info'}>
+                <Badge
+                  tone={
+                    alert.severity === 'CRITICAL' || alert.severity === 'HIGH'
+                      ? 'danger'
+                      : alert.severity === 'WARNING'
+                        ? 'warning'
+                        : 'info'
+                  }
+                >
                   {alert.severity}
                 </Badge>
               </div>
@@ -387,10 +451,15 @@ function QuickActions() {
           <li key={action.to} className="border-b sm:border-r last:border-r-0 xl:last:border-r border-slate-100">
             <Link
               to={action.to}
-              className="block px-5 py-4 hover:bg-slate-50 transition-colors"
+              className="group flex h-full items-start justify-between gap-4 px-5 py-4 hover:bg-slate-50 transition-colors"
             >
-              <p className="text-sm font-semibold text-ink-50">{action.title}</p>
-              <p className="text-xs text-ink-300 mt-0.5">{action.hint}</p>
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold text-ink-50">{action.title}</span>
+                <span className="block text-xs text-ink-300 mt-0.5">{action.hint}</span>
+              </span>
+              <span aria-hidden className="mt-0.5 text-brand-700 transition-transform group-hover:translate-x-0.5">
+                &gt;
+              </span>
             </Link>
           </li>
         ))}

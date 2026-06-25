@@ -127,6 +127,21 @@ class TestMFASetup:
         assert "uri" in data
         assert "otpauth://" in data["uri"]
 
+    def test_mfa_setup_does_not_overwrite_enabled_secret(
+        self, client: TestClient, admin_token, admin_user, session
+    ):
+        """Enabled MFA cannot be overwritten by opening setup again."""
+        original_secret = "JBSWY3DPEHPK3PXP"
+        admin_user.mfa_secret = original_secret
+        admin_user.mfa_enabled = True
+        session.flush()
+
+        resp = client.post("/api/v1/auth/mfa-setup", headers=auth_headers(admin_token))
+
+        assert resp.status_code == 400
+        session.refresh(admin_user)
+        assert admin_user.mfa_secret == original_secret
+
 
 class TestPasswordValidation:
     """TestPasswordValidation schema/model definition."""

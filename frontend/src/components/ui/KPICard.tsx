@@ -17,15 +17,15 @@ interface KPICardProps {
 }
 
 const trendStyles: Record<Exclude<Trend, null>, string> = {
-  up: 'text-emerald-300',
-  down: 'text-rose-300',
+  up: 'text-emerald-700',
+  down: 'text-rose-700',
   flat: 'text-ink-300',
 }
 
 const trendIcon: Record<Exclude<Trend, null>, string> = {
-  up: '▲',
-  down: '▼',
-  flat: '·',
+  up: '+',
+  down: '-',
+  flat: '=',
 }
 
 export function KPICard({
@@ -42,7 +42,7 @@ export function KPICard({
     <GlassCard className={cn('relative overflow-hidden', className)} hoverable>
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-2 min-w-0">
-          <p className="text-xs uppercase tracking-wide text-ink-300 font-medium">{label}</p>
+          <p className="text-xs uppercase tracking-wide text-ink-300 font-semibold">{label}</p>
           {loading ? (
             <Skeleton className="h-8 w-28" />
           ) : (
@@ -65,7 +65,7 @@ export function KPICard({
           )}
         </div>
         {icon && (
-          <div className="h-10 w-10 rounded-lg bg-brand-500/15 border border-brand-400/30 flex items-center justify-center text-brand-200">
+          <div className="h-10 w-10 rounded-md bg-brand-50 border border-brand-200 flex items-center justify-center text-brand-700">
             {icon}
           </div>
         )}

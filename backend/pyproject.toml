@@ -1,7 +1,7 @@
 [project]
 name = "datalegal-backend"
 version = "0.1.0"
-description = "DataLegal 2.0 — LOPDP Compliance Platform Backend"
+description = "DataLegal - LOPDP Compliance Platform Backend"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",

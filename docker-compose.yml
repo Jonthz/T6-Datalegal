@@ -25,6 +25,8 @@ services:
       ENVIRONMENT: development
       SHOW_DOCS: "true"
       SEED_DEV_DATA: "true"
+      SEED_MOCK_DATA: "true"
+      DEV_MOCK_DATASET: medium
       DEV_ADMIN_EMAIL: ${DEV_ADMIN_EMAIL:-admin@datalegal.local}
       DEV_ADMIN_PASSWORD: ${DEV_ADMIN_PASSWORD:-Admin123!}
     ports:

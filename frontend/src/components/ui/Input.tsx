@@ -3,8 +3,9 @@ import { useId } from 'react'
 import { cn } from '../../lib/cn'
 
 const baseField =
-  'w-full rounded-lg bg-white border border-slate-300 text-ink-50 placeholder:text-ink-400 ' +
-  'focus:bg-white focus:border-brand-500/70 disabled:opacity-50 disabled:cursor-not-allowed'
+  'w-full rounded-md bg-white border border-slate-300 text-ink-50 placeholder:text-ink-400 shadow-sm ' +
+  'focus:bg-white focus:border-brand-600 focus:ring-2 focus:ring-brand-100 disabled:bg-slate-50 ' +
+  'disabled:opacity-60 disabled:cursor-not-allowed'
 
 interface FieldShellProps {
   label?: string
@@ -52,7 +53,7 @@ export function Input({ label, hint, error, required, className, id, ...rest }: 
         id={inputId}
         required={required}
         aria-invalid={error ? 'true' : undefined}
-        className={cn(baseField, 'h-10 px-3 text-sm', error && 'border-rose-400/60', className)}
+        className={cn(baseField, 'h-10 px-3 text-sm', error && 'border-rose-400/70 focus:ring-rose-100', className)}
       />
     </FieldShell>
   )
@@ -84,7 +85,12 @@ export function Textarea({
         rows={rows}
         required={required}
         aria-invalid={error ? 'true' : undefined}
-        className={cn(baseField, 'px-3 py-2 text-sm leading-6 scrollbar-thin', error && 'border-rose-400/60', className)}
+        className={cn(
+          baseField,
+          'px-3 py-2 text-sm leading-6 scrollbar-thin',
+          error && 'border-rose-400/70 focus:ring-rose-100',
+          className
+        )}
       />
     </FieldShell>
   )
@@ -121,7 +127,7 @@ export function Select({
         className={cn(
           baseField,
           'h-10 px-3 text-sm appearance-none bg-white',
-          error && 'border-rose-400/60',
+          error && 'border-rose-400/70 focus:ring-rose-100',
           className
         )}
       >

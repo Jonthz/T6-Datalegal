@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "DataLegal 2.0",
+    "title": "DataLegal",
     "subtitle": "LOPDP Compliance Platform",
     "environment": "Multi-tenant compliance workspace"
   },
@@ -1274,7 +1274,7 @@
       "current": "English (en-US)"
     },
     "about": {
-      "platform": "DataLegal 2.0",
+      "platform": "DataLegal",
       "version": "Build",
       "buildLabel": "Release {{label}}",
       "docs": "API documentation",

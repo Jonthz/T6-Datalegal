@@ -1,4 +1,4 @@
-# DataLegal 2.0
+# DataLegal
 
 **Privacy compliance platform for LOPDP — multi-tenant SaaS**
 
@@ -6,7 +6,7 @@
 
 ## Overview
 
-DataLegal 2.0 is a web platform that helps organizations in Ecuador achieve and maintain compliance with the **Ley Orgánica de Protección de Datos Personales (LOPDP)**. It provides a centralized workspace for Data Protection Officers (DPOs) and compliance teams to manage the full data protection lifecycle: from registering treatment activities and assessing risks, to generating ROPA reports and handling ARCO requests.
+DataLegal is a web platform that helps organizations in Ecuador achieve and maintain compliance with the **Ley Orgánica de Protección de Datos Personales (LOPDP)**. It provides a centralized workspace for Data Protection Officers (DPOs) and compliance teams to manage the full data protection lifecycle: from registering treatment activities and assessing risks, to generating ROPA reports and handling ARCO requests.
 
 The platform is built as a **multi-tenant SaaS**, meaning each organization gets isolated data, its own user roles, and independent compliance dashboards.
 
