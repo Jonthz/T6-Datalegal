@@ -96,6 +96,7 @@ datalegal/
 │   ├── plan/                # Sprint plans, requirements, use cases
 │   └── reviews/             # QA and code review reports
 ├── communications/          # Project communications and client evidence
-│   └── Communications_Index.md 
+│   ├── Communications_Index.md 
+│   └── Documents/           # Project Documentations
 ├── docker-compose.yml
 └── README.md

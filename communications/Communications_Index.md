@@ -8,3 +8,4 @@ This document centralizes the links to the cloud folders where all project evide
 | **Client meetings** | [Access folder](https://drive.google.com/drive/folders/14o30tRcsc2RxesfB-hG33P17uKRG_V-z?usp=drive_link) | Recordings and minutes from requirements gathering and client validation meetings. |
 | **Team meetings** | [Access folder](https://drive.google.com/drive/folders/1drtnOQiZcHbHgVB-fAUKSMd2BynaEhtO?usp=drive_link) | Records of work sessions, architecture planning, and internal team coordination. |
 | **Documents** | [Access folder](https://drive.google.com/drive/folders/1XQa_8RKe-z8XIfUxRCaByBPDoAToqSu2?usp=drive_link) | This directory contains all official project documentation. |
+| **Capture Client** | [Access folder](https://drive.google.com/drive/folders/1WGOcSsxOxUwECG9NTQ2F5HVWMfTEumHI?usp=drive_link) | Screenshots of client communications and approvals. |
