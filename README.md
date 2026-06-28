@@ -71,7 +71,7 @@ The platform is built as a **multi-tenant SaaS**, meaning each organization gets
 
 ## Project Structure
 
-```
+```text
 datalegal/
 ├── backend/
 │   ├── app/
@@ -95,60 +95,7 @@ datalegal/
 ├── docs/
 │   ├── plan/                # Sprint plans, requirements, use cases
 │   └── reviews/             # QA and code review reports
+├── communications/          # Project communications and client evidence
+│   └── Communications_Index.md 
 ├── docker-compose.yml
 └── README.md
-```
-
----
-
-## Getting Started
-
-### Prerequisites
-- Python 3.12+
-- Node.js 20+
-- Docker & docker-compose (recommended)
-
-### Option A — Docker (full stack)
-
-```bash
-git clone https://github.com/Jonthz/datalegal.git
-cd datalegal
-docker-compose up --build
-```
-
-API available at `http://localhost:8000/api/docs`  
-Frontend available at `http://localhost:5173`
-
-### Option B — Local development
-
-**Backend**
-```bash
-cd backend
-python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
-uvicorn app.main:app --reload --port 8000
-```
-
-**Frontend** (separate terminal)
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## Running Tests
-
-```bash
-cd backend
-pytest tests/ -v
-pytest --cov=app --cov-report=term-missing   # with coverage
-```
-
----
-
-## License
-
-This project is developed as an academic project at **ESPOL** (Escuela Superior Politécnica del Litoral).  
-MIT License — see [LICENSE](LICENSE) for details.
