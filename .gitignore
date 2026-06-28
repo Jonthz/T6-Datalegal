@@ -26,3 +26,11 @@ backend/backups/
 package-lock.json
 
 .agents
+
+# Ignorar archivos multimedia pesados en Comunicaciones
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.zip
+*.rar
