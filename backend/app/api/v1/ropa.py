@@ -16,13 +16,35 @@ from app.models.user import User
 router = APIRouter(prefix="/ropa", tags=["ropa"])
 
 
+@router.get("")
+def get_ropa(
+    _: Annotated[User, Depends(require_permission("ropa", "r"))],
+    tenant_id: int = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Return the Record of Processing Activities (ROPA) report as JSON (US-RF31-1)."""
+    return _build_ropa_data(tenant_id, db)
+
+
+@router.get("/pdf")
+def get_ropa_pdf(
+    _: Annotated[User, Depends(require_permission("ropa", "r"))],
+    tenant_id: int = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    """Return the ROPA report as a downloadable PDF (US-RF31-1)."""
+    ropa_data = _build_ropa_data(tenant_id, db)
+    pdf_bytes = _generate_ropa_pdf(ropa_data)
+    return StreamingResponse(
+        BytesIO(bytes(pdf_bytes)),
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=ropa_report.pdf"},
+    )
+
+
 def _build_ropa_data(tenant_id: int, db: Session) -> dict:
     """Build the ROPA data structure grouped by legal basis."""
-    activities = (
-        db.query(TreatmentActivity)
-        .filter(TreatmentActivity.tenant_id == tenant_id)
-        .all()
-    )
+    activities = db.query(TreatmentActivity).filter(TreatmentActivity.tenant_id == tenant_id).all()
     activities_by_basis: dict[str, list] = {}
     for act in activities:
         entry = {
@@ -56,13 +78,21 @@ def _generate_ropa_pdf(ropa_data: dict) -> bytes:
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 16)
     pdf.cell(
-        0, 10, "Record of Processing Activities (ROPA)",
-        new_x="LMARGIN", new_y="NEXT", align="C",
+        0,
+        10,
+        "Record of Processing Activities (ROPA)",
+        new_x="LMARGIN",
+        new_y="NEXT",
+        align="C",
     )
     pdf.set_font("Helvetica", "", 11)
     pdf.cell(
-        0, 8, f"Generated: {ropa_data['generated_at']}",
-        new_x="LMARGIN", new_y="NEXT", align="C",
+        0,
+        8,
+        f"Generated: {ropa_data['generated_at']}",
+        new_x="LMARGIN",
+        new_y="NEXT",
+        align="C",
     )
     pdf.cell(
         0, 8, f"Generated: {ropa_data['generated_at']}", new_x="LMARGIN", new_y="NEXT", align="C"
@@ -93,14 +123,20 @@ def _generate_ropa_pdf(ropa_data: dict) -> bytes:
         for act in entries:
             pdf.set_font("Helvetica", "B", 11)
             pdf.cell(
-                0, 7, f"[{act['id']}] {act['name']} - Status: {act['status']}",
-                new_x="LMARGIN", new_y="NEXT",
+                0,
+                7,
+                f"[{act['id']}] {act['name']} - Status: {act['status']}",
+                new_x="LMARGIN",
+                new_y="NEXT",
             )
             pdf.set_font("Helvetica", "", 10)
             pdf.multi_cell(0, 6, f"Purpose: {act['purpose']}")
             pdf.cell(
-                0, 6, f"Retention: {act['retention_period_days']} days",
-                new_x="LMARGIN", new_y="NEXT",
+                0,
+                6,
+                f"Retention: {act['retention_period_days']} days",
+                new_x="LMARGIN",
+                new_y="NEXT",
             )
             types_str = (
                 ", ".join(act["personal_data_types"]) if act["personal_data_types"] else "N/A"
@@ -112,8 +148,11 @@ def _generate_ropa_pdf(ropa_data: dict) -> bytes:
                 destinations = act["destination_countries"]
                 countries = ", ".join(destinations) if destinations else "N/A"
                 pdf.cell(
-                    0, 6, f"Cross-border - Destinations: {countries}",
-                    new_x="LMARGIN", new_y="NEXT",
+                    0,
+                    6,
+                    f"Cross-border - Destinations: {countries}",
+                    new_x="LMARGIN",
+                    new_y="NEXT",
                 )
             if act["processor_name"]:
                 pdf.cell(

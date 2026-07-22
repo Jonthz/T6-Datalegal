@@ -11,8 +11,34 @@ from app.models.alert import Alert
 from app.models.audit_log import AuditLog
 from app.models.user import User
 from app.schemas.alert import AlertCreate, AlertRead
+from app.services.critical_alerts import scan_tenant_for_critical_alerts
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
+
+
+@router.post("/scan", response_model=list[AlertRead])
+def scan_critical_alerts(
+    current_user: Annotated[User, Depends(require_permission("alerts", "c"))],
+    tenant_id: int = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    """Scan open legal deadlines (ARCO SLA, audit plans) and raise missing alerts.
+
+    Idempotent: re-running does not duplicate alerts already unread for the
+    same resource. Intended to be called by a scheduled job (see
+    scripts/scan_critical_alerts.py) as well as on-demand from the UI.
+    """
+    new_alerts = scan_tenant_for_critical_alerts(db, tenant_id)
+    if new_alerts:
+        AuditLog.create_log(
+            db,
+            action="critical_alerts_scanned",
+            resource="alerts",
+            tenant_id=tenant_id,
+            user_id=current_user.id,
+            detail=f"created={len(new_alerts)}",
+        )
+    return new_alerts
 
 
 @router.get("/unread-count")
@@ -48,9 +74,7 @@ def list_alerts(
 
     if current_user.role not in ("ADMIN", "DPO", "SUPER_ADMIN"):
         # Non-privileged users: only their personal alerts and broadcasts
-        q = q.filter(
-            (Alert.recipient_id == current_user.id) | (Alert.recipient_id.is_(None))
-        )
+        q = q.filter((Alert.recipient_id == current_user.id) | (Alert.recipient_id.is_(None)))
 
     if is_read is not None:
         q = q.filter(Alert.is_read == is_read)

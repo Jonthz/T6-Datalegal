@@ -8,7 +8,7 @@ Covers:
 
 import csv
 import io
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Response
@@ -17,6 +17,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_tenant_id, get_db, require_permission
+from app.core.sla import is_on_time, is_overdue
 from app.models.action_plan import ActionPlan
 from app.models.arco_request import ARCORequest
 from app.models.audit_plan import AuditFinding, AuditPlan
@@ -33,6 +34,7 @@ router = APIRouter(prefix="/reports", tags=["reports"])
 
 
 # ── Shared schemas ────────────────────────────────────────────────────────────
+
 
 class RiskSummary(BaseModel):
     """Risk assessment totals grouped by level."""
@@ -111,45 +113,66 @@ def _count_for_tenant(db: Session, tenant_id: int, model, **filters) -> int:
 
 def _count_open_arco_requests(db: Session, tenant_id: int) -> int:
     """Count ARCO requests that are still open."""
-    return db.query(ARCORequest).filter(
-        ARCORequest.tenant_id == tenant_id,
-        ARCORequest.status.notin_(["CLOSED", "REJECTED"]),
-    ).count()
+    return (
+        db.query(ARCORequest)
+        .filter(
+            ARCORequest.tenant_id == tenant_id,
+            ARCORequest.status.notin_(["CLOSED", "REJECTED"]),
+        )
+        .count()
+    )
 
 
 def _count_open_incidents(db: Session, tenant_id: int) -> int:
     """Count incidents that are still open."""
-    return db.query(Incident).filter(
-        Incident.tenant_id == tenant_id,
-        Incident.status.notin_(["CLOSED", "FALSE_POSITIVE"]),
-    ).count()
+    return (
+        db.query(Incident)
+        .filter(
+            Incident.tenant_id == tenant_id,
+            Incident.status.notin_(["CLOSED", "FALSE_POSITIVE"]),
+        )
+        .count()
+    )
 
 
 def _count_regulatory_notification_incidents(db: Session, tenant_id: int) -> int:
     """Count incidents that require regulatory notification."""
-    return db.query(Incident).filter(
-        Incident.tenant_id == tenant_id,
-        Incident.regulatory_notification_required.is_(True),
-    ).count()
+    return (
+        db.query(Incident)
+        .filter(
+            Incident.tenant_id == tenant_id,
+            Incident.regulatory_notification_required.is_(True),
+        )
+        .count()
+    )
 
 
 def _count_current_legal_documents(db: Session, tenant_id: int) -> int:
     """Count current legal documents."""
-    return db.query(LegalDocument).filter(
-        LegalDocument.tenant_id == tenant_id,
-        LegalDocument.is_current.is_(True),
-    ).count()
+    return (
+        db.query(LegalDocument)
+        .filter(
+            LegalDocument.tenant_id == tenant_id,
+            LegalDocument.is_current.is_(True),
+        )
+        .count()
+    )
 
 
 def _count_open_remediations(db: Session, tenant_id: int) -> int:
     """Count remediations that are still open."""
-    return db.query(Remediation).filter(
-        Remediation.tenant_id == tenant_id,
-        Remediation.status.notin_(["COMPLETED", "CANCELLED"]),
-    ).count()
+    return (
+        db.query(Remediation)
+        .filter(
+            Remediation.tenant_id == tenant_id,
+            Remediation.status.notin_(["COMPLETED", "CANCELLED"]),
+        )
+        .count()
+    )
 
 
 # ── US-RF42-1: Consolidated summary ──────────────────────────────────────────
+
 
 @router.get("/summary", response_model=ConsolidatedSummaryReport)
 def get_summary_report(
@@ -190,9 +213,7 @@ def get_summary_report(
         audits=AuditSummary(
             total_plans=_count_for_tenant(db, tenant_id, AuditPlan),
             open_findings=_count_for_tenant(db, tenant_id, AuditFinding, status="OPEN"),
-            critical_findings=_count_for_tenant(
-                db, tenant_id, AuditFinding, severity="CRITICAL"
-            ),
+            critical_findings=_count_for_tenant(db, tenant_id, AuditFinding, severity="CRITICAL"),
         ),
         consents=ConsentSummary(
             total=_count_for_tenant(db, tenant_id, ConsentRecord),
@@ -207,6 +228,7 @@ def get_summary_report(
 
 
 # ── US-RF16-1: KPI dashboard ──────────────────────────────────────────────────
+
 
 @router.get("/kpis")
 def get_kpis(
@@ -227,57 +249,80 @@ def get_kpis(
     """
     # % activities registered as ACTIVE
     total_ta = db.query(TreatmentActivity).filter(TreatmentActivity.tenant_id == tenant_id).count()
-    active_ta = db.query(TreatmentActivity).filter(
-        TreatmentActivity.tenant_id == tenant_id,
-        TreatmentActivity.status == "ACTIVE",
-    ).count()
+    active_ta = (
+        db.query(TreatmentActivity)
+        .filter(
+            TreatmentActivity.tenant_id == tenant_id,
+            TreatmentActivity.status == "ACTIVE",
+        )
+        .count()
+    )
     pct_active = round((active_ta / total_ta * 100), 1) if total_ta else 0.0
 
     # Average risk score
     ra_rows = (
-        db.query(RiskAssessment.risk_score)
-        .filter(RiskAssessment.tenant_id == tenant_id)
-        .all()
+        db.query(RiskAssessment.risk_score).filter(RiskAssessment.tenant_id == tenant_id).all()
     )
     avg_risk = round(sum(r.risk_score for r in ra_rows) / len(ra_rows), 2) if ra_rows else 0.0
 
     # On-time ARCO %: responded/closed requests where responded_at <= deadline_date
-    terminal_arco = db.query(ARCORequest).filter(
-        ARCORequest.tenant_id == tenant_id,
-        ARCORequest.status.in_(["RESPONDED", "CLOSED"]),
-    ).all()
+    terminal_arco = (
+        db.query(ARCORequest)
+        .filter(
+            ARCORequest.tenant_id == tenant_id,
+            ARCORequest.status.in_(["RESPONDED", "CLOSED"]),
+        )
+        .all()
+    )
     on_time = sum(
-        1 for r in terminal_arco
-        if r.responded_at is not None
-        and r.responded_at.date() <= r.deadline_date
+        1
+        for r in terminal_arco
+        if is_on_time(
+            r.responded_at.date() if r.responded_at is not None else None, r.deadline_date
+        )
     )
     pct_arco_on_time = round((on_time / len(terminal_arco) * 100), 1) if terminal_arco else 100.0
 
     # Reported breaches (HIGH or CRITICAL incidents)
-    reported_breaches = db.query(Incident).filter(
-        Incident.tenant_id == tenant_id,
-        Incident.severity.in_(["HIGH", "CRITICAL"]),
-    ).count()
+    reported_breaches = (
+        db.query(Incident)
+        .filter(
+            Incident.tenant_id == tenant_id,
+            Incident.severity.in_(["HIGH", "CRITICAL"]),
+        )
+        .count()
+    )
 
     # Alert items: overdue ARCO, open critical findings, open high-risk RAs
-    today = date.today()
-    overdue_arco = db.query(ARCORequest).filter(
-        ARCORequest.tenant_id == tenant_id,
-        ARCORequest.deadline_date < today,
-        ARCORequest.status.notin_(["RESPONDED", "CLOSED", "REJECTED"]),
-    ).count()
+    open_arco = (
+        db.query(ARCORequest)
+        .filter(
+            ARCORequest.tenant_id == tenant_id,
+            ARCORequest.status.notin_(["RESPONDED", "CLOSED", "REJECTED"]),
+        )
+        .all()
+    )
+    overdue_arco = sum(1 for r in open_arco if is_overdue(r.deadline_date))
 
-    critical_findings = db.query(AuditFinding).filter(
-        AuditFinding.tenant_id == tenant_id,
-        AuditFinding.severity == "CRITICAL",
-        AuditFinding.status == "OPEN",
-    ).count()
+    critical_findings = (
+        db.query(AuditFinding)
+        .filter(
+            AuditFinding.tenant_id == tenant_id,
+            AuditFinding.severity == "CRITICAL",
+            AuditFinding.status == "OPEN",
+        )
+        .count()
+    )
 
-    high_risk_open = db.query(RiskAssessment).filter(
-        RiskAssessment.tenant_id == tenant_id,
-        RiskAssessment.risk_level == "HIGH",
-        RiskAssessment.status.notin_(["CLOSED", "ACCEPTED"]),
-    ).count()
+    high_risk_open = (
+        db.query(RiskAssessment)
+        .filter(
+            RiskAssessment.tenant_id == tenant_id,
+            RiskAssessment.risk_level == "HIGH",
+            RiskAssessment.status.notin_(["CLOSED", "ACCEPTED"]),
+        )
+        .count()
+    )
 
     return {
         "pct_activities_active": pct_active,
@@ -293,6 +338,7 @@ def get_kpis(
 
 
 # ── US-RF16-1: 6-month trends ─────────────────────────────────────────────────
+
 
 @router.get("/trends")
 def get_trends(
@@ -329,33 +375,38 @@ def get_trends(
             end: datetime,
         ) -> int:
             col = getattr(model, date_col)
-            return db.query(model).filter(
-                model.tenant_id == tenant_id,
-                col >= start,
-                col < end,
-            ).count()
+            return (
+                db.query(model)
+                .filter(
+                    model.tenant_id == tenant_id,
+                    col >= start,
+                    col < end,
+                )
+                .count()
+            )
 
-        new_activities = _count_in_period(
-            TreatmentActivity, "created_at", period_start, period_end
-        )
+        new_activities = _count_in_period(TreatmentActivity, "created_at", period_start, period_end)
         new_incidents = _count_in_period(Incident, "created_at", period_start, period_end)
         new_arco = _count_in_period(ARCORequest, "created_at", period_start, period_end)
         new_consents = _count_in_period(ConsentRecord, "granted_at", period_start, period_end)
         new_risks = _count_in_period(RiskAssessment, "created_at", period_start, period_end)
 
-        result.append({
-            "month": label,
-            "new_treatment_activities": new_activities,
-            "new_incidents": new_incidents,
-            "new_arco_requests": new_arco,
-            "new_consents": new_consents,
-            "new_risk_assessments": new_risks,
-        })
+        result.append(
+            {
+                "month": label,
+                "new_treatment_activities": new_activities,
+                "new_incidents": new_incidents,
+                "new_arco_requests": new_arco,
+                "new_consents": new_consents,
+                "new_risk_assessments": new_risks,
+            }
+        )
 
     return {"months": months, "trends": result}
 
 
 # ── US-RF15-1: Filterable PDF/CSV reports ────────────────────────────────────
+
 
 def _latin1(text: str) -> str:
     """Encode unicode string to latin-1, replacing unmappable chars."""
@@ -446,6 +497,7 @@ def get_summary_pdf(
     db: Session = Depends(get_db),
 ):
     """Download the consolidated summary report as PDF (US-RF15-1)."""
+
     # Reuse summary logic inline
     def count(model, **filters):
         q = db.query(model).filter(model.tenant_id == tenant_id)
@@ -454,18 +506,30 @@ def get_summary_pdf(
         return q.count()
 
     total_ra = count(RiskAssessment)
-    arco_open = db.query(ARCORequest).filter(
-        ARCORequest.tenant_id == tenant_id,
-        ARCORequest.status.notin_(["CLOSED", "REJECTED"]),
-    ).count()
-    incidents_open = db.query(Incident).filter(
-        Incident.tenant_id == tenant_id,
-        Incident.status.notin_(["CLOSED", "FALSE_POSITIVE"]),
-    ).count()
-    open_remediations = db.query(Remediation).filter(
-        Remediation.tenant_id == tenant_id,
-        Remediation.status.notin_(["COMPLETED", "CANCELLED"]),
-    ).count()
+    arco_open = (
+        db.query(ARCORequest)
+        .filter(
+            ARCORequest.tenant_id == tenant_id,
+            ARCORequest.status.notin_(["CLOSED", "REJECTED"]),
+        )
+        .count()
+    )
+    incidents_open = (
+        db.query(Incident)
+        .filter(
+            Incident.tenant_id == tenant_id,
+            Incident.status.notin_(["CLOSED", "FALSE_POSITIVE"]),
+        )
+        .count()
+    )
+    open_remediations = (
+        db.query(Remediation)
+        .filter(
+            Remediation.tenant_id == tenant_id,
+            Remediation.status.notin_(["COMPLETED", "CANCELLED"]),
+        )
+        .count()
+    )
     total_docs = _count_current_legal_documents(db, tenant_id)
 
     data = ConsolidatedSummaryReport(
@@ -518,7 +582,7 @@ def get_summary_pdf(
     return Response(
         content=bytes(pdf_bytes),
         media_type="application/pdf",
-        headers={"Content-Disposition": f"attachment; filename=\"{filename}\""},
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
 
@@ -531,6 +595,7 @@ def get_summary_csv(
     db: Session = Depends(get_db),
 ):
     """Download the consolidated summary report as CSV (US-RF15-1)."""
+
     def count(model, **filters):
         q = db.query(model).filter(model.tenant_id == tenant_id)
         for attr, val in filters.items():
@@ -545,16 +610,28 @@ def get_summary_csv(
         ["Risk Assessments", "MEDIUM", count(RiskAssessment, risk_level="MEDIUM")],
         ["Risk Assessments", "LOW", count(RiskAssessment, risk_level="LOW")],
         ["ARCO Requests", "Total", count(ARCORequest)],
-        ["ARCO Requests", "Open", db.query(ARCORequest).filter(
-            ARCORequest.tenant_id == tenant_id,
-            ARCORequest.status.notin_(["CLOSED", "REJECTED"]),
-        ).count()],
+        [
+            "ARCO Requests",
+            "Open",
+            db.query(ARCORequest)
+            .filter(
+                ARCORequest.tenant_id == tenant_id,
+                ARCORequest.status.notin_(["CLOSED", "REJECTED"]),
+            )
+            .count(),
+        ],
         ["ARCO Requests", "Closed", count(ARCORequest, status="CLOSED")],
         ["Incidents", "Total", count(Incident)],
-        ["Incidents", "Open", db.query(Incident).filter(
-            Incident.tenant_id == tenant_id,
-            Incident.status.notin_(["CLOSED", "FALSE_POSITIVE"]),
-        ).count()],
+        [
+            "Incidents",
+            "Open",
+            db.query(Incident)
+            .filter(
+                Incident.tenant_id == tenant_id,
+                Incident.status.notin_(["CLOSED", "FALSE_POSITIVE"]),
+            )
+            .count(),
+        ],
         [
             "Incidents",
             "Regulatory Notification Required",
@@ -572,10 +649,16 @@ def get_summary_csv(
         ["Audit Findings", "Critical", count(AuditFinding, severity="CRITICAL")],
         ["Legal Documents", "Current", _count_current_legal_documents(db, tenant_id)],
         ["DPIAs", "Total", count(DPIAssessment)],
-        ["Remediations", "Open", db.query(Remediation).filter(
-            Remediation.tenant_id == tenant_id,
-            Remediation.status.notin_(["COMPLETED", "CANCELLED"]),
-        ).count()],
+        [
+            "Remediations",
+            "Open",
+            db.query(Remediation)
+            .filter(
+                Remediation.tenant_id == tenant_id,
+                Remediation.status.notin_(["COMPLETED", "CANCELLED"]),
+            )
+            .count(),
+        ],
     ]
 
     output = io.StringIO()
@@ -587,5 +670,5 @@ def get_summary_csv(
     return Response(
         content=csv_bytes,
         media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=\"{filename}\""},
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
