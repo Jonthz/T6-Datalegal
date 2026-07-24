@@ -22,14 +22,18 @@ import {
 } from '../components/ui'
 import type { DataTableColumn } from '../components/ui'
 import {
+  VULNERABILITY_TYPES,
+  closeIncident,
   createIncident,
+  downloadIncidentReport,
   listIncidents,
   notifyIncident,
   updateIncident,
 } from '../api/incidents'
 import { listDepartments } from '../api/departments'
 import { getUsers } from '../api/users'
-import type { Department, Incident, User } from '../types'
+import { getCompanyProfile } from '../api/companyProfile'
+import type { Department, Incident, Tenant, User } from '../types'
 import { extractErrorMessage } from '../lib/errors'
 import { formatDate, formatDateTime } from '../lib/format'
 
@@ -42,6 +46,9 @@ const INCIDENT_TYPES = [
 ] as const
 const SEVERITIES = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const
 const STATUSES = ['OPEN', 'INVESTIGATING', 'RESOLVED', 'CLOSED'] as const
+// CLOSED is reached only through the closure flow (which generates the PDF report),
+// so it is not offered as a directly-selectable status in the edit form.
+const EDIT_STATUSES = ['OPEN', 'INVESTIGATING', 'RESOLVED'] as const
 
 // LOPDP timeline: regulator notification within 5 calendar days of detection.
 const REGULATOR_DEADLINE_DAYS = 5
@@ -51,10 +58,17 @@ interface CreateForm {
   description: string
   incident_type: string
   severity: string
+  vulnerability_types: string[]
   regulatory_notification_required: boolean
   affected_data_types: string
   department_id: string
   assigned_to_id: string
+  delegate_name: string
+  delegate_email: string
+  delegate_phone: string
+  controller_name: string
+  controller_email: string
+  controller_phone: string
 }
 
 const EMPTY_CREATE: CreateForm = {
@@ -62,10 +76,25 @@ const EMPTY_CREATE: CreateForm = {
   description: '',
   incident_type: 'DATA_BREACH',
   severity: 'MEDIUM',
+  vulnerability_types: [],
   regulatory_notification_required: false,
   affected_data_types: '',
   department_id: '',
   assigned_to_id: '',
+  delegate_name: '',
+  delegate_email: '',
+  delegate_phone: '',
+  controller_name: '',
+  controller_email: '',
+  controller_phone: '',
+}
+
+function toggleVuln(list: string[], value: string): string[] {
+  const next = list.includes(value)
+    ? list.filter((v) => v !== value)
+    : [...list, value]
+  // Keep canonical CIA order to match the backend.
+  return VULNERABILITY_TYPES.filter((v) => next.includes(v))
 }
 
 function daysBetween(from: string, to: Date): number {
@@ -99,6 +128,7 @@ export default function IncidentsPage() {
   const [items, setItems] = useState<Incident[]>([])
   const [departments, setDepartments] = useState<Department[]>([])
   const [users, setUsers] = useState<User[]>([])
+  const [companyProfile, setCompanyProfile] = useState<Tenant | null>(null)
   const [statusFilter, setStatusFilter] = useState('')
   const [severityFilter, setSeverityFilter] = useState('')
   const [loading, setLoading] = useState(true)
@@ -119,6 +149,11 @@ export default function IncidentsPage() {
   const [editSubmitting, setEditSubmitting] = useState(false)
   const [busyId, setBusyId] = useState<number | null>(null)
 
+  const [closingIncident, setClosingIncident] = useState<Incident | null>(null)
+  const [closeSummary, setCloseSummary] = useState('')
+  const [closeError, setCloseError] = useState('')
+  const [closeSubmitting, setCloseSubmitting] = useState(false)
+
   const load = useCallback(async () => {
     setLoading(true)
     setError('')
@@ -128,14 +163,16 @@ export default function IncidentsPage() {
       }
       if (statusFilter) params.status = statusFilter
       if (severityFilter) params.severity = severityFilter
-      const [list, deptList, userList] = await Promise.all([
+      const [list, deptList, userList, profile] = await Promise.all([
         listIncidents(params),
         listDepartments({ limit: 200 }).catch(() => [] as Department[]),
         getUsers({ limit: 200 }).catch(() => [] as User[]),
+        getCompanyProfile().catch(() => null),
       ])
       setItems(list)
       setDepartments(deptList)
       setUsers(userList)
+      setCompanyProfile(profile)
     } catch (err) {
       setError(extractErrorMessage(err, t('incidents.loadFailed')))
     } finally {
@@ -160,7 +197,15 @@ export default function IncidentsPage() {
   }, [users])
 
   function openCreate() {
-    setCreateForm(EMPTY_CREATE)
+    // RF-03: pre-fill delegado/responsable from the company profile as editable
+    // defaults; the values are stored as a per-incident snapshot on save.
+    setCreateForm({
+      ...EMPTY_CREATE,
+      delegate_name: companyProfile?.dpo_name ?? '',
+      delegate_email: companyProfile?.dpo_email ?? '',
+      delegate_phone: companyProfile?.dpo_phone ?? '',
+      controller_name: companyProfile?.name ?? '',
+    })
     setCreateError('')
     setCreating(true)
   }
@@ -172,17 +217,78 @@ export default function IncidentsPage() {
       description: incident.description,
       incident_type: incident.incident_type,
       severity: incident.severity,
+      vulnerability_types: incident.vulnerability_types ?? [],
       regulatory_notification_required: incident.regulatory_notification_required,
       affected_data_types: incident.affected_data_types,
       department_id: incident.department_id ? String(incident.department_id) : '',
       assigned_to_id: incident.assigned_to_id ? String(incident.assigned_to_id) : '',
+      delegate_name: incident.delegate_name ?? '',
+      delegate_email: incident.delegate_email ?? '',
+      delegate_phone: incident.delegate_phone ?? '',
+      controller_name: incident.controller_name ?? '',
+      controller_email: incident.controller_email ?? '',
+      controller_phone: incident.controller_phone ?? '',
       status: incident.status,
     })
     setEditError('')
   }
 
+  function openClose(incident: Incident) {
+    setClosingIncident(incident)
+    setCloseSummary('')
+    setCloseError('')
+  }
+
+  async function handleCloseSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (!closingIncident) return
+    if (!closeSummary.trim()) {
+      setCloseError(t('incidents.validation.summaryRequired'))
+      return
+    }
+    setCloseError('')
+    setCloseSubmitting(true)
+    try {
+      await closeIncident(closingIncident.id, closeSummary)
+      setSuccess(t('incidents.closure.success'))
+      setClosingIncident(null)
+      await load()
+    } catch (err) {
+      setCloseError(extractErrorMessage(err, t('common.error')))
+    } finally {
+      setCloseSubmitting(false)
+    }
+  }
+
+  async function handleDownloadReport(incident: Incident) {
+    setBusyId(incident.id)
+    try {
+      await downloadIncidentReport(incident.id)
+    } catch (err) {
+      setError(extractErrorMessage(err, t('incidents.downloadReportFailed')))
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  // Required-field validation shared by create and edit. The footer Save button
+  // lives outside the <form>, so HTML `required` is not enforced — validate here.
+  function validateIncidentForm(f: CreateForm): string | null {
+    if (!f.title.trim()) return t('incidents.validation.titleRequired')
+    if (!f.description.trim()) return t('incidents.validation.descriptionRequired')
+    if (f.vulnerability_types.length === 0) return t('incidents.validation.breachRequired')
+    if (!f.delegate_name.trim()) return t('incidents.validation.delegateRequired')
+    if (!f.controller_name.trim()) return t('incidents.validation.controllerRequired')
+    return null
+  }
+
   async function handleCreate(e: FormEvent) {
     e.preventDefault()
+    const validationError = validateIncidentForm(createForm)
+    if (validationError) {
+      setCreateError(validationError)
+      return
+    }
     setCreateError('')
     setCreateSubmitting(true)
     try {
@@ -191,10 +297,17 @@ export default function IncidentsPage() {
         description: createForm.description,
         incident_type: createForm.incident_type,
         severity: createForm.severity,
+        vulnerability_types: createForm.vulnerability_types,
         regulatory_notification_required: createForm.regulatory_notification_required,
         affected_data_types: createForm.affected_data_types,
         department_id: createForm.department_id ? Number(createForm.department_id) : null,
         assigned_to_id: createForm.assigned_to_id ? Number(createForm.assigned_to_id) : null,
+        delegate_name: createForm.delegate_name || null,
+        delegate_email: createForm.delegate_email || null,
+        delegate_phone: createForm.delegate_phone || null,
+        controller_name: createForm.controller_name || null,
+        controller_email: createForm.controller_email || null,
+        controller_phone: createForm.controller_phone || null,
       })
       setSuccess(t('incidents.createSuccess'))
       setCreating(false)
@@ -209,6 +322,11 @@ export default function IncidentsPage() {
   async function handleEditSubmit(e: FormEvent) {
     e.preventDefault()
     if (!editing) return
+    const validationError = validateIncidentForm(editForm)
+    if (validationError) {
+      setEditError(validationError)
+      return
+    }
     setEditError('')
     setEditSubmitting(true)
     try {
@@ -218,9 +336,16 @@ export default function IncidentsPage() {
         incident_type: editForm.incident_type,
         severity: editForm.severity,
         status: editForm.status,
+        vulnerability_types: editForm.vulnerability_types,
         regulatory_notification_required: editForm.regulatory_notification_required,
         affected_data_types: editForm.affected_data_types,
         assigned_to_id: editForm.assigned_to_id ? Number(editForm.assigned_to_id) : null,
+        delegate_name: editForm.delegate_name || null,
+        delegate_email: editForm.delegate_email || null,
+        delegate_phone: editForm.delegate_phone || null,
+        controller_name: editForm.controller_name || null,
+        controller_email: editForm.controller_email || null,
+        controller_phone: editForm.controller_phone || null,
       })
       setSuccess(t('incidents.updateSuccess'))
       setEditing(null)
@@ -322,6 +447,21 @@ export default function IncidentsPage() {
                 loading={busyId === i.id}
               >
                 {t('incidents.notifyAction')}
+              </Button>
+            )}
+            {i.status !== 'CLOSED' && (
+              <Button size="sm" variant="secondary" onClick={() => openClose(i)}>
+                {t('incidents.closeAction')}
+              </Button>
+            )}
+            {i.has_closure_report && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => handleDownloadReport(i)}
+                loading={busyId === i.id}
+              >
+                {t('incidents.closure.download')}
               </Button>
             )}
           </div>
@@ -449,6 +589,91 @@ export default function IncidentsPage() {
             hint={t('incidents.csvHelp')}
             rows={2}
           />
+          <div>
+            <p className="text-sm font-medium text-ink-50">
+              {t('incidents.fields.vulnerability')} <span className="text-red-500">*</span>
+            </p>
+            <p className="text-xs text-ink-300 mb-2">
+              {t('incidents.fields.vulnerabilityHint')}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {VULNERABILITY_TYPES.map((v) => (
+                <label
+                  key={v}
+                  className="flex items-center gap-2 text-sm text-ink-100 border border-slate-200 rounded-lg px-3 py-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={createForm.vulnerability_types.includes(v)}
+                    onChange={() =>
+                      setCreateForm({
+                        ...createForm,
+                        vulnerability_types: toggleVuln(createForm.vulnerability_types, v),
+                      })
+                    }
+                  />
+                  {t(`incidents.vulnerabilities.${v}`)}
+                </label>
+              ))}
+            </div>
+          </div>
+          <p className="text-xs text-ink-300">{t('incidents.fields.partiesHint')}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-ink-50">
+                {t('incidents.fields.delegate')}
+              </p>
+              <Input
+                label={t('incidents.fields.name')}
+                required
+                value={createForm.delegate_name}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, delegate_name: e.target.value })
+                }
+              />
+              <Input
+                label={t('incidents.fields.email')}
+                value={createForm.delegate_email}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, delegate_email: e.target.value })
+                }
+              />
+              <Input
+                label={t('incidents.fields.phone')}
+                value={createForm.delegate_phone}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, delegate_phone: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-ink-50">
+                {t('incidents.fields.controller')}
+              </p>
+              <Input
+                label={t('incidents.fields.name')}
+                required
+                value={createForm.controller_name}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, controller_name: e.target.value })
+                }
+              />
+              <Input
+                label={t('incidents.fields.email')}
+                value={createForm.controller_email}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, controller_email: e.target.value })
+                }
+              />
+              <Input
+                label={t('incidents.fields.phone')}
+                value={createForm.controller_phone}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, controller_phone: e.target.value })
+                }
+              />
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Select
               label={t('incidents.fields.department')}
@@ -594,7 +819,10 @@ export default function IncidentsPage() {
                 label={t('incidents.fields.status')}
                 value={editForm.status}
                 onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                options={STATUSES.map((v) => ({
+                options={(editing?.status === 'CLOSED'
+                  ? STATUSES
+                  : EDIT_STATUSES
+                ).map((v) => ({
                   value: v,
                   label: t(`incidents.statuses.${v}`),
                 }))}
@@ -609,6 +837,90 @@ export default function IncidentsPage() {
               hint={t('incidents.csvHelp')}
               rows={2}
             />
+            <div>
+              <p className="text-sm font-medium text-ink-50">
+                {t('incidents.fields.vulnerability')} <span className="text-red-500">*</span>
+              </p>
+              <p className="text-xs text-ink-300 mb-2">
+                {t('incidents.fields.vulnerabilityHint')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {VULNERABILITY_TYPES.map((v) => (
+                  <label
+                    key={v}
+                    className="flex items-center gap-2 text-sm text-ink-100 border border-slate-200 rounded-lg px-3 py-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={editForm.vulnerability_types.includes(v)}
+                      onChange={() =>
+                        setEditForm({
+                          ...editForm,
+                          vulnerability_types: toggleVuln(editForm.vulnerability_types, v),
+                        })
+                      }
+                    />
+                    {t(`incidents.vulnerabilities.${v}`)}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-ink-50">
+                  {t('incidents.fields.delegate')}
+                </p>
+                <Input
+                  label={t('incidents.fields.name')}
+                  required
+                  value={editForm.delegate_name}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, delegate_name: e.target.value })
+                  }
+                />
+                <Input
+                  label={t('incidents.fields.email')}
+                  value={editForm.delegate_email}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, delegate_email: e.target.value })
+                  }
+                />
+                <Input
+                  label={t('incidents.fields.phone')}
+                  value={editForm.delegate_phone}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, delegate_phone: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-ink-50">
+                  {t('incidents.fields.controller')}
+                </p>
+                <Input
+                  label={t('incidents.fields.name')}
+                  required
+                  value={editForm.controller_name}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, controller_name: e.target.value })
+                  }
+                />
+                <Input
+                  label={t('incidents.fields.email')}
+                  value={editForm.controller_email}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, controller_email: e.target.value })
+                  }
+                />
+                <Input
+                  label={t('incidents.fields.phone')}
+                  value={editForm.controller_phone}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, controller_phone: e.target.value })
+                  }
+                />
+              </div>
+            </div>
             <Select
               label={t('incidents.fields.assigned')}
               value={editForm.assigned_to_id}
@@ -646,6 +958,38 @@ export default function IncidentsPage() {
             </label>
 
             {editError && <AlertBox tone="danger">{editError}</AlertBox>}
+          </form>
+        )}
+      </Modal>
+
+      <Modal
+        open={!!closingIncident}
+        onClose={() => setClosingIncident(null)}
+        title={t('incidents.closure.action')}
+        size="lg"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setClosingIncident(null)}>
+              {t('common.cancel')}
+            </Button>
+            <Button onClick={handleCloseSubmit} loading={closeSubmitting}>
+              {t('incidents.closure.action')}
+            </Button>
+          </>
+        }
+      >
+        {closingIncident && (
+          <form onSubmit={handleCloseSubmit} className="space-y-3">
+            <AlertBox tone="info">{t('incidents.closure.requirements')}</AlertBox>
+            <Textarea
+              label={t('incidents.closure.summary')}
+              required
+              value={closeSummary}
+              onChange={(e) => setCloseSummary(e.target.value)}
+              hint={t('incidents.closure.summaryHint')}
+              rows={5}
+            />
+            {closeError && <AlertBox tone="danger">{closeError}</AlertBox>}
           </form>
         )}
       </Modal>

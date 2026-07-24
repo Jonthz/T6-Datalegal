@@ -41,6 +41,7 @@ export interface Incident {
   incident_type: string
   severity: string
   status: string
+  vulnerability_types: string[]
   regulatory_notification_required: boolean
   regulatory_notified_at: string | null
   reporter_id: number | null
@@ -48,6 +49,15 @@ export interface Incident {
   resolved_at: string | null
   affected_data_types: string
   department_id: number | null
+  delegate_name: string | null
+  delegate_email: string | null
+  delegate_phone: string | null
+  controller_name: string | null
+  controller_email: string | null
+  controller_phone: string | null
+  closure_summary: string
+  closed_at: string | null
+  has_closure_report: boolean
   created_at: string
 }
 

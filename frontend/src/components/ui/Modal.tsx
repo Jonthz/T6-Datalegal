@@ -64,11 +64,12 @@ export function Modal({
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
         className={cn(
-          'glass-surface rounded-glass w-full p-6 shadow-glass-lg border-slate-200',
+          'glass-surface rounded-glass w-full shadow-glass-lg border-slate-200',
+          'flex flex-col max-h-[90vh] sm:max-h-[85vh]',
           sizeClasses[size]
         )}
       >
-        <header className="flex items-start justify-between gap-3 mb-4">
+        <header className="flex items-start justify-between gap-3 shrink-0 px-6 pt-6 pb-4 border-b border-slate-200">
           <div>
             <h2 className="text-lg font-semibold text-ink-50">{title}</h2>
             {description && <p className="text-sm text-ink-300 mt-0.5">{description}</p>}
@@ -77,8 +78,12 @@ export function Modal({
             <CloseIcon className="h-4 w-4" />
           </Button>
         </header>
-        <div className="space-y-4">{children}</div>
-        {footer && <footer className="mt-6 flex items-center justify-end gap-2">{footer}</footer>}
+        <div className="space-y-4 overflow-y-auto flex-1 px-6 py-4">{children}</div>
+        {footer && (
+          <footer className="shrink-0 flex items-center justify-end gap-2 px-6 py-4 border-t border-slate-200">
+            {footer}
+          </footer>
+        )}
       </div>
     </div>
   )
