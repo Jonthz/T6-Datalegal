@@ -95,9 +95,6 @@ def _generate_ropa_pdf(ropa_data: dict) -> bytes:
         align="C",
     )
     pdf.cell(
-        0, 8, f"Generated: {ropa_data['generated_at']}", new_x="LMARGIN", new_y="NEXT", align="C"
-    )
-    pdf.cell(
         0,
         8,
         f"Tenant ID: {ropa_data['tenant_id']}  Total activities: {ropa_data['total_activities']}",

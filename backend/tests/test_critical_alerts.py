@@ -1,9 +1,10 @@
 """Tests for US-RF18-1: automated internal alerts for critical legal-deadline events."""
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from fastapi.testclient import TestClient
 
+from app.core.sla import compute_stoplight, is_approaching, is_overdue
 from app.models.alert import Alert
 from app.models.arco_request import ARCORequest
 from app.models.audit_plan import AuditPlan
@@ -97,17 +98,19 @@ def test_scan_ignores_terminal_requests(session, tenant_a):
     assert not created
 
 
-def test_scan_is_idempotent(session, tenant_a):
-    """Running the scan twice must not create duplicate unread alerts."""
+def test_scan_caps_at_two_alerts_per_day(session, tenant_a):
+    """While unread, an overdue event nudges again, but at most twice per day."""
     _make_arco(session, tenant_id=tenant_a.id, deadline_date=date.today() - timedelta(days=1))
     session.commit()
 
     first = scan_tenant_for_critical_alerts(session, tenant_a.id)
     second = scan_tenant_for_critical_alerts(session, tenant_a.id)
+    third = scan_tenant_for_critical_alerts(session, tenant_a.id)
 
     assert len(first) == 1
-    assert len(second) == 0
-    assert session.query(Alert).filter(Alert.alert_type == "ARCO_OVERDUE").count() == 1
+    assert len(second) == 1  # still unread → a second nudge is allowed
+    assert len(third) == 0  # daily cap of 2 reached
+    assert session.query(Alert).filter(Alert.alert_type == "ARCO_OVERDUE").count() == 2
 
 
 def test_scan_raises_audit_scheduled_alert(session, tenant_a):
@@ -158,3 +161,70 @@ def test_scan_endpoint_forbidden_for_auditor(client: TestClient, auditor_token):
     """Non-privileged roles without alerts:c permission must not trigger a scan."""
     resp = client.post("/api/v1/alerts/scan", headers=auth_headers(auditor_token))
     assert resp.status_code == 403
+
+
+# ── SLA day-0 boundary (point 1) ─────────────────────────────────────────────
+
+
+def test_deadline_day_is_yellow_not_red():
+    """On the deadline day itself the item is still within term: YELLOW, not overdue."""
+    today = date(2026, 7, 24)
+    deadline = today  # days_remaining == 0
+
+    stoplight, days_remaining = compute_stoplight(deadline, today)
+
+    assert days_remaining == 0
+    assert stoplight == "YELLOW"
+    assert is_overdue(deadline, today) is False
+    assert is_approaching(deadline, today) is True
+
+
+def test_day_after_deadline_is_red_and_overdue():
+    """The day after the deadline is RED and counts as overdue."""
+    today = date(2026, 7, 24)
+    deadline = today - timedelta(days=1)  # days_remaining == -1
+
+    stoplight, _ = compute_stoplight(deadline, today)
+
+    assert stoplight == "RED"
+    assert is_overdue(deadline, today) is True
+
+
+# ── Nudge while pending + daily cap (point 2) ────────────────────────────────
+
+
+def test_read_alert_still_nudges_while_pending(session, tenant_a):
+    """A read alert whose deadline is still pending gets a second nudge (up to the cap)."""
+    _make_arco(session, tenant_id=tenant_a.id, deadline_date=date.today() - timedelta(days=1))
+    session.commit()
+
+    first = scan_tenant_for_critical_alerts(session, tenant_a.id)
+    assert len(first) == 1
+
+    # DPO reads it but the ARCO is still overdue → keep nudging.
+    first[0].is_read = True
+    session.commit()
+
+    second = scan_tenant_for_critical_alerts(session, tenant_a.id)
+    assert len(second) == 1
+    assert session.query(Alert).filter(Alert.alert_type == "ARCO_OVERDUE").count() == 2
+
+
+def test_daily_cap_resets_next_day(session, tenant_a):
+    """A still-unread overdue event nudges again on a new day."""
+    _make_arco(session, tenant_id=tenant_a.id, deadline_date=date.today() - timedelta(days=1))
+    session.commit()
+
+    # Use up today's cap of 2.
+    scan_tenant_for_critical_alerts(session, tenant_a.id)
+    scan_tenant_for_critical_alerts(session, tenant_a.id)
+    assert session.query(Alert).filter(Alert.alert_type == "ARCO_OVERDUE").count() == 2
+
+    # Back-date both alerts to yesterday, still unread → next-day cap resets.
+    yesterday = datetime.now(timezone.utc) - timedelta(days=1)
+    for alert in session.query(Alert).filter(Alert.alert_type == "ARCO_OVERDUE").all():
+        alert.created_at = yesterday
+    session.commit()
+
+    third = scan_tenant_for_critical_alerts(session, tenant_a.id)
+    assert len(third) == 1

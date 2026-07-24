@@ -18,14 +18,18 @@ def compute_stoplight(deadline_date: date, today: date | None = None) -> tuple[s
     """Return (stoplight, days_remaining) for an open (non-terminal) deadline.
 
     GREEN: more than YELLOW_THRESHOLD_DAYS days left.
-    YELLOW: between 1 and YELLOW_THRESHOLD_DAYS days left.
-    RED: due today or overdue.
+    YELLOW: between 0 and YELLOW_THRESHOLD_DAYS days left. The deadline day
+        itself (days_remaining == 0) is still within the legal term, so it is
+        treated as a last-chance YELLOW rather than RED. This keeps the
+        stoplight consistent with is_overdue() and is_approaching(), which both
+        treat the deadline day as on-time/approaching.
+    RED: the deadline has passed (overdue).
     """
     today = today or date.today()
     days_remaining = (deadline_date - today).days
     if days_remaining > YELLOW_THRESHOLD_DAYS:
         stoplight = "GREEN"
-    elif days_remaining >= 1:
+    elif days_remaining >= 0:
         stoplight = "YELLOW"
     else:
         stoplight = "RED"
