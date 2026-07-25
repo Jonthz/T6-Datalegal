@@ -52,6 +52,7 @@ PERMISSIONS: dict[str, dict[str, list[str]]] = {
         "reports": ["r"],
         "alerts": ["c", "r", "u", "d"],
         "backups": ["r"],
+        "permissions": ["c", "r", "u", "d"],
     },
     "ADMIN": {
         "users": ["c", "r", "u", "d"],
@@ -78,6 +79,7 @@ PERMISSIONS: dict[str, dict[str, list[str]]] = {
         "reports": ["r"],
         "alerts": ["c", "r", "u", "d"],
         "backups": ["c", "r", "u"],
+        "permissions": ["c", "r", "u"],
     },
     "DEPT_HEAD": {
         "users": ["r"],
@@ -101,6 +103,7 @@ PERMISSIONS: dict[str, dict[str, list[str]]] = {
         "sectors": ["r"],
         "reports": ["r"],
         "alerts": ["r", "u"],
+        "permissions": ["r"],
     },
     "AUDITOR": {
         "audit": ["r", "export"],
@@ -124,12 +127,42 @@ PERMISSIONS: dict[str, dict[str, list[str]]] = {
         "sectors": ["r"],
         "reports": ["r"],
         "alerts": ["r"],
+        "permissions": ["r"],
     },
 }
 
+SYSTEM_ROLES = set(PERMISSIONS.keys())
+# The full universe of modules a custom role may be granted access to.
+KNOWN_MODULES = set(PERMISSIONS["SUPER_ADMIN"].keys())
+VALID_ACTIONS = {"c", "r", "u", "d", "export"}
+
 
 def has_permission(role: str, module: str, action: str) -> bool:
-    """Check if a role has permission to perform action on module."""
+    """Check if a built-in system role has permission to perform action on module."""
     role_perms = PERMISSIONS.get(role, {})
     module_perms = role_perms.get(module, [])
     return action in module_perms
+
+
+def has_custom_role_permission(db, tenant_id: int, role: str, module: str, action: str) -> bool:
+    """Check whether a tenant-defined custom role grants this module action (Cycle 6).
+
+    System roles are never looked up here — has_permission() already covers
+    them from the static matrix, cheaply and without a DB round-trip.
+    """
+    if role in SYSTEM_ROLES:
+        return False
+
+    from app.models.role import Role, RolePermission  # local import avoids a core->models cycle
+
+    row = (
+        db.query(RolePermission)
+        .join(Role, Role.id == RolePermission.role_id)
+        .filter(
+            Role.tenant_id == tenant_id,
+            Role.name == role,
+            RolePermission.module == module,
+        )
+        .first()
+    )
+    return row is not None and action in row.actions

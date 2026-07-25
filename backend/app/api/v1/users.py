@@ -4,12 +4,28 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_tenant_id, get_db, require_permission
+from app.core.permissions import SYSTEM_ROLES
 from app.core.security import get_password_hash
 from app.models.audit_log import AuditLog
+from app.models.role import Role
 from app.models.user import User
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
+
+
+def _validate_role(db: Session, tenant_id: int, role: str) -> None:
+    """Reject a role that is neither a system role nor an existing custom role."""
+    if role in SYSTEM_ROLES:
+        return
+    exists = (
+        db.query(Role).filter(Role.tenant_id == tenant_id, Role.name == role).first() is not None
+    )
+    if not exists:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unknown role '{role}'. Must be a system role or an existing custom role.",
+        )
 
 
 @router.get("", response_model=list[UserRead])
@@ -38,6 +54,7 @@ def create_user(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Email already registered."
         )
+    _validate_role(db, tenant_id, body.role)
 
     user = User(
         tenant_id=tenant_id,
@@ -87,6 +104,8 @@ def update_user(
     user = db.query(User).filter(User.id == user_id, User.tenant_id == tenant_id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+    if body.role is not None:
+        _validate_role(db, tenant_id, body.role)
 
     update_data = body.model_dump(exclude_none=True)
     if "password" in update_data:

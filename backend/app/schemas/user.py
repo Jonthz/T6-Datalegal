@@ -2,26 +2,24 @@ from datetime import datetime
 
 from pydantic import BaseModel, field_validator
 
+from app.core.permissions import SYSTEM_ROLES
 from app.core.security import validate_password_strength
 
-VALID_ROLES = {"SUPER_ADMIN", "DPO", "ADMIN", "DEPT_HEAD", "AUDITOR"}
+# Kept for backward compatibility; SYSTEM_ROLES (app.core.permissions) is now the
+# source of truth. A role is valid if it's a system role OR a tenant custom role
+# (Cycle 6) — the latter can only be checked against the DB, so that check lives
+# in the users router (see app/api/v1/users.py), not here.
+VALID_ROLES = SYSTEM_ROLES
 
 
 class UserCreate(BaseModel):
     """UserCreate schema/model definition."""
+
     email: str
     password: str
     full_name: str
     role: str = "AUDITOR"
     department_id: int | None = None
-
-    @field_validator("role")
-    @classmethod
-    def validate_role(cls, v: str) -> str:
-        """Handle validate role."""
-        if v not in VALID_ROLES:
-            raise ValueError(f"Role must be one of {sorted(VALID_ROLES)}")
-        return v
 
     @field_validator("password")
     @classmethod
@@ -35,20 +33,13 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     """UserUpdate schema/model definition."""
+
     email: str | None = None
     full_name: str | None = None
     role: str | None = None
     department_id: int | None = None
     is_active: bool | None = None
     password: str | None = None
-
-    @field_validator("role")
-    @classmethod
-    def validate_role(cls, v: str | None) -> str | None:
-        """Handle validate role."""
-        if v is not None and v not in VALID_ROLES:
-            raise ValueError(f"Role must be one of {sorted(VALID_ROLES)}")
-        return v
 
     @field_validator("password")
     @classmethod
@@ -63,6 +54,7 @@ class UserUpdate(BaseModel):
 
 class UserRead(BaseModel):
     """UserRead schema/model definition."""
+
     model_config = {"from_attributes": True}
 
     id: int

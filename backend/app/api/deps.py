@@ -7,7 +7,7 @@ from jose import JWTError
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.permissions import has_permission
+from app.core.permissions import has_custom_role_permission, has_permission
 from app.core.security import decode_token
 from app.db.session import get_db
 from app.models.user import User
@@ -109,7 +109,10 @@ def require_permission(module: str, action: str):
         db: Session = Depends(get_db),
     ) -> User:
         """Handle checker."""
-        if not has_permission(current_user.role, module, action):
+        allowed = has_permission(current_user.role, module, action) or has_custom_role_permission(
+            db, current_user.tenant_id, current_user.role, module, action
+        )
+        if not allowed:
             from app.models.audit_log import AuditLog
 
             AuditLog.create_log(
