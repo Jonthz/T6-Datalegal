@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_tenant_id, get_db, require_permission
+from app.core.sla import compute_stoplight, is_on_time, is_overdue
 from app.models.alert import Alert
 from app.models.arco_request import ARCORequest
 from app.models.audit_log import AuditLog
@@ -31,7 +32,6 @@ def get_arco_dashboard(
 ):
     """Dashboard summary: totals, by type, by status, overdue count."""
     requests = db.query(ARCORequest).filter(ARCORequest.tenant_id == tenant_id).all()
-    today = date.today()
     terminal = {"RESPONDED", "CLOSED", "REJECTED"}
 
     by_type: dict[str, int] = {}
@@ -41,7 +41,7 @@ def get_arco_dashboard(
     for r in requests:
         by_type[r.request_type] = by_type.get(r.request_type, 0) + 1
         by_status[r.status] = by_status.get(r.status, 0) + 1
-        if r.deadline_date < today and r.status not in terminal:
+        if r.status not in terminal and is_overdue(r.deadline_date):
             overdue += 1
 
     return {
@@ -129,9 +129,11 @@ def get_arco_request(
     db: Session = Depends(get_db),
 ):
     """Retrieve a single ARCO request by ID."""
-    req = db.query(ARCORequest).filter(
-        ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id
-    ).first()
+    req = (
+        db.query(ARCORequest)
+        .filter(ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id)
+        .first()
+    )
     if not req:
         raise HTTPException(status_code=404, detail="ARCO request not found.")
     return req
@@ -146,9 +148,11 @@ def update_arco_request(
     db: Session = Depends(get_db),
 ):
     """Update status, assignee, or response of an ARCO request."""
-    req = db.query(ARCORequest).filter(
-        ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id
-    ).first()
+    req = (
+        db.query(ARCORequest)
+        .filter(ARCORequest.id == request_id, ARCORequest.tenant_id == tenant_id)
+        .first()
+    )
     if not req:
         raise HTTPException(status_code=404, detail="ARCO request not found.")
 
@@ -197,7 +201,8 @@ def get_sla_status(
 
     terminal = {"RESPONDED", "CLOSED", "REJECTED"}
     if req.status in terminal:
-        on_time = req.responded_at is not None and req.responded_at.date() <= req.deadline_date
+        responded_date = req.responded_at.date() if req.responded_at is not None else None
+        on_time = is_on_time(responded_date, req.deadline_date)
         return {
             "ticket_number": req.ticket_number,
             "status": req.status,
@@ -207,14 +212,7 @@ def get_sla_status(
             "deadline_date": str(req.deadline_date),
         }
 
-    today = date.today()
-    days_remaining = (req.deadline_date - today).days
-    if days_remaining > 7:
-        stoplight = "GREEN"
-    elif days_remaining >= 1:
-        stoplight = "YELLOW"
-    else:
-        stoplight = "RED"
+    stoplight, days_remaining = compute_stoplight(req.deadline_date)
 
     return {
         "ticket_number": req.ticket_number,

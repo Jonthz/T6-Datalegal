@@ -27,3 +27,26 @@ services:
         sync: false
       - key: CORS_ORIGINS
         sync: false
+
+  # US-RF18-1: hourly job that raises internal alerts for critical legal-deadline
+  # events (ARCO SLA overdue/approaching, audit plans starting soon). Reuses the
+  # same backend image; see backend/scripts/scan_critical_alerts.py.
+  - type: cron
+    runtime: docker
+    name: datalegal-critical-alerts-scan
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerCommand: python scripts/scan_critical_alerts.py
+    plan: free
+    schedule: "0 * * * *"
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: MFA_ENCRYPTION_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false

@@ -18,6 +18,8 @@ build/
 
 # Test databases
 *.db
+*.db-journal
+*.sqlite3
 
 # Runtime artifacts written by the SQLite backup endpoint and CLI
 backend/backups/
