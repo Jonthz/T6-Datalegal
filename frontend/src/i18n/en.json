@@ -695,7 +695,31 @@
       "assigned": "Assigned to",
       "regulatoryNotified": "Regulator notified",
       "resolvedAt": "Resolved at",
-      "reporter": "Reporter"
+      "reporter": "Reporter",
+      "vulnerability": "Type of breach",
+      "vulnerabilityHint": "Which security properties were affected (select all that apply).",
+      "delegate": "Data protection delegate (DPO)",
+      "controller": "Data controller (responsible)",
+      "partiesHint": "Pre-filled from the company profile. Edit if this incident needs different details.",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "vulnerabilities": {
+      "CONFIDENTIALITY": "Confidentiality",
+      "INTEGRITY": "Integrity",
+      "AVAILABILITY": "Availability"
+    },
+    "closure": {
+      "title": "Closure report",
+      "action": "Close with report",
+      "summary": "Closure summary",
+      "summaryHint": "Describe the resolution and remediation. Required to generate the closure report.",
+      "requirements": "To close, the breach type, delegate name, controller name, and a closure summary are required.",
+      "success": "Incident closed and PDF report generated.",
+      "download": "Download report",
+      "closed": "Closed",
+      "reportReady": "Report available"
     },
     "types": {
       "DATA_BREACH": "Data breach",
@@ -736,6 +760,16 @@
     "updateSuccess": "Incident updated.",
     "notifySuccess": "Regulator notification marked.",
     "notifyAction": "Mark regulator notified",
+    "closeAction": "Close",
+    "downloadReportFailed": "We could not download the report.",
+    "validation": {
+      "titleRequired": "Title is required.",
+      "descriptionRequired": "Description is required.",
+      "breachRequired": "Select at least one type of breach.",
+      "delegateRequired": "The delegate (DPO) name is required.",
+      "controllerRequired": "The controller (responsible) name is required.",
+      "summaryRequired": "A closure summary is required to generate the report."
+    },
     "loadFailed": "We could not load incidents.",
     "empty": "No incidents reported",
     "emptyHint": "Register the first security or privacy incident to start tracking deadlines.",
