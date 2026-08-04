@@ -23,6 +23,7 @@ from app.api.v1 import (
     reports,
     retention,
     risk_assessments,
+    roles,
     ropa,
     sectors,
     tenants,
@@ -70,3 +71,6 @@ api_router.include_router(reports.router)
 api_router.include_router(alerts.router)
 api_router.include_router(backups.router)
 api_router.include_router(import_export.router)
+
+# Cycle 6
+api_router.include_router(roles.router)

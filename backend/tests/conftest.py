@@ -37,6 +37,7 @@ from app.models import (  # noqa: F401
     treatment_activity,
     user,
 )
+from app.models import role as role_model  # noqa: F401
 from app.models.tenant import Tenant
 from app.models.user import User
 
@@ -77,6 +78,7 @@ def session(create_tables):  # pylint: disable=unused-argument
 @pytest.fixture
 def client(session):
     """Handle client."""
+
     def override_get_db():
         """Handle override get db."""
         yield session

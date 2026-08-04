@@ -26,6 +26,7 @@ from app.models import (  # noqa: F401
     remediation,
     retention,
     risk_assessment,
+    role,
     tenant,
     training,
     treatment_activity,

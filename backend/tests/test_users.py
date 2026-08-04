@@ -7,6 +7,7 @@ from tests.conftest import _make_user, auth_headers
 
 class TestUserCRUD:
     """TestUserCRUD schema/model definition."""
+
     def test_create_user_success(self, client: TestClient, admin_token, tenant_a):
         """Test that create user success behaves as expected."""
         resp = client.post(
@@ -89,7 +90,7 @@ class TestUserCRUD:
             },
             headers=auth_headers(admin_token),
         )
-        assert resp.status_code == 422
+        assert resp.status_code == 400
 
     def test_create_user_with_department(self, client: TestClient, admin_token, tenant_a, session):
         """Test that create user with department behaves as expected."""
