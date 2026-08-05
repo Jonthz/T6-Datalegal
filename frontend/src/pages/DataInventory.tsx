@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
   Button,
   GlassCard,
+  IconButton,
   KPICard,
   LoadingState,
   PageHeader,
@@ -45,9 +47,13 @@ export default function DataInventoryPage() {
         title={t('dataInventory.title')}
         description={t('dataInventory.description')}
         actions={
-          <Button variant="secondary" size="sm" onClick={() => load()}>
-            {t('common.refresh')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            size="md"
+            onClick={() => load()}
+          />
         }
         meta={
           progress && (

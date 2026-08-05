@@ -54,6 +54,30 @@ function BellIcon() {
   )
 }
 
+function ChevronDownIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" aria-hidden>
+      <path
+        d="m6 8 4 4 4-4"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+    </svg>
+  )
+}
+
+function formatRole(role: string | null): string {
+  if (!role) return '-'
+  return role
+    .toLowerCase()
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
 export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -61,6 +85,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
   const menuRef = useRef<HTMLDivElement>(null)
   const role = getStoredRole()
   const tenantId = getStoredTenantId()
+  const roleLabel = formatRole(role)
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -119,7 +144,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
         >
           <BellIcon />
           {unreadAlerts > 0 && (
-            <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[1rem] h-4 px-1 text-[10px] font-semibold rounded-full bg-rose-500 text-white">
+            <span className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 text-[13px] font-semibold rounded-full bg-rose-600 text-white">
               {unreadAlerts > 99 ? '99+' : unreadAlerts}
             </span>
           )}
@@ -129,14 +154,15 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex items-center gap-2 h-9 pl-1.5 pr-3 rounded-full bg-white border border-slate-300 text-sm text-ink-100 hover:bg-slate-50"
+            className="flex h-9 items-center gap-1.5 rounded-full border border-slate-300 bg-white pl-1.5 pr-2 text-ink-100 hover:bg-slate-50 hover:text-ink-50"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
+            aria-label={t('topbar.signedInAs')}
           >
-            <span className="h-6 w-6 rounded-full bg-brand-50 border border-brand-200 flex items-center justify-center text-[11px] font-bold text-brand-800">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-brand-200 bg-brand-50 text-[13px] font-bold text-brand-800">
               {role?.charAt(0) ?? '-'}
             </span>
-            <span className="hidden sm:inline">{role ?? '-'}</span>
+            <ChevronDownIcon />
           </button>
           {menuOpen && (
             <div
@@ -145,7 +171,7 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
             >
               <div className="px-3 py-2 border-b border-slate-200 mb-2">
                 <p className="text-xs text-ink-400">{t('topbar.signedInAs')}</p>
-                <p className="text-sm text-ink-50 font-semibold">{role ?? '-'}</p>
+                <p className="text-sm text-ink-50 font-semibold">{roleLabel}</p>
                 {tenantId != null && (
                   <p className="text-xs text-ink-300 mt-1">
                     {t('topbar.tenantId')}: <Badge tone="brand">{tenantId}</Badge>

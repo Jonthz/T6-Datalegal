@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FilePlus2, Pencil, RefreshCw, UserPlus } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -7,6 +8,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   LoadingState,
   Modal,
@@ -527,9 +529,12 @@ export default function TrainingPage() {
         <GlassPanel>
           <header className="p-3 border-b border-slate-200 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink-50">{t('training.programs.title')}</h3>
-            <Button size="sm" onClick={openProgramCreate}>
-              {t('training.programs.create')}
-            </Button>
+            <IconButton
+              label={t('training.programs.create')}
+              icon={<FilePlus2 className="h-4 w-4" />}
+              variant="primary"
+              onClick={openProgramCreate}
+            />
           </header>
           {programsLoading ? (
             <div className="p-3">
@@ -572,17 +577,19 @@ export default function TrainingPage() {
             <h3 className="text-sm font-semibold text-ink-50">{t('training.modules.title')}</h3>
             <div className="flex items-center gap-2">
               {selectedProgram && (
-                <Button size="sm" variant="ghost" onClick={() => openProgramEdit(selectedProgram)}>
-                  {t('training.programs.edit')}
-                </Button>
+                <IconButton
+                  label={t('training.programs.edit')}
+                  icon={<Pencil className="h-4 w-4" />}
+                  onClick={() => openProgramEdit(selectedProgram)}
+                />
               )}
-              <Button
-                size="sm"
+              <IconButton
+                label={t('training.modules.create')}
+                icon={<FilePlus2 className="h-4 w-4" />}
+                variant="primary"
                 onClick={openModuleCreate}
                 disabled={!selectedProgram}
-              >
-                {t('training.modules.create')}
-              </Button>
+              />
             </div>
           </header>
           {!selectedProgram ? (
@@ -628,13 +635,19 @@ export default function TrainingPage() {
             <h3 className="text-sm font-semibold text-ink-50">{t('training.materials.title')}</h3>
             <div className="flex items-center gap-2">
               {selectedModule && (
-                <Button size="sm" variant="ghost" onClick={() => openModuleEdit(selectedModule)}>
-                  {t('training.modules.edit')}
-                </Button>
+                <IconButton
+                  label={t('training.modules.edit')}
+                  icon={<Pencil className="h-4 w-4" />}
+                  onClick={() => openModuleEdit(selectedModule)}
+                />
               )}
-              <Button size="sm" onClick={openMaterialCreate} disabled={!selectedModule}>
-                {t('training.materials.create')}
-              </Button>
+              <IconButton
+                label={t('training.materials.create')}
+                icon={<FilePlus2 className="h-4 w-4" />}
+                variant="primary"
+                onClick={openMaterialCreate}
+                disabled={!selectedModule}
+              />
             </div>
           </header>
           {!selectedModule ? (
@@ -679,12 +692,19 @@ export default function TrainingPage() {
       <GlassCard padded={false} className="p-4 flex flex-wrap items-center justify-between gap-3">
         <div className="text-sm text-ink-300">{t('training.enrollments.description')}</div>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" onClick={loadEnrollments}>
-            {t('common.refresh')}
-          </Button>
-          <Button onClick={openEnroll} disabled={programs.length === 0 || users.length === 0}>
-            {t('training.enrollments.create')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            onClick={loadEnrollments}
+          />
+          <IconButton
+            label={t('training.enrollments.create')}
+            icon={<UserPlus className="h-4 w-4" />}
+            variant="primary"
+            onClick={openEnroll}
+            disabled={programs.length === 0 || users.length === 0}
+          />
         </div>
       </GlassCard>
       <GlassPanel>

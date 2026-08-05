@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FileText, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -8,6 +9,7 @@ import {
   ErrorState,
   GlassCard,
   GlassPanel,
+  IconButton,
   KPICard,
   LoadingState,
   PageHeader,
@@ -69,16 +71,22 @@ export default function ROPAPage() {
         description={t('ropa.description')}
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={load}>
-              {t('common.refresh')}
-            </Button>
-            <Button
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={load}
+            />
+            <IconButton
+              label={t('ropa.downloadPdf')}
+              icon={<FileText className="h-5 w-5" />}
+              variant="primary"
+              size="md"
               onClick={handleDownload}
               loading={downloading}
               disabled={!report || report.total_activities === 0}
-            >
-              {t('ropa.downloadPdf')}
-            </Button>
+            />
           </div>
         }
       />

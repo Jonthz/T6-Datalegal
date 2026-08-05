@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FilePlus2, Pencil, Play, RefreshCw, Search } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -13,6 +14,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -253,9 +255,11 @@ export default function RetentionPage() {
         header: t('common.actions'),
         align: 'right',
         render: (p) => (
-          <Button size="sm" variant="ghost" onClick={() => openEditPolicy(p)}>
-            {t('common.edit')}
-          </Button>
+          <IconButton
+            label={t('common.edit')}
+            icon={<Pencil className="h-4 w-4" />}
+            onClick={() => openEditPolicy(p)}
+          />
         ),
       },
     ],
@@ -349,9 +353,12 @@ export default function RetentionPage() {
         header: t('common.actions'),
         align: 'right',
         render: (r) => (
-          <Button size="sm" variant="secondary" onClick={() => openReview(r)}>
-            {t('common.viewDetails')}
-          </Button>
+          <IconButton
+            label={t('common.viewDetails')}
+            icon={<Search className="h-4 w-4" />}
+            variant="secondary"
+            onClick={() => openReview(r)}
+          />
         ),
       },
     ],
@@ -421,9 +428,13 @@ export default function RetentionPage() {
         title={t('retention.title')}
         description={t('retention.description')}
         actions={
-          <Button variant="secondary" size="sm" onClick={() => load()}>
-            {t('common.refresh')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            size="md"
+            onClick={() => load()}
+          />
         }
       />
 
@@ -441,9 +452,12 @@ export default function RetentionPage() {
                   <h3 className="text-sm font-semibold text-ink-50">
                     {t('retention.policies.title')}
                   </h3>
-                  <Button size="sm" onClick={openCreatePolicy}>
-                    {t('retention.policies.create')}
-                  </Button>
+                  <IconButton
+                    label={t('retention.policies.create')}
+                    icon={<FilePlus2 className="h-4 w-4" />}
+                    variant="primary"
+                    onClick={openCreatePolicy}
+                  />
                 </div>
                 <DataTable<RetentionPolicy>
                   columns={policyColumns}
@@ -491,7 +505,7 @@ export default function RetentionPage() {
                         {t('retention.execute.description')}
                       </p>
                       {expired && (
-                        <p className="text-[10px] text-ink-400 mt-1">
+                        <p className="text-[13px] text-ink-400 mt-1">
                           {t('retention.expired.asOf', { date: formatDateTime(expired.as_of) })}
                         </p>
                       )}
@@ -504,9 +518,14 @@ export default function RetentionPage() {
                         options={policyOptions}
                         className="sm:w-56"
                       />
-                      <Button onClick={handleExecute} loading={executing}>
-                        {t('retention.execute.title')}
-                      </Button>
+                      <IconButton
+                        label={t('retention.execute.title')}
+                        icon={<Play className="h-4 w-4" />}
+                        variant="primary"
+                        size="md"
+                        loading={executing}
+                        onClick={handleExecute}
+                      />
                     </div>
                   </div>
                 </GlassCard>

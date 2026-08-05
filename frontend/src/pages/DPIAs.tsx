@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ClipboardSignature, Download, FilePlus2, Pencil, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -13,6 +14,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Modal,
   PageHeader,
   Select,
@@ -265,30 +267,30 @@ export default function DPIAsPage() {
         align: 'right',
         render: (d) => (
           <div className="flex justify-end gap-1 flex-wrap">
-            <Button size="sm" variant="ghost" onClick={() => openEdit(d)}>
-              {t('common.edit')}
-            </Button>
+            <IconButton
+              label={t('common.edit')}
+              icon={<Pencil className="h-4 w-4" />}
+              onClick={() => openEdit(d)}
+            />
             {d.status !== 'SIGNED' && (
-              <Button
-                size="sm"
+              <IconButton
+                label={t('dpias.sign')}
+                icon={<ClipboardSignature className="h-4 w-4" />}
                 variant="secondary"
                 onClick={() => handleSign(d)}
                 loading={busyId === d.id}
                 disabled={!isSigner}
                 title={!isSigner ? t('dpias.permissionRequired') : undefined}
-              >
-                {t('dpias.sign')}
-              </Button>
+              />
             )}
             {d.status === 'SIGNED' && (
-              <Button
-                size="sm"
+              <IconButton
+                label={t('dpias.downloadPdf')}
+                icon={<Download className="h-4 w-4" />}
                 variant="primary"
                 onClick={() => handleDownload(d)}
                 loading={busyId === d.id}
-              >
-                {t('dpias.downloadPdf')}
-              </Button>
+              />
             )}
           </div>
         ),
@@ -305,12 +307,21 @@ export default function DPIAsPage() {
         description={t('dpias.description')}
         actions={
           <>
-            <Button variant="secondary" size="sm" onClick={() => load()}>
-              {t('common.refresh')}
-            </Button>
-            <Button onClick={openCreate} disabled={activities.length === 0}>
-              {t('dpias.create')}
-            </Button>
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={() => load()}
+            />
+            <IconButton
+              label={t('dpias.create')}
+              icon={<FilePlus2 className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              onClick={openCreate}
+              disabled={activities.length === 0}
+            />
           </>
         }
       />

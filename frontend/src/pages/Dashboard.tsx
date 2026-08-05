@@ -2,6 +2,14 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
+  ArrowRight,
+  ClipboardList,
+  FileClock,
+  FileDown,
+  FileText,
+  ShieldQuestion,
+} from 'lucide-react'
+import {
   GlassCard,
   GlassPanel,
   KPICard,
@@ -11,6 +19,7 @@ import {
   LoadingState,
   Badge,
   Button,
+  IconButton,
 } from '../components/ui'
 import { getKPIs, getTrends } from '../api/reports'
 import { listAlerts } from '../api/alerts'
@@ -138,22 +147,22 @@ export default function DashboardPage() {
         description={t('dashboard.description')}
         actions={
           <>
-            <Button
+            <IconButton
+              label={t('common.exportPdf')}
+              icon={<FileText className="h-5 w-5" />}
               variant="secondary"
-              size="sm"
+              size="md"
               loading={exporting === 'pdf'}
               onClick={() => handleExport('pdf')}
-            >
-              {t('common.exportPdf')}
-            </Button>
-            <Button
+            />
+            <IconButton
+              label={t('common.exportCsv')}
+              icon={<FileDown className="h-5 w-5" />}
               variant="secondary"
-              size="sm"
+              size="md"
               loading={exporting === 'csv'}
               onClick={() => handleExport('csv')}
-            >
-              {t('common.exportCsv')}
-            </Button>
+            />
           </>
         }
       />
@@ -344,7 +353,7 @@ function TrendChart({ series }: { series: TrendSeries }) {
           ))}
         </svg>
       </div>
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-[10px] text-ink-400">
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-[13px] text-ink-400">
         {series.labels.map((label, i) => (
           <div key={label + i} className="text-center">
             <span className="block uppercase tracking-wider">{label}</span>
@@ -392,7 +401,7 @@ function AlertsPanel({
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-ink-50 truncate">{alert.title}</p>
                   <p className="text-xs text-ink-300 line-clamp-2">{alert.message}</p>
-                  <p className="text-[10px] text-ink-400 mt-1">{formatRelative(alert.created_at)}</p>
+                  <p className="text-[13px] text-ink-400 mt-1">{formatRelative(alert.created_at)}</p>
                 </div>
                 <Badge
                   tone={
@@ -421,21 +430,25 @@ function QuickActions() {
       title: t('dashboard.quickActions.registerActivity'),
       hint: t('dashboard.quickActions.registerActivityHint'),
       to: '/treatment-activities',
+      icon: <ClipboardList className="h-5 w-5" />,
     },
     {
       title: t('dashboard.quickActions.runRisk'),
       hint: t('dashboard.quickActions.runRiskHint'),
       to: '/risk-assessments',
+      icon: <ShieldQuestion className="h-5 w-5" />,
     },
     {
       title: t('dashboard.quickActions.openARCO'),
       hint: t('dashboard.quickActions.openARCOHint'),
       to: '/arco',
+      icon: <FileClock className="h-5 w-5" />,
     },
     {
       title: t('dashboard.quickActions.exportReport'),
       hint: t('dashboard.quickActions.exportReportHint'),
       to: '/reports',
+      icon: <FileDown className="h-5 w-5" />,
     },
   ]
 
@@ -451,14 +464,20 @@ function QuickActions() {
           <li key={action.to} className="border-b sm:border-r last:border-r-0 xl:last:border-r border-slate-100">
             <Link
               to={action.to}
-              className="group flex h-full items-start justify-between gap-4 px-5 py-4 hover:bg-slate-50 transition-colors"
+              className="group flex h-full min-h-28 items-start gap-3 px-5 py-4 hover:bg-slate-50 transition-colors"
             >
-              <span className="min-w-0">
-                <span className="block text-sm font-semibold text-ink-50">{action.title}</span>
-                <span className="block text-xs text-ink-300 mt-0.5">{action.hint}</span>
+              <span
+                aria-hidden
+                className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-brand-100 bg-brand-50 text-brand-700 transition-colors group-hover:bg-brand-100"
+              >
+                {action.icon}
               </span>
-              <span aria-hidden className="mt-0.5 text-brand-700 transition-transform group-hover:translate-x-0.5">
-                &gt;
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-ink-50">{action.title}</span>
+                <span className="block text-xs text-ink-300 mt-1 leading-5">{action.hint}</span>
+              </span>
+              <span aria-hidden className="mt-1 text-brand-700 transition-transform group-hover:translate-x-0.5">
+                <ArrowRight className="h-4 w-4" />
               </span>
             </Link>
           </li>

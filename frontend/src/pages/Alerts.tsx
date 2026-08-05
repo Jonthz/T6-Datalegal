@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { BellPlus, Check, RefreshCw, Trash2 } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
   Button,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   KPICard,
   Modal,
@@ -207,23 +209,20 @@ export default function AlertsPage() {
               </div>
               <div className="flex items-center gap-1">
                 {!a.is_read && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
+                  <IconButton
+                    label={t('alerts.markRead')}
+                    icon={<Check className="h-4 w-4" />}
                     loading={busyId === a.id}
                     onClick={() => handleMarkRead(a.id)}
-                  >
-                    {t('alerts.markRead')}
-                  </Button>
+                  />
                 )}
-                <Button
-                  size="sm"
-                  variant="ghost"
+                <IconButton
+                  label={t('alerts.delete')}
+                  icon={<Trash2 className="h-4 w-4" />}
+                  variant="danger"
                   loading={busyId === a.id}
                   onClick={() => handleDelete(a.id)}
-                >
-                  {t('alerts.delete')}
-                </Button>
+                />
               </div>
             </div>
           </li>
@@ -240,10 +239,22 @@ export default function AlertsPage() {
         description={t('alerts.description')}
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={() => Promise.all([load(), loadCount()])}>
-              {t('common.refresh')}
-            </Button>
-            {canCreate && <Button onClick={openCreate}>{t('alerts.create')}</Button>}
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={() => Promise.all([load(), loadCount()])}
+            />
+            {canCreate && (
+              <IconButton
+                label={t('alerts.create')}
+                icon={<BellPlus className="h-5 w-5" />}
+                variant="primary"
+                size="md"
+                onClick={openCreate}
+              />
+            )}
           </div>
         }
       />

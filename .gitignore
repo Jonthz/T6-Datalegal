@@ -27,6 +27,12 @@ backend/backups/
 # Frontend lock files (not versioned in this repo)
 package-lock.json
 
+# Local Playwright QA artifacts
+playwright-report/
+test-results/
+.playwright/
+docs/design/screenshots-local/
+
 .agents
 
 # Ignorar archivos multimedia pesados en Comunicaciones

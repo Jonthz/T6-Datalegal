@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FilePlus2, RefreshCw, RotateCcw, ToggleLeft, ToggleRight } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -7,6 +8,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   KPICard,
   Modal,
@@ -383,9 +385,11 @@ export default function ConsentsPage() {
           row.is_revoked ? (
             <span className="text-xs text-ink-400">{t('consents.records.alreadyRevoked')}</span>
           ) : (
-            <Button size="sm" variant="ghost" onClick={() => openRevoke(row)}>
-              {t('consents.records.revoke')}
-            </Button>
+            <IconButton
+              label={t('consents.records.revoke')}
+              icon={<RotateCcw className="h-4 w-4" />}
+              onClick={() => openRevoke(row)}
+            />
           ),
       },
     ],
@@ -426,14 +430,18 @@ export default function ConsentsPage() {
         header: t('common.actions'),
         align: 'right',
         render: (row) => (
-          <Button
-            size="sm"
-            variant="ghost"
+          <IconButton
+            label={row.is_active ? t('consents.banners.deactivate') : t('consents.banners.activate')}
+            icon={
+              row.is_active ? (
+                <ToggleLeft className="h-4 w-4" />
+              ) : (
+                <ToggleRight className="h-4 w-4" />
+              )
+            }
             loading={bannerBusy === row.id}
             onClick={() => toggleBanner(row)}
-          >
-            {row.is_active ? t('consents.banners.deactivate') : t('consents.banners.activate')}
-          </Button>
+          />
         ),
       },
     ],
@@ -467,10 +475,18 @@ export default function ConsentsPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={loadRecords}>
-              {t('common.refresh')}
-            </Button>
-            <Button onClick={openCreateRecord}>{t('consents.records.create')}</Button>
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              onClick={loadRecords}
+            />
+            <IconButton
+              label={t('consents.records.create')}
+              icon={<FilePlus2 className="h-4 w-4" />}
+              variant="primary"
+              onClick={openCreateRecord}
+            />
           </div>
         </div>
       </GlassCard>
@@ -495,10 +511,18 @@ export default function ConsentsPage() {
       <GlassCard padded={false} className="p-4 flex flex-wrap items-center justify-between gap-3">
         <div className="text-sm text-ink-300">{t('consents.banners.subtitle')}</div>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" onClick={loadBanners}>
-            {t('common.refresh')}
-          </Button>
-          <Button onClick={openBannerCreate}>{t('consents.banners.create')}</Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            onClick={loadBanners}
+          />
+          <IconButton
+            label={t('consents.banners.create')}
+            icon={<FilePlus2 className="h-4 w-4" />}
+            variant="primary"
+            onClick={openBannerCreate}
+          />
         </div>
       </GlassCard>
       <GlassPanel>

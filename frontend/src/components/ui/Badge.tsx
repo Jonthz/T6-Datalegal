@@ -7,6 +7,7 @@ export type BadgeTone =
   | 'success'
   | 'warning'
   | 'danger'
+  | 'critical'
   | 'info'
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -21,6 +22,7 @@ const toneClasses: Record<BadgeTone, string> = {
   success: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
   warning: 'bg-amber-50 text-amber-700 border border-amber-200',
   danger: 'bg-rose-50 text-rose-700 border border-rose-200',
+  critical: 'bg-rose-100 text-rose-900 border border-rose-300',
   info: 'bg-sky-50 text-sky-700 border border-sky-200',
 }
 
@@ -46,7 +48,7 @@ const riskTone: Record<RiskLevel, BadgeTone> = {
   LOW: 'success',
   MEDIUM: 'warning',
   HIGH: 'danger',
-  CRITICAL: 'danger',
+  CRITICAL: 'critical',
 }
 
 const riskLabel: Record<RiskLevel, string> = {

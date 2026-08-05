@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Database, Pencil, RefreshCw, Trash2 } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -13,6 +14,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -331,17 +333,18 @@ export default function InformationAssetsPage() {
         align: 'right',
         render: (a) => (
           <div className="flex items-center justify-end gap-2">
-            <Button size="sm" variant="ghost" onClick={() => openEdit(a)}>
-              {t('common.edit')}
-            </Button>
-            <Button
-              size="sm"
+            <IconButton
+              label={t('common.edit')}
+              icon={<Pencil className="h-4 w-4" />}
+              onClick={() => openEdit(a)}
+            />
+            <IconButton
+              label={t('common.delete')}
+              icon={<Trash2 className="h-4 w-4" />}
               variant="danger"
               loading={busyId === a.id}
               onClick={() => handleDelete(a)}
-            >
-              {t('common.delete')}
-            </Button>
+            />
           </div>
         ),
       },
@@ -355,7 +358,15 @@ export default function InformationAssetsPage() {
       <PageHeader
         title={t('informationAssets.title')}
         description={t('informationAssets.description')}
-        actions={<Button onClick={openCreate}>{t('informationAssets.create')}</Button>}
+        actions={
+          <IconButton
+            label={t('informationAssets.create')}
+            icon={<Database className="h-5 w-5" />}
+            variant="primary"
+            size="md"
+            onClick={openCreate}
+          />
+        }
       />
 
       {error && <AlertBox tone="danger">{error}</AlertBox>}
@@ -370,9 +381,12 @@ export default function InformationAssetsPage() {
             options={classOptions}
             className="sm:w-72"
           />
-          <Button variant="ghost" size="sm" onClick={() => load()}>
-            {t('common.refresh')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            onClick={() => load()}
+          />
         </div>
       </GlassCard>
 

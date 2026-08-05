@@ -6,13 +6,16 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { BellRing, Download, FilePlus2, LockKeyhole, Pencil, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
+  ActionMenu,
   Badge,
   Button,
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -20,7 +23,7 @@ import {
   StatusBadge,
   Textarea,
 } from '../components/ui'
-import type { DataTableColumn } from '../components/ui'
+import type { ActionMenuItem, DataTableColumn } from '../components/ui'
 import {
   VULNERABILITY_TYPES,
   closeIncident,
@@ -434,38 +437,43 @@ export default function IncidentsPage() {
         key: 'actions',
         header: t('common.actions'),
         align: 'right',
-        render: (i) => (
-          <div className="flex justify-end gap-1 flex-wrap">
-            <Button size="sm" variant="ghost" onClick={() => openEdit(i)}>
-              {t('common.edit')}
-            </Button>
-            {!i.regulatory_notified_at && (
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => handleNotify(i)}
-                loading={busyId === i.id}
-              >
-                {t('incidents.notifyAction')}
-              </Button>
-            )}
-            {i.status !== 'CLOSED' && (
-              <Button size="sm" variant="secondary" onClick={() => openClose(i)}>
-                {t('incidents.closeAction')}
-              </Button>
-            )}
-            {i.has_closure_report && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => handleDownloadReport(i)}
-                loading={busyId === i.id}
-              >
-                {t('incidents.closure.download')}
-              </Button>
-            )}
-          </div>
-        ),
+        render: (i) => {
+          const menuItems: ActionMenuItem[] = []
+          if (!i.regulatory_notified_at) {
+            menuItems.push({
+              label: t('incidents.notifyAction'),
+              icon: <BellRing className="h-4 w-4" />,
+              onSelect: () => handleNotify(i),
+              loading: busyId === i.id,
+            })
+          }
+          if (i.status !== 'CLOSED') {
+            menuItems.push({
+              label: t('incidents.closeAction'),
+              icon: <LockKeyhole className="h-4 w-4" />,
+              onSelect: () => openClose(i),
+            })
+          }
+          if (i.has_closure_report) {
+            menuItems.push({
+              label: t('incidents.closure.download'),
+              icon: <Download className="h-4 w-4" />,
+              onSelect: () => handleDownloadReport(i),
+              loading: busyId === i.id,
+            })
+          }
+
+          return (
+            <div className="flex justify-end gap-1">
+              <IconButton
+                label={t('common.edit')}
+                icon={<Pencil className="h-4 w-4" />}
+                onClick={() => openEdit(i)}
+              />
+              <ActionMenu ariaLabel={t('common.actions')} items={menuItems} />
+            </div>
+          )
+        },
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -484,10 +492,20 @@ export default function IncidentsPage() {
         description={t('incidents.description')}
         actions={
           <>
-            <Button variant="secondary" size="sm" onClick={() => load()}>
-              {t('common.refresh')}
-            </Button>
-            <Button onClick={openCreate}>{t('incidents.create')}</Button>
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={() => load()}
+            />
+            <IconButton
+              label={t('incidents.create')}
+              icon={<FilePlus2 className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              onClick={openCreate}
+            />
           </>
         }
       />
