@@ -1,4 +1,4 @@
-import type { Role } from '../types'
+import type { AccountScope, PlatformPermission, Role } from '../types'
 
 export interface NavItem {
   id: string
@@ -6,6 +6,8 @@ export interface NavItem {
   labelKey: string
   /** When omitted, route is visible to every authenticated user. */
   roles?: Role[]
+  accountScopes?: AccountScope[]
+  platformPermissions?: PlatformPermission[]
   /** Hide from the sidebar but still register the route. */
   hidden?: boolean
 }
@@ -22,6 +24,13 @@ export const NAV_GROUPS: NavGroup[] = [
     id: 'overview',
     labelKey: 'nav.groups.overview',
     items: [
+      {
+        id: 'platform',
+        path: '/platform',
+        labelKey: 'nav.platform',
+        accountScopes: ['PLATFORM'],
+        platformPermissions: ['tenants:read'],
+      },
       { id: 'dashboard', path: '/dashboard', labelKey: 'nav.dashboard' },
       {
         id: 'alerts',
@@ -74,7 +83,8 @@ export const NAV_GROUPS: NavGroup[] = [
         id: 'tenants',
         path: '/tenants',
         labelKey: 'nav.tenants',
-        roles: ['SUPER_ADMIN'],
+        accountScopes: ['PLATFORM'],
+        platformPermissions: ['tenants:read'],
       },
     ],
   },

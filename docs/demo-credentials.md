@@ -9,10 +9,17 @@ Credenciales para demostracion del MVP. Estos usuarios vienen de
 Admin123!
 ```
 
+La cuenta de plataforma usa una clave separada:
+
+```text
+Owner123!
+```
+
 ## Usuarios Demo
 
 | Email | Nombre | Rol | Departamento | Uso recomendado |
 | --- | --- | --- | --- | --- |
+| `owner@datalegal.local` | DataLegal Platform Owner | `SUPER_ADMIN` + `PLATFORM` | N/A | Consola global de DataLegal y provisioning de tenants |
 | `admin@datalegal.local` | DataLegal Admin | `SUPER_ADMIN` | N/A | Administracion total del tenant demo |
 | `dpo@datalegal.local` | Camila Andrade | `DPO` | Legal y Cumplimiento | Gestion de cumplimiento y privacidad |
 | `admin.ops@datalegal.local` | Mateo Rivas | `ADMIN` | Legal y Cumplimiento | Operacion administrativa del tenant |
@@ -22,7 +29,8 @@ Admin123!
 
 ## Diferencias Esperadas
 
-- `SUPER_ADMIN` puede administrar tenants, usuarios, backups y configuracion amplia.
+- `owner@datalegal.local` es la unica cuenta demo con `account_scope=PLATFORM` y permisos `tenants:read` / `tenants:provision`.
+- `SUPER_ADMIN` administra usuarios, backups y configuracion amplia dentro de su propio tenant; no administra otros tenants.
 - `DEPT_HEAD` tiene permisos limitados y, en modulos con alcance departamental, ve solo registros de su departamento.
 - `AUDITOR` opera principalmente en modo lectura y auditoria; no debe crear usuarios, departamentos, catalogos ni actividades.
 
@@ -33,7 +41,7 @@ en una terminal local y ejecutar el siguiente comando desde `backend` para reset
 solo esos usuarios demo:
 
 ```powershell
-uv run python -c "import app.db.init_db; from app.db.session import SessionLocal; from app.core.security import get_password_hash; from app.models.user import User; emails=['admin@datalegal.local','dpo@datalegal.local','admin.ops@datalegal.local','tech@datalegal.local','rrhh@datalegal.local','auditor@datalegal.local']; db=SessionLocal(); updated=0; pwd=get_password_hash('Admin123!'); users=db.query(User).filter(User.email.in_(emails)).all(); [setattr(u,'hashed_password',pwd) for u in users]; updated=len(users); db.commit(); print('reset demo passwords:', updated); db.close()"
+uv run python -c "import app.db.init_db; from app.db.session import SessionLocal; from app.core.security import get_password_hash; from app.models.user import User; tenant_emails=['admin@datalegal.local','dpo@datalegal.local','admin.ops@datalegal.local','tech@datalegal.local','rrhh@datalegal.local','auditor@datalegal.local']; db=SessionLocal(); tenant_pwd=get_password_hash('Admin123!'); owner_pwd=get_password_hash('Owner123!'); users=db.query(User).filter(User.email.in_(tenant_emails + ['owner@datalegal.local'])).all(); [setattr(u,'hashed_password', owner_pwd if u.email == 'owner@datalegal.local' else tenant_pwd) for u in users]; db.commit(); print('reset demo passwords:', len(users)); db.close()"
 ```
 
 No usar estas credenciales como usuarios reales de produccion.

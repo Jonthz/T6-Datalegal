@@ -62,6 +62,7 @@ class UserRead(BaseModel):
     email: str
     full_name: str
     role: str
+    account_scope: str
     department_id: int | None
     is_active: bool
     mfa_enabled: bool

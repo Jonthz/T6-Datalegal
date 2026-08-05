@@ -1,16 +1,28 @@
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
-import { getStoredRole, hasRole } from '../routes/permissions'
-import type { Role } from '../types'
+import {
+  getStoredRole,
+  hasAccountScope,
+  hasPlatformPermissions,
+  hasRole,
+} from '../routes/permissions'
+import type { AccountScope, PlatformPermission, Role } from '../types'
 import { AppShell } from './layout/AppShell'
 import { Button, ForbiddenState } from './ui'
 
 interface ProtectedRouteProps {
   children: ReactNode
   roles?: Role[]
+  accountScopes?: AccountScope[]
+  platformPermissions?: PlatformPermission[]
 }
 
-export default function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
+export default function ProtectedRoute({
+  children,
+  roles,
+  accountScopes,
+  platformPermissions,
+}: ProtectedRouteProps) {
   const token = localStorage.getItem('access_token')
   const location = useLocation()
   const navigate = useNavigate()
@@ -20,7 +32,11 @@ export default function ProtectedRoute({ children, roles }: ProtectedRouteProps)
   }
 
   const role = getStoredRole()
-  if (roles && !hasRole(roles, role)) {
+  if (
+    (roles && !hasRole(roles, role)) ||
+    !hasAccountScope(accountScopes) ||
+    !hasPlatformPermissions(platformPermissions)
+  ) {
     return (
       <AppShell>
         <ForbiddenState

@@ -28,7 +28,9 @@ export default function MFAVerifyPage() {
       localStorage.setItem('access_token', result.access_token)
       localStorage.setItem('role', result.role)
       localStorage.setItem('tenant_id', String(result.tenant_id))
-      navigate('/dashboard')
+      localStorage.setItem('account_scope', result.account_scope)
+      localStorage.setItem('platform_permissions', JSON.stringify(result.platform_permissions))
+      navigate(result.account_scope === 'PLATFORM' ? '/platform' : '/dashboard')
     } catch {
       setError(t('auth.mfaFailed'))
     } finally {

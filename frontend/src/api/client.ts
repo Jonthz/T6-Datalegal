@@ -28,6 +28,8 @@ apiClient.interceptors.response.use(
       localStorage.removeItem('access_token')
       localStorage.removeItem('role')
       localStorage.removeItem('tenant_id')
+      localStorage.removeItem('account_scope')
+      localStorage.removeItem('platform_permissions')
       window.location.href = '/login'
     }
     return Promise.reject(error)

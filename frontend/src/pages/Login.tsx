@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { login } from '../api/auth'
 import { Alert, BrandMark, Button, GlassCard, Input } from '../components/ui'
+import type { TokenResponse } from '../types'
 
 export default function LoginPage() {
   const { t } = useTranslation()
@@ -26,11 +27,13 @@ export default function LoginPage() {
         return
       }
 
-      const token = result as { access_token: string; role: string; tenant_id: number }
+      const token = result as TokenResponse
       localStorage.setItem('access_token', token.access_token)
       localStorage.setItem('role', token.role)
       localStorage.setItem('tenant_id', String(token.tenant_id))
-      navigate('/dashboard')
+      localStorage.setItem('account_scope', token.account_scope)
+      localStorage.setItem('platform_permissions', JSON.stringify(token.platform_permissions))
+      navigate(token.account_scope === 'PLATFORM' ? '/platform' : '/dashboard')
     } catch (err: unknown) {
       const axiosErr = err as { response?: { status: number } }
       if (axiosErr.response?.status === 423) setError(t('auth.accountLocked'))

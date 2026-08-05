@@ -19,6 +19,8 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     role: str
     tenant_id: int
+    account_scope: str = "TENANT"
+    platform_permissions: list[str] = []
 
 
 class MFAPendingResponse(BaseModel):

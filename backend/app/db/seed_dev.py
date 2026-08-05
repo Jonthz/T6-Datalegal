@@ -27,6 +27,7 @@ from app.models.dpia import DPIAssessment
 from app.models.incident import Incident
 from app.models.information_asset import InformationAsset
 from app.models.legal_document import LegalDocument
+from app.models.platform_access import PlatformPermission
 from app.models.portability import PortabilityRequest
 from app.models.remediation import Remediation
 from app.models.retention import RetentionExecutionLog, RetentionPolicy, RetentionRecord
@@ -40,7 +41,10 @@ DEFAULT_TENANT_NAME = "DataLegal Demo"
 DEFAULT_TENANT_RUC = "9999999999001"
 DEFAULT_ADMIN_EMAIL = "admin@datalegal.local"
 DEFAULT_ADMIN_PASSWORD = "Admin123!"
+DEFAULT_PLATFORM_OWNER_EMAIL = "owner@datalegal.local"
+DEFAULT_PLATFORM_OWNER_PASSWORD = "Owner123!"
 DEMO_PASSWORD = "Admin123!"
+PLATFORM_TENANT_PERMISSIONS = ("tenants:read", "tenants:provision")
 
 
 def _env_flag(name: str) -> bool:
@@ -149,8 +153,41 @@ def _seed_tenant_and_admin(db: Session) -> tuple[Tenant, User]:
         )
         db.add(admin)
         db.flush()
+    elif admin.account_scope != "TENANT":
+        admin.account_scope = "TENANT"
 
     return tenant, admin
+
+
+def _seed_platform_owner(db: Session, tenant: Tenant) -> User:
+    """Create the DataLegal platform owner account for local development."""
+    owner_email = os.getenv("DEV_PLATFORM_OWNER_EMAIL", DEFAULT_PLATFORM_OWNER_EMAIL)
+    owner = db.query(User).filter(User.email == owner_email).first()
+    if owner is None:
+        owner = User(
+            tenant_id=tenant.id,
+            email=owner_email,
+            hashed_password=get_password_hash(
+                os.getenv("DEV_PLATFORM_OWNER_PASSWORD", DEFAULT_PLATFORM_OWNER_PASSWORD)
+            ),
+            full_name=os.getenv("DEV_PLATFORM_OWNER_NAME", "DataLegal Platform Owner"),
+            role="SUPER_ADMIN",
+            account_scope="PLATFORM",
+            is_active=True,
+            last_activity_at=_now(),
+        )
+        db.add(owner)
+        db.flush()
+    else:
+        owner.account_scope = "PLATFORM"
+        owner.role = "SUPER_ADMIN"
+
+    existing = {permission.permission for permission in owner.platform_permissions}
+    for permission in PLATFORM_TENANT_PERMISSIONS:
+        if permission not in existing:
+            db.add(PlatformPermission(user_id=owner.id, permission=permission))
+    db.flush()
+    return owner
 
 
 def seed_dev_data(db: Session) -> None:
@@ -159,6 +196,7 @@ def seed_dev_data(db: Session) -> None:
         return
 
     tenant, admin = _seed_tenant_and_admin(db)
+    _seed_platform_owner(db, tenant)
     if _env_flag("SEED_MOCK_DATA"):
         _seed_mock_data(db, tenant, admin)
     db.commit()

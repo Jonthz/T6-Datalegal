@@ -35,7 +35,12 @@ import {
   Users,
 } from 'lucide-react'
 import { NAV_GROUPS } from '../../routes/navigation'
-import { getStoredRole, hasRole } from '../../routes/permissions'
+import {
+  getStoredAccountScope,
+  getStoredRole,
+  hasPlatformPermissions,
+  hasRole,
+} from '../../routes/permissions'
 import { cn } from '../../lib/cn'
 import { BrandMark } from '../ui/BrandMark'
 import { DataLegalWordmark } from '../ui/DataLegalWordmark'
@@ -45,6 +50,7 @@ const STORAGE_KEY = 'datalegal.sidebar.openGroups'
 const COLLAPSED_STORAGE_KEY = 'datalegal.sidebar.collapsed'
 
 const NAV_ITEM_ICONS: Record<string, ComponentType<{ className?: string }>> = {
+  platform: Building2,
   dashboard: Home,
   alerts: Bell,
   reports: FileBarChart2,
@@ -86,14 +92,23 @@ export function Sidebar({ open, onClose, unreadAlerts = 0 }: SidebarProps) {
   const { t } = useTranslation()
   const location = useLocation()
   const role = getStoredRole()
+  const accountScope = getStoredAccountScope()
 
   const groups = useMemo(
     () =>
       NAV_GROUPS.map((group) => ({
         ...group,
-        items: group.items.filter((item) => !item.hidden && hasRole(item.roles, role)),
+        items: group.items.filter((item) => {
+          if (item.hidden) return false
+          const itemScopes = item.accountScopes ?? ['TENANT']
+          return (
+            itemScopes.includes(accountScope) &&
+            hasRole(item.roles, role) &&
+            hasPlatformPermissions(item.platformPermissions)
+          )
+        }),
       })).filter((group) => group.items.length > 0),
-    [role]
+    [accountScope, role]
   )
   const activeGroupId = useMemo(
     () => groups.find((group) => group.items.some((item) => item.path === location.pathname))?.id,

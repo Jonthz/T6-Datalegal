@@ -10,12 +10,17 @@ from app.core.config import settings
 from app.core.permissions import has_custom_role_permission, has_permission
 from app.core.security import decode_token
 from app.db.session import get_db
+from app.models import platform_access as _platform_access  # noqa: F401
 from app.models.user import User
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
 INACTIVITY_TIMEOUT_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
+TENANT_SCOPE = "TENANT"
+PLATFORM_SCOPE = "PLATFORM"
+PLATFORM_PERMISSION_TENANTS_READ = "tenants:read"
+PLATFORM_PERMISSION_TENANTS_PROVISION = "tenants:provision"
 
 
 def get_current_user(
@@ -80,25 +85,46 @@ def get_current_tenant_id(
     current_user: Annotated[User, Depends(get_current_user)],
     tenant_id: int | None = Query(None, description="Override tenant (SUPER_ADMIN only)"),
 ) -> int:
-    """Returns tenant_id from JWT, or override if SUPER_ADMIN."""
+    """Returns tenant_id from JWT. Tenant users cannot override tenant scope."""
     if tenant_id is not None:
-        if current_user.role != "SUPER_ADMIN":
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Only SUPER_ADMIN can specify a tenant_id query param.",
-            )
-        return tenant_id
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tenant override is restricted to platform-specific endpoints.",
+        )
     return current_user.tenant_id
 
 
 def require_super_admin(current_user: Annotated[User, Depends(get_current_user)]) -> User:
     """Handle require super admin."""
-    if current_user.role != "SUPER_ADMIN":
+    if current_user.account_scope != TENANT_SCOPE or current_user.role != "SUPER_ADMIN":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only SUPER_ADMIN can access this endpoint.",
         )
     return current_user
+
+
+def _platform_permission_names(current_user: User) -> set[str]:
+    return {permission.permission for permission in current_user.platform_permissions or []}
+
+
+def require_platform_permission(permission: str):
+    """FastAPI dependency factory for platform-level capabilities."""
+
+    def _checker(current_user: Annotated[User, Depends(get_current_user)]) -> User:
+        if current_user.account_scope != PLATFORM_SCOPE:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="A platform account is required for this endpoint.",
+            )
+        if permission not in _platform_permission_names(current_user):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Missing platform permission: {permission}.",
+            )
+        return current_user
+
+    return _checker
 
 
 def require_permission(module: str, action: str):
@@ -109,6 +135,11 @@ def require_permission(module: str, action: str):
         db: Session = Depends(get_db),
     ) -> User:
         """Handle checker."""
+        if current_user.account_scope != TENANT_SCOPE:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Tenant-scoped account required.",
+            )
         allowed = has_permission(current_user.role, module, action) or has_custom_role_permission(
             db, current_user.tenant_id, current_user.role, module, action
         )
