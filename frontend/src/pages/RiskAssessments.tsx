@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ClipboardPlus, Pencil, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -13,6 +14,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   KPICard,
   Modal,
   PageHeader,
@@ -256,9 +258,11 @@ export default function RiskAssessmentsPage() {
         header: t('common.actions'),
         align: 'right',
         render: (a) => (
-          <Button size="sm" variant="ghost" onClick={() => openEdit(a)}>
-            {t('common.edit')}
-          </Button>
+          <IconButton
+            label={t('common.edit')}
+            icon={<Pencil className="h-4 w-4" />}
+            onClick={() => openEdit(a)}
+          />
         ),
       },
     ],
@@ -431,9 +435,23 @@ export default function RiskAssessmentsPage() {
         title={t('riskAssessments.title')}
         description={t('riskAssessments.description')}
         actions={
-          <Button variant="secondary" size="sm" onClick={() => load()}>
-            {t('common.refresh')}
-          </Button>
+          <div className="flex items-center gap-2">
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={() => load()}
+            />
+            <IconButton
+              label={t('riskAssessments.create')}
+              icon={<ClipboardPlus className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              disabled={activities.length === 0}
+              onClick={openCreate}
+            />
+          </div>
         }
       />
 

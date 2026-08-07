@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Download, FilePlus2, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -7,6 +8,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -215,14 +217,12 @@ export default function LegalDocumentsPage() {
         header: t('common.actions'),
         align: 'right',
         render: (row) => (
-          <Button
-            size="sm"
-            variant="ghost"
+          <IconButton
+            label={t('legalDocuments.downloadPdf')}
+            icon={<Download className="h-4 w-4" />}
             loading={downloadingId === row.id}
             onClick={() => handleDownload(row)}
-          >
-            {t('legalDocuments.downloadPdf')}
-          </Button>
+          />
         ),
       },
     ],
@@ -236,7 +236,13 @@ export default function LegalDocumentsPage() {
         title={t('legalDocuments.title')}
         description={t('legalDocuments.description')}
         actions={
-          <Button onClick={() => openCreate()}>{t('legalDocuments.create')}</Button>
+          <IconButton
+            label={t('legalDocuments.create')}
+            icon={<FilePlus2 className="h-5 w-5" />}
+            variant="primary"
+            size="md"
+            onClick={() => openCreate()}
+          />
         }
       />
 
@@ -254,9 +260,12 @@ export default function LegalDocumentsPage() {
                 {t('legalDocuments.templates.description')}
               </p>
             </div>
-            <Button variant="secondary" size="sm" onClick={loadTemplates}>
-              {t('common.refresh')}
-            </Button>
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              onClick={loadTemplates}
+            />
           </header>
           {templatesLoading ? (
             <p className="text-sm text-ink-300">{t('common.loading')}</p>
@@ -303,9 +312,12 @@ export default function LegalDocumentsPage() {
             />
             {t('legalDocuments.onlyCurrent')}
           </label>
-          <Button variant="secondary" size="sm" onClick={loadDocs}>
-            {t('common.refresh')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            onClick={loadDocs}
+          />
         </div>
       </GlassCard>
 

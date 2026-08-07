@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Trash2, UserPlus } from 'lucide-react'
 import {
   Badge,
   Button,
   DataTable,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -156,14 +158,13 @@ export default function UserManagementPage() {
         header: t('users.actions'),
         align: 'right',
         render: (u) => (
-          <Button
-            size="sm"
-            variant="ghost"
+          <IconButton
+            label={t('users.delete')}
+            icon={<Trash2 className="h-4 w-4" />}
+            variant="danger"
             loading={busyId === u.id}
             onClick={() => handleDelete(u)}
-          >
-            {t('users.delete')}
-          </Button>
+          />
         ),
       },
     ],
@@ -177,7 +178,13 @@ export default function UserManagementPage() {
         title={t('users.title')}
         description={t('users.description')}
         actions={
-          <Button onClick={() => setModalOpen(true)}>{t('users.create')}</Button>
+          <IconButton
+            label={t('users.create')}
+            icon={<UserPlus className="h-5 w-5" />}
+            variant="primary"
+            size="md"
+            onClick={() => setModalOpen(true)}
+          />
         }
       />
 

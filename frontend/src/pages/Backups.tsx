@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { DatabaseBackup, RefreshCw, ShieldCheck } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -7,6 +8,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   KPICard,
   PageHeader,
   StatusBadge,
@@ -174,14 +176,12 @@ export default function BackupsPage() {
         header: t('common.actions'),
         align: 'right',
         render: (b) => (
-          <Button
-            size="sm"
-            variant="ghost"
+          <IconButton
+            label={t('backups.verify')}
+            icon={<ShieldCheck className="h-4 w-4" />}
             loading={verifyingId === b.id}
             onClick={() => handleVerify(b)}
-          >
-            {t('backups.verify')}
-          </Button>
+          />
         ),
       },
     ],
@@ -196,12 +196,22 @@ export default function BackupsPage() {
         description={t('backups.description')}
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={load}>
-              {t('common.refresh')}
-            </Button>
-            <Button onClick={handleCreate} loading={creating} disabled={!isSuperAdmin}>
-              {t('backups.create')}
-            </Button>
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={load}
+            />
+            <IconButton
+              label={t('backups.create')}
+              icon={<DatabaseBackup className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              loading={creating}
+              disabled={!isSuperAdmin}
+              onClick={handleCreate}
+            />
           </div>
         }
       />

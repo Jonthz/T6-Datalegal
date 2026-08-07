@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FolderPlus, Pencil, Trash2 } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
   Button,
   DataTable,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -174,17 +176,18 @@ export default function DepartmentsPage() {
         align: 'right',
         render: (d) => (
           <div className="flex items-center justify-end gap-2">
-            <Button size="sm" variant="ghost" onClick={() => openEdit(d)}>
-              {t('common.edit')}
-            </Button>
-            <Button
-              size="sm"
+            <IconButton
+              label={t('common.edit')}
+              icon={<Pencil className="h-4 w-4" />}
+              onClick={() => openEdit(d)}
+            />
+            <IconButton
+              label={t('common.delete')}
+              icon={<Trash2 className="h-4 w-4" />}
               variant="danger"
               loading={busyId === d.id}
               onClick={() => handleDelete(d)}
-            >
-              {t('common.delete')}
-            </Button>
+            />
           </div>
         ),
       },
@@ -198,7 +201,15 @@ export default function DepartmentsPage() {
       <PageHeader
         title={t('departments.title')}
         description={t('departments.description')}
-        actions={<Button onClick={openCreate}>{t('departments.create')}</Button>}
+        actions={
+          <IconButton
+            label={t('departments.create')}
+            icon={<FolderPlus className="h-5 w-5" />}
+            variant="primary"
+            size="md"
+            onClick={openCreate}
+          />
+        }
       />
 
       {pageError && <AlertBox tone="danger">{pageError}</AlertBox>}

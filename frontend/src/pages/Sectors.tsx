@@ -152,7 +152,7 @@ function SuggestionBlock({
   if (!items || items.length === 0) return null
   return (
     <div className="mt-3">
-      <p className="text-[10px] uppercase tracking-wider text-ink-400 mb-1.5">{title}</p>
+      <p className="text-[13px] uppercase tracking-wide text-ink-400 mb-1.5">{title}</p>
       <ul className="flex flex-wrap gap-1.5">
         {items.map((item) => (
           <li key={item}>

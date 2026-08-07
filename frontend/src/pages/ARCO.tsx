@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Eye, FilePlus2, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -13,6 +14,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   KPICard,
   Modal,
@@ -300,9 +302,14 @@ export default function ARCOPage() {
         header: t('common.actions'),
         align: 'right',
         render: (r) => (
-          <Button size="sm" variant="ghost" onClick={() => openDetail(r)}>
-            {t('common.viewDetails')}
-          </Button>
+          <IconButton
+            label={t('common.viewDetails')}
+            icon={<Eye className="h-4 w-4" />}
+            onClick={(event) => {
+              event.stopPropagation()
+              openDetail(r)
+            }}
+          />
         ),
       },
     ],
@@ -404,10 +411,20 @@ export default function ARCOPage() {
         description={t('arco.description')}
         actions={
           <>
-            <Button variant="secondary" size="sm" onClick={() => load()}>
-              {t('common.refresh')}
-            </Button>
-            <Button onClick={openCreate}>{t('arco.create')}</Button>
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={() => load()}
+            />
+            <IconButton
+              label={t('arco.create')}
+              icon={<FilePlus2 className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              onClick={openCreate}
+            />
           </>
         }
       />

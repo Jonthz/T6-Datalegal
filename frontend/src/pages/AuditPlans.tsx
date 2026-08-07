@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FileDown, ListPlus, Pencil, RefreshCw, Search } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -7,6 +8,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -372,20 +374,22 @@ export default function AuditPlansPage() {
         align: 'right',
         render: (p) => (
           <div className="flex justify-end gap-1">
-            <Button size="sm" variant="ghost" onClick={() => openFindings(p)}>
-              {t('auditPlans.findings.open')}
-            </Button>
-            <Button size="sm" variant="ghost" onClick={() => openEdit(p)}>
-              {t('common.edit')}
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
+            <IconButton
+              label={t('auditPlans.findings.open')}
+              icon={<Search className="h-4 w-4" />}
+              onClick={() => openFindings(p)}
+            />
+            <IconButton
+              label={t('common.edit')}
+              icon={<Pencil className="h-4 w-4" />}
+              onClick={() => openEdit(p)}
+            />
+            <IconButton
+              label={t('auditPlans.downloadReport')}
+              icon={<FileDown className="h-4 w-4" />}
               loading={downloadingId === p.id}
               onClick={() => handleDownload(p)}
-            >
-              {t('auditPlans.downloadReport')}
-            </Button>
+            />
           </div>
         ),
       },
@@ -430,9 +434,11 @@ export default function AuditPlansPage() {
         header: t('common.actions'),
         align: 'right',
         render: (f) => (
-          <Button size="sm" variant="ghost" onClick={() => openEditFinding(f)}>
-            {t('common.edit')}
-          </Button>
+          <IconButton
+            label={t('common.edit')}
+            icon={<Pencil className="h-4 w-4" />}
+            onClick={() => openEditFinding(f)}
+          />
         ),
       },
     ],
@@ -444,7 +450,15 @@ export default function AuditPlansPage() {
       <PageHeader
         title={t('auditPlans.title')}
         description={t('auditPlans.description')}
-        actions={<Button onClick={openCreate}>{t('auditPlans.create')}</Button>}
+        actions={
+          <IconButton
+            label={t('auditPlans.create')}
+            icon={<ListPlus className="h-5 w-5" />}
+            variant="primary"
+            size="md"
+            onClick={openCreate}
+          />
+        }
       />
 
       {error && <AlertBox tone="danger">{error}</AlertBox>}
@@ -463,9 +477,12 @@ export default function AuditPlansPage() {
               ]}
             />
           </div>
-          <Button variant="secondary" size="sm" onClick={loadPlans}>
-            {t('common.refresh')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            onClick={loadPlans}
+          />
         </div>
       </GlassCard>
 

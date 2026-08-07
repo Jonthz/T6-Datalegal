@@ -56,7 +56,7 @@ export default function MFASetupPage() {
 
           {secret && (
             <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 mb-5 text-center">
-              <p className="text-[10px] uppercase tracking-wide text-ink-400">
+              <p className="text-[13px] uppercase tracking-wide text-ink-400">
                 {t('auth.mfaSetupManualKey')}
               </p>
               <code className="text-xs font-mono text-ink-100 break-all">{secret}</code>

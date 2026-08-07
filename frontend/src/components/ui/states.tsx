@@ -94,3 +94,27 @@ export function ErrorState({
     </div>
   )
 }
+
+export function ForbiddenState({
+  title = 'Access restricted',
+  description = 'Your current role does not have permission to view this workspace area.',
+  action,
+  className,
+}: ErrorStateProps) {
+  return (
+    <div
+      role="alert"
+      className={cn(
+        'flex flex-col items-center text-center py-10 px-6 rounded-glass border border-amber-200 bg-amber-50',
+        className
+      )}
+    >
+      <div className="h-10 w-10 rounded-md bg-white border border-amber-100 text-amber-700 flex items-center justify-center mb-3">
+        <span aria-hidden>!</span>
+      </div>
+      <h3 className="text-base font-semibold text-amber-900">{title}</h3>
+      <p className="text-sm text-amber-800 mt-1 max-w-md">{description}</p>
+      {action && <div className="mt-4">{action}</div>}
+    </div>
+  )
+}

@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CheckCircle2, Download, FilePlus2, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -13,6 +14,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -230,18 +232,20 @@ export default function PortabilityPage() {
         render: (r) => (
           <div className="flex justify-end gap-1 flex-wrap">
             {r.status !== 'COMPLETED' && r.status !== 'REJECTED' && (
-              <Button size="sm" variant="secondary" onClick={() => openComplete(r)}>
-                {t('portability.complete')}
-              </Button>
+              <IconButton
+                label={t('portability.complete')}
+                icon={<CheckCircle2 className="h-4 w-4" />}
+                variant="secondary"
+                onClick={() => openComplete(r)}
+              />
             )}
-            <Button
-              size="sm"
+            <IconButton
+              label={t('portability.exportLabel')}
+              icon={<Download className="h-4 w-4" />}
               variant="primary"
               onClick={() => handleExport(r)}
               loading={busyId === r.id}
-            >
-              {t('portability.exportLabel')}
-            </Button>
+            />
           </div>
         ),
       },
@@ -262,10 +266,20 @@ export default function PortabilityPage() {
         description={t('portability.description')}
         actions={
           <>
-            <Button variant="secondary" size="sm" onClick={() => load()}>
-              {t('common.refresh')}
-            </Button>
-            <Button onClick={openCreate}>{t('portability.create')}</Button>
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={() => load()}
+            />
+            <IconButton
+              label={t('portability.create')}
+              icon={<FilePlus2 className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              onClick={openCreate}
+            />
           </>
         }
       />

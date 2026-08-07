@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ListPlus, Pencil, RefreshCw, Sparkles, Trash2 } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -7,6 +8,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -420,9 +422,11 @@ export default function ActionPlansPage() {
         header: t('common.actions'),
         align: 'right',
         render: (p) => (
-          <Button size="sm" variant="ghost" onClick={() => openEdit(p)}>
-            {t('common.edit')}
-          </Button>
+          <IconButton
+            label={t('common.edit')}
+            icon={<Pencil className="h-4 w-4" />}
+            onClick={() => openEdit(p)}
+          />
         ),
       },
     ],
@@ -453,7 +457,12 @@ export default function ActionPlansPage() {
             >
               {t('actionPlans.autoGenerate')}
             </Button>
-            <Button onClick={openCreate}>{t('actionPlans.create')}</Button>
+            <IconButton
+              label={t('actionPlans.create')}
+              icon={<ListPlus className="h-4 w-4" />}
+              variant="primary"
+              onClick={openCreate}
+            />
           </div>
         </div>
       </GlassCard>
@@ -475,7 +484,12 @@ export default function ActionPlansPage() {
     <div className="space-y-4">
       <GlassCard padded={false} className="p-4 flex flex-wrap items-center justify-between gap-3">
         <div className="text-sm text-ink-300">{t('actionPlans.templates.description')}</div>
-        <Button onClick={openTemplate}>{t('actionPlans.templates.create')}</Button>
+        <IconButton
+          label={t('actionPlans.templates.create')}
+          icon={<ListPlus className="h-4 w-4" />}
+          variant="primary"
+          onClick={openTemplate}
+        />
       </GlassCard>
       <GlassPanel>
         <div className="p-4">
@@ -509,6 +523,32 @@ export default function ActionPlansPage() {
       <PageHeader
         title={t('actionPlans.title')}
         description={t('actionPlans.description')}
+        actions={
+          <div className="flex items-center gap-2">
+            <IconButton
+              label={t('common.refresh')}
+              icon={<RefreshCw className="h-4 w-4" />}
+              variant="secondary"
+              size="md"
+              onClick={loadPlans}
+            />
+            <IconButton
+              label={t('actionPlans.autoGenerate')}
+              icon={<Sparkles className="h-5 w-5" />}
+              variant="secondary"
+              size="md"
+              loading={autoGenerating}
+              onClick={handleAutoGenerate}
+            />
+            <IconButton
+              label={t('actionPlans.create')}
+              icon={<ListPlus className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              onClick={openCreate}
+            />
+          </div>
+        }
       />
 
       {error && <AlertBox tone="danger">{error}</AlertBox>}
@@ -738,9 +778,13 @@ function TaskEditor({ tasks, onAdd, onRemove, onChange, t }: TaskEditorProps) {
                 rows={2}
               />
               <div className="flex justify-end">
-                <Button size="sm" variant="ghost" type="button" onClick={() => onRemove(idx)}>
-                  {t('common.delete')}
-                </Button>
+                <IconButton
+                  label={t('common.delete')}
+                  icon={<Trash2 className="h-4 w-4" />}
+                  variant="danger"
+                  type="button"
+                  onClick={() => onRemove(idx)}
+                />
               </div>
             </li>
           ))}

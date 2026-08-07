@@ -7,6 +7,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Pencil, RefreshCw, Trash2, Upload } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -14,6 +15,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -284,17 +286,18 @@ export default function CatalogsPage() {
         align: 'right',
         render: (entry) => (
           <div className="flex items-center justify-end gap-2">
-            <Button size="sm" variant="ghost" onClick={() => openEdit(entry)}>
-              {t('common.edit')}
-            </Button>
-            <Button
-              size="sm"
+            <IconButton
+              label={t('common.edit')}
+              icon={<Pencil className="h-4 w-4" />}
+              onClick={() => openEdit(entry)}
+            />
+            <IconButton
+              label={t('common.delete')}
+              icon={<Trash2 className="h-4 w-4" />}
               variant="danger"
               loading={busyId === entry.id}
               onClick={() => handleDelete(entry)}
-            >
-              {t('common.delete')}
-            </Button>
+            />
           </div>
         ),
       },
@@ -308,7 +311,15 @@ export default function CatalogsPage() {
       <PageHeader
         title={t('catalogs.title')}
         description={t('catalogs.description')}
-        actions={<Button onClick={openBulk}>{t('catalogs.create')}</Button>}
+        actions={
+          <IconButton
+            label={t('catalogs.create')}
+            icon={<Upload className="h-5 w-5" />}
+            variant="primary"
+            size="md"
+            onClick={openBulk}
+          />
+        }
       />
 
       {pageError && <AlertBox tone="danger">{pageError}</AlertBox>}
@@ -323,9 +334,12 @@ export default function CatalogsPage() {
             options={typeOptions}
             className="sm:w-72"
           />
-          <Button variant="ghost" size="sm" onClick={() => setTypeFilter('')}>
-            {t('common.refresh')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            onClick={() => setTypeFilter('')}
+          />
         </div>
       </GlassCard>
 

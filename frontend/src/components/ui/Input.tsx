@@ -22,12 +22,12 @@ export function FieldShell({ label, hint, error, required, htmlFor, children }: 
       {label && (
         <label htmlFor={htmlFor} className="block text-xs font-medium text-ink-200">
           {label}
-          {required && <span className="text-rose-400 ml-1" aria-hidden>*</span>}
+          {required && <span className="text-rose-600 ml-1" aria-hidden>*</span>}
         </label>
       )}
       {children}
       {error ? (
-        <p className="text-xs text-rose-300" role="alert">
+        <p className="text-xs text-rose-700" role="alert">
           {error}
         </p>
       ) : hint ? (

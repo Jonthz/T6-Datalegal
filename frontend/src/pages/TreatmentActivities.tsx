@@ -6,6 +6,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ClipboardPlus, Pencil, RefreshCw, StepForward, Trash2 } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -13,6 +14,7 @@ import {
   DataTable,
   GlassCard,
   GlassPanel,
+  IconButton,
   Input,
   Modal,
   PageHeader,
@@ -165,21 +167,25 @@ export default function TreatmentActivitiesPage() {
         render: (a) => (
           <div className="flex items-center justify-end gap-2">
             {a.status === 'DRAFT' && (
-              <Button size="sm" variant="secondary" onClick={() => continueWizard(a)}>
-                {t('common.next')}
-              </Button>
+              <IconButton
+                label={t('common.next')}
+                icon={<StepForward className="h-4 w-4" />}
+                variant="secondary"
+                onClick={() => continueWizard(a)}
+              />
             )}
-            <Button size="sm" variant="ghost" onClick={() => setEditing(a)}>
-              {t('common.edit')}
-            </Button>
-            <Button
-              size="sm"
+            <IconButton
+              label={t('common.edit')}
+              icon={<Pencil className="h-4 w-4" />}
+              onClick={() => setEditing(a)}
+            />
+            <IconButton
+              label={t('common.delete')}
+              icon={<Trash2 className="h-4 w-4" />}
               variant="danger"
               loading={busyId === a.id}
               onClick={() => handleDelete(a)}
-            >
-              {t('common.delete')}
-            </Button>
+            />
           </div>
         ),
       },
@@ -193,7 +199,15 @@ export default function TreatmentActivitiesPage() {
       <PageHeader
         title={t('treatmentActivities.title')}
         description={t('treatmentActivities.description')}
-        actions={<Button onClick={startNewWizard}>{t('treatmentActivities.create')}</Button>}
+        actions={
+          <IconButton
+            label={t('treatmentActivities.create')}
+            icon={<ClipboardPlus className="h-5 w-5" />}
+            variant="primary"
+            size="md"
+            onClick={startNewWizard}
+          />
+        }
       />
 
       {error && <AlertBox tone="danger">{error}</AlertBox>}
@@ -208,9 +222,12 @@ export default function TreatmentActivitiesPage() {
             options={STATUS_FILTER_OPTIONS(t)}
             className="sm:w-64"
           />
-          <Button variant="ghost" size="sm" onClick={() => load()}>
-            {t('common.refresh')}
-          </Button>
+          <IconButton
+            label={t('common.refresh')}
+            icon={<RefreshCw className="h-4 w-4" />}
+            variant="secondary"
+            onClick={() => load()}
+          />
         </div>
       </GlassCard>
 
