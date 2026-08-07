@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FileText, RefreshCw } from 'lucide-react'
+import { FileSpreadsheet, FileText, RefreshCw } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -14,7 +14,7 @@ import {
   LoadingState,
   PageHeader,
 } from '../components/ui'
-import { downloadROPAPdf, getROPAReport } from '../api/ropa'
+import { downloadROPAPdf, downloadROPAXlsx, getROPAReport } from '../api/ropa'
 import type { ROPAActivity, ROPAReport } from '../types'
 import { extractErrorMessage } from '../lib/errors'
 import { downloadBlob, formatDateTime } from '../lib/format'
@@ -25,6 +25,7 @@ export default function ROPAPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [downloading, setDownloading] = useState(false)
+  const [downloadingXlsx, setDownloadingXlsx] = useState(false)
   const [downloadError, setDownloadError] = useState('')
 
   const load = useCallback(async () => {
@@ -57,6 +58,19 @@ export default function ROPAPage() {
     }
   }
 
+  async function handleDownloadXlsx() {
+    setDownloadingXlsx(true)
+    setDownloadError('')
+    try {
+      const blob = await downloadROPAXlsx()
+      downloadBlob(blob, 'RAT.xlsx')
+    } catch (err) {
+      setDownloadError(extractErrorMessage(err, t('common.error')))
+    } finally {
+      setDownloadingXlsx(false)
+    }
+  }
+
   const groups = useMemo(() => {
     if (!report) return [] as Array<{ basis: string; activities: ROPAActivity[] }>
     return Object.entries(report.activities_by_legal_basis)
@@ -85,6 +99,15 @@ export default function ROPAPage() {
               size="md"
               onClick={handleDownload}
               loading={downloading}
+              disabled={!report || report.total_activities === 0}
+            />
+            <IconButton
+              label={t('ropa.downloadXlsx')}
+              icon={<FileSpreadsheet className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              onClick={handleDownloadXlsx}
+              loading={downloadingXlsx}
               disabled={!report || report.total_activities === 0}
             />
           </div>

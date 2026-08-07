@@ -272,7 +272,8 @@
       "sensitivity": "Sensitivity",
       "criticality": "Criticality",
       "version": "Version",
-      "active": "Active"
+      "active": "Active",
+      "typeCustom": "Type (custom)"
     },
     "sensitivity": {
       "ORDINARY": "Ordinary",
@@ -293,7 +294,15 @@
     "deleteBlocked": "Cannot delete this entry — it is still referenced by other records.",
     "confirmDelete": "Soft-delete this catalog entry?",
     "loadFailed": "We could not load catalogs.",
-    "empty": "No entries match the current filter."
+    "empty": "No entries match the current filter.",
+    "createSingle": "Add single entry",
+    "reclassify": "Auto-classify",
+    "reclassifySuccess": "Entry re-classified from its code.",
+    "reclassifyNoRule": "No automatic classification rule for code \"{{code}}\".",
+    "history": "Version history",
+    "noHistory": "No versions recorded yet.",
+    "inactive": "Inactive",
+    "autoClassifyHint": "Known LOPDP codes (e.g. HEALTH_DATA, BIOMETRIC) are auto-classified."
   },
   "dataInventory": {
     "title": "Data inventory progress",
@@ -337,7 +346,30 @@
       "destinationCountries": "Destination countries",
       "processorName": "Processor name",
       "processorCountry": "Processor country",
-      "status": "Status"
+      "status": "Status",
+      "ratCode": "RAT ID",
+      "area": "Area",
+      "operationalOwner": "Operational owner",
+      "legalBases": "Legal bases (multiple)",
+      "complementaryLegalBases": "Complementary / conditional bases",
+      "dataCategories": "Data categories",
+      "dataOrigin": "Data origin",
+      "treatmentOperations": "Processing operations",
+      "recipients": "Recipients",
+      "processors": "Processors",
+      "systemPlatform": "System / platform",
+      "technicalMeasures": "Technical measures",
+      "organizationalMeasures": "Organizational measures",
+      "physicalMeasures": "Physical measures",
+      "legalMeasures": "Legal measures",
+      "mtgeScore": "MTGE score",
+      "mtgeResult": "MTGE result",
+      "usesProfiling": "Profiling",
+      "usesAi": "Uses AI",
+      "automatedDecision": "Automated decision",
+      "requiresDpia": "DPIA required",
+      "hasSpecialData": "Special data",
+      "involvesMinors": "Involves minors"
     },
     "csvHelp": "Separate entries with commas",
     "wizard": {
@@ -362,7 +394,18 @@
     "confirmDelete": "Archive this treatment activity? It will not be deleted but its status will become ARCHIVED.",
     "loadFailed": "We could not load treatment activities.",
     "empty": "No activities registered",
-    "emptyHint": "Use the wizard to register the first processing activity."
+    "emptyHint": "Use the wizard to register the first processing activity.",
+    "areaHint": "Sets the RAT ID prefix (e.g. CRÉDITO → CRE001).",
+    "legalBasesHint": "Multiple bases, comma-separated. First is treated as principal.",
+    "section": {
+      "general": "General",
+      "legalBases": "Legal bases",
+      "data": "Data",
+      "flags": "Risk flags",
+      "recipients": "Recipients & systems",
+      "measures": "Security measures",
+      "mtge": "MTGE assessment"
+    }
   },
   "informationAssets": {
     "title": "Information assets",
@@ -974,7 +1017,8 @@
       "days": "days",
       "destinations": "Destinations",
       "processor": "Processor"
-    }
+    },
+    "downloadXlsx": "Export Excel (RAT)"
   },
   "actionPlans": {
     "title": "Action plans",

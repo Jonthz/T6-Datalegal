@@ -46,9 +46,11 @@ def upgrade() -> None:
     )
 
     # Drop the server defaults now that existing rows are backfilled; the ORM
-    # supplies these values on new rows.
-    op.alter_column("incidents", "vulnerability_types", server_default=None)
-    op.alter_column("incidents", "closure_summary", server_default=None)
+    # supplies these values on new rows. Wrapped in batch mode so SQLite (which
+    # lacks ALTER COLUMN ... DROP DEFAULT) recreates the table instead.
+    with op.batch_alter_table("incidents") as batch_op:
+        batch_op.alter_column("vulnerability_types", server_default=None)
+        batch_op.alter_column("closure_summary", server_default=None)
 
 
 def downgrade() -> None:
