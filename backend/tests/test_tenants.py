@@ -98,7 +98,9 @@ class TestTenantProvisioning:
         )
         assert resp.status_code == 403
 
-    def test_list_tenants_as_platform_owner(self, client: TestClient, platform_owner_token, tenant_a):  # pylint: disable=unused-argument
+    def test_list_tenants_as_platform_owner(
+        self, client: TestClient, platform_owner_token, tenant_a  # pylint: disable=unused-argument
+    ):
         """Test that list tenants as platform owner behaves as expected."""
         resp = client.get("/api/v1/tenants", headers=auth_headers(platform_owner_token))
         assert resp.status_code == 200

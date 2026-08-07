@@ -13,7 +13,9 @@ class PlatformPermission(Base, TimestampMixin):
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=False, index=True
+    )
     permission: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
 
     user: Mapped["User"] = relationship(  # noqa: F821
