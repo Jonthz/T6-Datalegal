@@ -10,3 +10,8 @@ export async function downloadROPAPdf(): Promise<Blob> {
   const res = await apiClient.get<Blob>('/ropa/pdf', { responseType: 'blob' })
   return res.data
 }
+
+export async function downloadROPAXlsx(): Promise<Blob> {
+  const res = await apiClient.get<Blob>('/ropa/xlsx', { responseType: 'blob' })
+  return res.data
+}

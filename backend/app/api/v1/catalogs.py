@@ -6,9 +6,19 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_tenant_id, get_db, require_permission
 from app.models.audit_log import AuditLog
-from app.models.catalog import DATA_CRITICALITIES, DATA_SENSITIVITIES, CatalogEntry
+from app.models.catalog import (
+    DATA_CRITICALITIES,
+    DATA_SENSITIVITIES,
+    CatalogEntry,
+    CatalogEntryVersion,
+)
 from app.models.user import User
-from app.schemas.catalog import BulkLoadRequest, CatalogEntryRead
+from app.schemas.catalog import (
+    BulkLoadRequest,
+    CatalogEntryCreate,
+    CatalogEntryRead,
+    CatalogEntryVersionRead,
+)
 
 # US-RF05-1: Auto-classification lookup for LOPDP data categories
 _LOPDP_AUTO_CLASSIFY: dict[str, tuple[str, str]] = {
@@ -35,6 +45,28 @@ _LOPDP_AUTO_CLASSIFY: dict[str, tuple[str, str]] = {
     "PURCHASE_HISTORY": ("ORDINARY", "MEDIUM"),
     "BEHAVIORAL_DATA": ("ORDINARY", "MEDIUM"),
 }
+
+
+def auto_classify(code: str) -> tuple[str | None, str | None]:
+    """US-RF05-1: derive (sensitivity, criticality) from a catalog code, if known."""
+    return _LOPDP_AUTO_CLASSIFY.get(code.upper(), (None, None))
+
+
+def _snapshot(db: Session, entry: CatalogEntry, user_id: int | None) -> None:
+    """US-RF20-1: append an immutable version snapshot of a catalog entry."""
+    db.add(
+        CatalogEntryVersion(
+            tenant_id=entry.tenant_id,
+            catalog_entry_id=entry.id,
+            version=entry.version,
+            label=entry.label,
+            description=entry.description,
+            sensitivity=entry.sensitivity,
+            criticality=entry.criticality,
+            is_active=entry.is_active,
+            changed_by_id=user_id,
+        )
+    )
 
 
 class CatalogEntryUpdate(BaseModel):
@@ -126,6 +158,50 @@ def list_catalogs(
     return q.offset(skip).limit(limit).all()
 
 
+@router.post("", response_model=CatalogEntryRead, status_code=status.HTTP_201_CREATED)
+def create_catalog_entry(
+    body: CatalogEntryCreate,
+    current_user: Annotated[User, Depends(require_permission("catalogs", "c"))],
+    tenant_id: int = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    """US-RF20-1: Create a single editable catalog entry with auto-classification (US-RF05-1)."""
+    if body.sensitivity and body.sensitivity not in DATA_SENSITIVITIES:
+        raise HTTPException(
+            status_code=400, detail=f"sensitivity must be one of {DATA_SENSITIVITIES}"
+        )
+    if body.criticality and body.criticality not in DATA_CRITICALITIES:
+        raise HTTPException(
+            status_code=400, detail=f"criticality must be one of {DATA_CRITICALITIES}"
+        )
+    auto = auto_classify(body.code)
+    entry = CatalogEntry(
+        tenant_id=tenant_id,
+        type=body.type,
+        code=body.code,
+        label=body.label,
+        description=body.description,
+        sensitivity=body.sensitivity or auto[0],
+        criticality=body.criticality or auto[1],
+        version=1,
+        updated_by_id=current_user.id,
+    )
+    db.add(entry)
+    db.commit()
+    db.refresh(entry)
+    _snapshot(db, entry, current_user.id)
+    db.commit()
+    AuditLog.create_log(
+        db,
+        action="catalog_entry_created",
+        resource="catalogs",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"id={entry.id} type={entry.type} code={entry.code}",
+    )
+    return entry
+
+
 @router.get("/{catalog_type}", response_model=list[CatalogEntryRead])
 def list_catalogs_by_type(
     catalog_type: str,
@@ -150,14 +226,14 @@ def list_catalogs_by_type(
 )
 def bulk_load_catalogs(
     body: BulkLoadRequest,
-    current_user: Annotated[User, Depends(require_permission("catalogs", "c"))],  # pylint: disable=unused-argument
+    current_user: Annotated[User, Depends(require_permission("catalogs", "c"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
     """POST /catalogs/bulk-load — accepts list of entries [{type, code, label, description}]."""
     entries = []
     for item in body.entries:
-        auto = _LOPDP_AUTO_CLASSIFY.get(item.code.upper(), (None, None))
+        auto = auto_classify(item.code)
         entry = CatalogEntry(
             tenant_id=tenant_id,
             type=item.type,
@@ -165,15 +241,84 @@ def bulk_load_catalogs(
             label=item.label,
             description=item.description,
             # US-RF05-1: auto-classify if code matches LOPDP lookup
-            sensitivity=auto[0],
-            criticality=auto[1],
+            sensitivity=item.sensitivity or auto[0],
+            criticality=item.criticality or auto[1],
+            updated_by_id=current_user.id,
         )
         db.add(entry)
         entries.append(entry)
     db.commit()
     for e in entries:
         db.refresh(e)
+        _snapshot(db, e, current_user.id)
+    db.commit()
     return entries
+
+
+@router.get("/{entry_id}/versions", response_model=list[CatalogEntryVersionRead])
+def list_catalog_versions(
+    entry_id: int,
+    _: Annotated[User, Depends(require_permission("catalogs", "r"))],
+    tenant_id: int = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    """US-RF20-1: Return the version history of a catalog entry (newest first)."""
+    entry = (
+        db.query(CatalogEntry)
+        .filter(CatalogEntry.id == entry_id, CatalogEntry.tenant_id == tenant_id)
+        .first()
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Catalog entry not found.")
+    return (
+        db.query(CatalogEntryVersion)
+        .filter(
+            CatalogEntryVersion.catalog_entry_id == entry_id,
+            CatalogEntryVersion.tenant_id == tenant_id,
+        )
+        .order_by(CatalogEntryVersion.version.desc())
+        .all()
+    )
+
+
+@router.post("/{entry_id}/reclassify", response_model=CatalogEntryRead)
+def reclassify_catalog_entry(
+    entry_id: int,
+    current_user: Annotated[User, Depends(require_permission("catalogs", "u"))],
+    tenant_id: int = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    """US-RF05-1: Re-run automatic classification from the entry code, versioning the change."""
+    entry = (
+        db.query(CatalogEntry)
+        .filter(CatalogEntry.id == entry_id, CatalogEntry.tenant_id == tenant_id)
+        .first()
+    )
+    if not entry:
+        raise HTTPException(status_code=404, detail="Catalog entry not found.")
+    sensitivity, criticality = auto_classify(entry.code)
+    if sensitivity is None and criticality is None:
+        raise HTTPException(
+            status_code=422,
+            detail=f"No automatic classification available for code '{entry.code}'.",
+        )
+    entry.sensitivity = sensitivity
+    entry.criticality = criticality
+    entry.version = (entry.version or 1) + 1
+    entry.updated_by_id = current_user.id
+    db.commit()
+    db.refresh(entry)
+    _snapshot(db, entry, current_user.id)
+    db.commit()
+    AuditLog.create_log(
+        db,
+        action="catalog_entry_reclassified",
+        resource="catalogs",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"id={entry_id} code={entry.code} -> {sensitivity}/{criticality}",
+    )
+    return entry
 
 
 @router.patch("/{entry_id}", response_model=CatalogEntryRead)
@@ -184,7 +329,7 @@ def update_catalog_entry(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """US-RF20-1: Edit catalog entry with version increment."""
+    """US-RF20-1: Edit catalog entry with version increment and history snapshot."""
     entry = (
         db.query(CatalogEntry)
         .filter(CatalogEntry.id == entry_id, CatalogEntry.tenant_id == tenant_id)
@@ -207,6 +352,8 @@ def update_catalog_entry(
     entry.updated_by_id = current_user.id
     db.commit()
     db.refresh(entry)
+    _snapshot(db, entry, current_user.id)
+    db.commit()
     AuditLog.create_log(
         db,
         action="catalog_entry_updated",

@@ -7,7 +7,7 @@ import {
   type FormEvent,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pencil, RefreshCw, Trash2, Upload } from 'lucide-react'
+import { History, Pencil, Plus, RefreshCw, Trash2, Upload, Wand2 } from 'lucide-react'
 import {
   Alert as AlertBox,
   Badge,
@@ -25,14 +25,17 @@ import {
 import type { DataTableColumn } from '../components/ui'
 import {
   bulkLoadCatalog,
+  createCatalogEntry,
   deleteCatalogEntry,
   listCatalogs,
+  listCatalogVersions,
+  reclassifyCatalogEntry,
   updateCatalogEntry,
   type CatalogEntryCreate,
 } from '../api/catalogs'
-import type { CatalogEntry } from '../types'
+import type { CatalogEntry, CatalogEntryVersion } from '../types'
 import { extractErrorMessage, getStatus } from '../lib/errors'
-import { formatDate } from '../lib/format'
+import { formatDate, formatDateTime } from '../lib/format'
 
 const KNOWN_TYPES = [
   'LEGAL_BASIS',
@@ -92,6 +95,22 @@ export default function CatalogsPage() {
   const [bulkType, setBulkType] = useState('')
   const [bulkError, setBulkError] = useState('')
   const [bulkSubmitting, setBulkSubmitting] = useState(false)
+
+  const [createOpen, setCreateOpen] = useState(false)
+  const [createForm, setCreateForm] = useState<CatalogEntryCreate>({
+    type: '',
+    code: '',
+    label: '',
+    description: '',
+    sensitivity: '',
+    criticality: '',
+  })
+  const [createError, setCreateError] = useState('')
+  const [createSubmitting, setCreateSubmitting] = useState(false)
+
+  const [versionsFor, setVersionsFor] = useState<CatalogEntry | null>(null)
+  const [versions, setVersions] = useState<CatalogEntryVersion[]>([])
+  const [versionsLoading, setVersionsLoading] = useState(false)
 
   const [busyId, setBusyId] = useState<number | null>(null)
 
@@ -167,6 +186,75 @@ export default function CatalogsPage() {
       }
     } finally {
       setBusyId(null)
+    }
+  }
+
+  function openCreate() {
+    setCreateForm({
+      type: typeFilter || '',
+      code: '',
+      label: '',
+      description: '',
+      sensitivity: '',
+      criticality: '',
+    })
+    setCreateError('')
+    setCreateOpen(true)
+  }
+
+  async function handleCreateSubmit(e: FormEvent) {
+    e.preventDefault()
+    setCreateSubmitting(true)
+    setCreateError('')
+    try {
+      await createCatalogEntry({
+        type: createForm.type.trim(),
+        code: createForm.code.trim(),
+        label: createForm.label.trim() || createForm.code.trim(),
+        description: createForm.description ?? '',
+        sensitivity: createForm.sensitivity || null,
+        criticality: createForm.criticality || null,
+      })
+      setSuccess(t('catalogs.createSuccess'))
+      setCreateOpen(false)
+      await load()
+    } catch (err) {
+      setCreateError(extractErrorMessage(err, t('common.error')))
+    } finally {
+      setCreateSubmitting(false)
+    }
+  }
+
+  async function handleReclassify(entry: CatalogEntry) {
+    setBusyId(entry.id)
+    setPageError('')
+    try {
+      await reclassifyCatalogEntry(entry.id)
+      setSuccess(t('catalogs.reclassifySuccess'))
+      await load()
+    } catch (err) {
+      const status = getStatus(err)
+      if (status === 422) {
+        setPageError(t('catalogs.reclassifyNoRule', { code: entry.code }))
+      } else {
+        setPageError(extractErrorMessage(err, t('common.error')))
+      }
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  async function openVersions(entry: CatalogEntry) {
+    setVersionsFor(entry)
+    setVersions([])
+    setVersionsLoading(true)
+    try {
+      const data = await listCatalogVersions(entry.id)
+      setVersions(data)
+    } catch (err) {
+      setPageError(extractErrorMessage(err, t('common.error')))
+    } finally {
+      setVersionsLoading(false)
     }
   }
 
@@ -287,6 +375,19 @@ export default function CatalogsPage() {
         render: (entry) => (
           <div className="flex items-center justify-end gap-2">
             <IconButton
+              label={t('catalogs.history')}
+              icon={<History className="h-4 w-4" />}
+              variant="secondary"
+              onClick={() => openVersions(entry)}
+            />
+            <IconButton
+              label={t('catalogs.reclassify')}
+              icon={<Wand2 className="h-4 w-4" />}
+              variant="secondary"
+              loading={busyId === entry.id}
+              onClick={() => handleReclassify(entry)}
+            />
+            <IconButton
               label={t('common.edit')}
               icon={<Pencil className="h-4 w-4" />}
               onClick={() => openEdit(entry)}
@@ -312,13 +413,22 @@ export default function CatalogsPage() {
         title={t('catalogs.title')}
         description={t('catalogs.description')}
         actions={
-          <IconButton
-            label={t('catalogs.create')}
-            icon={<Upload className="h-5 w-5" />}
-            variant="primary"
-            size="md"
-            onClick={openBulk}
-          />
+          <div className="flex items-center gap-2">
+            <IconButton
+              label={t('catalogs.createSingle')}
+              icon={<Plus className="h-5 w-5" />}
+              variant="secondary"
+              size="md"
+              onClick={openCreate}
+            />
+            <IconButton
+              label={t('catalogs.create')}
+              icon={<Upload className="h-5 w-5" />}
+              variant="primary"
+              size="md"
+              onClick={openBulk}
+            />
+          </div>
         }
       />
 
@@ -407,6 +517,139 @@ export default function CatalogsPage() {
           </label>
           {editError && <AlertBox tone="danger">{editError}</AlertBox>}
         </form>
+      </Modal>
+
+      <Modal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        title={t('catalogs.createSingle')}
+        size="md"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setCreateOpen(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button onClick={handleCreateSubmit} loading={createSubmitting}>
+              {t('common.save')}
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleCreateSubmit} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <Select
+              label={t('catalogs.fields.type')}
+              value={KNOWN_TYPES.includes(createForm.type) ? createForm.type : ''}
+              onChange={(e) => setCreateForm({ ...createForm, type: e.target.value })}
+              options={[
+                { value: '', label: t('common.optional') },
+                ...KNOWN_TYPES.map((tp) => ({ value: tp, label: tp })),
+              ]}
+            />
+            <Input
+              label={t('catalogs.fields.typeCustom')}
+              value={createForm.type}
+              onChange={(e) => setCreateForm({ ...createForm, type: e.target.value })}
+              placeholder="DATA_TYPE"
+            />
+          </div>
+          <Input
+            label={t('catalogs.fields.code')}
+            value={createForm.code}
+            onChange={(e) => setCreateForm({ ...createForm, code: e.target.value })}
+            hint={t('catalogs.autoClassifyHint')}
+            required
+          />
+          <Input
+            label={t('catalogs.fields.label')}
+            value={createForm.label}
+            onChange={(e) => setCreateForm({ ...createForm, label: e.target.value })}
+            required
+          />
+          <Textarea
+            label={t('catalogs.fields.description')}
+            value={createForm.description ?? ''}
+            onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
+            rows={2}
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <Select
+              label={t('catalogs.fields.sensitivity')}
+              value={createForm.sensitivity ?? ''}
+              onChange={(e) => setCreateForm({ ...createForm, sensitivity: e.target.value })}
+              options={SENSITIVITY_OPTIONS}
+            />
+            <Select
+              label={t('catalogs.fields.criticality')}
+              value={createForm.criticality ?? ''}
+              onChange={(e) => setCreateForm({ ...createForm, criticality: e.target.value })}
+              options={CRITICALITY_OPTIONS}
+            />
+          </div>
+          {createError && <AlertBox tone="danger">{createError}</AlertBox>}
+        </form>
+      </Modal>
+
+      <Modal
+        open={!!versionsFor}
+        onClose={() => setVersionsFor(null)}
+        title={
+          versionsFor
+            ? `${t('catalogs.history')} · ${versionsFor.type}/${versionsFor.code}`
+            : t('catalogs.history')
+        }
+        size="lg"
+        footer={
+          <Button variant="ghost" onClick={() => setVersionsFor(null)}>
+            {t('common.close')}
+          </Button>
+        }
+      >
+        {versionsLoading ? (
+          <p className="text-sm text-ink-300">{t('common.loading')}</p>
+        ) : versions.length === 0 ? (
+          <p className="text-sm text-ink-300">{t('catalogs.noHistory')}</p>
+        ) : (
+          <ul className="divide-y divide-white/5">
+            {versions.map((v) => (
+              <li key={v.id} className="flex items-start justify-between gap-3 py-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <Badge tone="info">v{v.version}</Badge>
+                    <span className="text-sm font-medium text-ink-50">{v.label}</span>
+                    {!v.is_active && <Badge tone="neutral">{t('catalogs.inactive')}</Badge>}
+                  </div>
+                  {v.description && (
+                    <p className="text-xs text-ink-300 line-clamp-2">{v.description}</p>
+                  )}
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    {v.sensitivity && (
+                      <Badge tone={v.sensitivity === 'SENSITIVE' ? 'danger' : 'neutral'}>
+                        {v.sensitivity}
+                      </Badge>
+                    )}
+                    {v.criticality && (
+                      <Badge
+                        tone={
+                          v.criticality === 'HIGH'
+                            ? 'danger'
+                            : v.criticality === 'MEDIUM'
+                              ? 'warning'
+                              : 'success'
+                        }
+                      >
+                        {v.criticality}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <span className="shrink-0 text-xs text-ink-400">
+                  {formatDateTime(v.created_at)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </Modal>
 
       <Modal

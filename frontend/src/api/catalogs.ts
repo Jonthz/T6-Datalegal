@@ -1,11 +1,13 @@
 import apiClient from './client'
-import type { CatalogEntry } from '../types'
+import type { CatalogEntry, CatalogEntryVersion } from '../types'
 
 export interface CatalogEntryCreate {
   type: string
   code: string
   label: string
   description?: string
+  sensitivity?: string | null
+  criticality?: string | null
 }
 
 export interface CatalogEntryUpdate {
@@ -26,6 +28,11 @@ export async function listCatalogByType(type: string) {
   return res.data
 }
 
+export async function createCatalogEntry(data: CatalogEntryCreate) {
+  const res = await apiClient.post<CatalogEntry>('/catalogs', data)
+  return res.data
+}
+
 export async function bulkLoadCatalog(entries: CatalogEntryCreate[]) {
   const res = await apiClient.post<CatalogEntry[]>('/catalogs/bulk-load', { entries })
   return res.data
@@ -33,6 +40,16 @@ export async function bulkLoadCatalog(entries: CatalogEntryCreate[]) {
 
 export async function updateCatalogEntry(id: number, data: CatalogEntryUpdate) {
   const res = await apiClient.patch<CatalogEntry>(`/catalogs/${id}`, data)
+  return res.data
+}
+
+export async function listCatalogVersions(id: number) {
+  const res = await apiClient.get<CatalogEntryVersion[]>(`/catalogs/${id}/versions`)
+  return res.data
+}
+
+export async function reclassifyCatalogEntry(id: number) {
+  const res = await apiClient.post<CatalogEntry>(`/catalogs/${id}/reclassify`)
   return res.data
 }
 

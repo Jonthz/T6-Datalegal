@@ -1,9 +1,12 @@
 export interface TreatmentActivity {
   id: number
   tenant_id: number
+  rat_code: string | null
   name: string
   purpose: string
   legal_basis: string
+  legal_bases: string[]
+  complementary_legal_bases: string[]
   personal_data_types: string[]
   data_subjects: string[]
   retention_period_days: number
@@ -14,6 +17,27 @@ export interface TreatmentActivity {
   department_id: number | null
   owner_id: number | null
   status: string
+  // Variables adicionales del RAT (Art. 38 RGLOPDP)
+  area: string | null
+  operational_owner: string | null
+  data_categories: string[]
+  data_origin: string | null
+  treatment_operations: string[]
+  uses_profiling: boolean
+  uses_ai: boolean
+  automated_decision: boolean
+  requires_dpia: boolean
+  has_special_data: boolean
+  involves_minors: boolean
+  recipients: string[]
+  processors: string[]
+  system_platform: string | null
+  technical_measures: string | null
+  organizational_measures: string | null
+  physical_measures: string | null
+  legal_measures: string | null
+  mtge_score: number | null
+  mtge_result: string | null
 }
 
 export interface InformationAsset {

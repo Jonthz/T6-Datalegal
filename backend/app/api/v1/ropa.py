@@ -42,6 +42,114 @@ def get_ropa_pdf(
     )
 
 
+@router.get("/xlsx")
+def get_ropa_xlsx(
+    _: Annotated[User, Depends(require_permission("ropa", "r"))],
+    tenant_id: int = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    """Return the RAT/ROPA as a downloadable Excel workbook (US-RF31-1)."""
+    activities = (
+        db.query(TreatmentActivity)
+        .filter(TreatmentActivity.tenant_id == tenant_id)
+        .order_by(TreatmentActivity.rat_code, TreatmentActivity.id)
+        .all()
+    )
+    xlsx_bytes = _generate_ropa_xlsx(activities)
+    return StreamingResponse(
+        BytesIO(xlsx_bytes),
+        media_type=(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ),
+        headers={"Content-Disposition": "attachment; filename=RAT.xlsx"},
+    )
+
+
+# Columnas del RAT: (encabezado, atributo/callable). Alineadas con la plantilla LOPDP.
+_RAT_COLUMNS: list[tuple[str, str]] = [
+    ("ID_TRATAMIENTO", "rat_code"),
+    ("Nombre del tratamiento", "name"),
+    ("Área responsable", "area"),
+    ("Responsable operativo", "operational_owner"),
+    ("Finalidad específica", "purpose"),
+    ("Categorías de titulares", "data_subjects"),
+    ("Categorías de datos", "data_categories"),
+    ("Origen de los datos", "data_origin"),
+    ("Operaciones de tratamiento", "treatment_operations"),
+    ("Perfilamiento", "uses_profiling"),
+    ("Uso de IA", "uses_ai"),
+    ("Decisión automatizada", "automated_decision"),
+    ("Base de licitud principal", "legal_basis"),
+    ("Bases de licitud (todas)", "legal_bases"),
+    ("Bases complementarias/condicionadas", "complementary_legal_bases"),
+    ("Encargado(s)", "processors"),
+    ("Destinatario(s)", "recipients"),
+    ("Transferencia internacional", "is_cross_border"),
+    ("País / mecanismo", "destination_countries"),
+    ("Plazo de conservación (días)", "retention_period_days"),
+    ("Datos especiales", "has_special_data"),
+    ("Datos de NNA", "involves_minors"),
+    ("EIPD", "requires_dpia"),
+    ("Sistema / plataforma", "system_platform"),
+    ("Medidas técnicas", "technical_measures"),
+    ("Medidas organizativas", "organizational_measures"),
+    ("Medidas físicas", "physical_measures"),
+    ("Medidas jurídicas", "legal_measures"),
+    ("Puntaje MTGE", "mtge_score"),
+    ("Resultado MTGE", "mtge_result"),
+    ("Estado", "status"),
+]
+
+
+def _cell_value(activity: TreatmentActivity, attr: str):
+    """Render a treatment-activity attribute into an Excel-friendly value."""
+    value = getattr(activity, attr, None)
+    if isinstance(value, bool):
+        return "Sí" if value else "No"
+    if isinstance(value, list):
+        return ", ".join(str(v) for v in value)
+    return value
+
+
+def _generate_ropa_xlsx(activities: list[TreatmentActivity]) -> bytes:
+    """Render the RAT to an .xlsx workbook using openpyxl."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font, PatternFill
+    from openpyxl.utils import get_column_letter
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "RAT"
+
+    header_fill = PatternFill("solid", fgColor="1F4E78")
+    header_font = Font(name="Arial", bold=True, color="FFFFFF", size=10)
+    body_font = Font(name="Arial", size=10)
+    wrap = Alignment(vertical="top", wrap_text=True)
+
+    headers = [h for h, _ in _RAT_COLUMNS]
+    ws.append(headers)
+    for col_idx, cell in enumerate(ws[1], start=1):
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(vertical="center", wrap_text=True)
+        ws.column_dimensions[get_column_letter(col_idx)].width = 26
+
+    for activity in activities:
+        ws.append([_cell_value(activity, attr) for _, attr in _RAT_COLUMNS])
+
+    for row in ws.iter_rows(min_row=2):
+        for cell in row:
+            cell.font = body_font
+            cell.alignment = wrap
+
+    ws.freeze_panes = "A2"
+    ws.auto_filter.ref = f"A1:{get_column_letter(len(headers))}{ws.max_row}"
+
+    buffer = BytesIO()
+    wb.save(buffer)
+    return buffer.getvalue()
+
+
 def _build_ropa_data(tenant_id: int, db: Session) -> dict:
     """Build the ROPA data structure grouped by legal basis."""
     activities = db.query(TreatmentActivity).filter(TreatmentActivity.tenant_id == tenant_id).all()

@@ -12,7 +12,7 @@ from app.api.deps import (
     require_permission,
 )
 from app.models.audit_log import AuditLog
-from app.models.treatment_activity import TreatmentActivity
+from app.models.treatment_activity import TreatmentActivity, area_prefix
 from app.models.user import User
 from app.schemas.treatment_activity import (
     TreatmentActivityCreate,
@@ -23,6 +23,59 @@ from app.schemas.treatment_activity import (
 router = APIRouter(prefix="/treatment-activities", tags=["treatment-activities"])
 
 
+# ── RAT helpers ──────────────────────────────────────────────────────────────
+
+# Campos del RAT que son columnas de TreatmentActivity y pueden asignarse dinámicamente.
+_RAT_EXTRA_FIELDS = (
+    "complementary_legal_bases",
+    "area",
+    "operational_owner",
+    "data_categories",
+    "data_origin",
+    "treatment_operations",
+    "uses_profiling",
+    "uses_ai",
+    "automated_decision",
+    "requires_dpia",
+    "has_special_data",
+    "involves_minors",
+    "recipients",
+    "processors",
+    "system_platform",
+    "technical_measures",
+    "organizational_measures",
+    "physical_measures",
+    "legal_measures",
+    "mtge_score",
+    "mtge_result",
+)
+
+
+def generate_rat_code(db: Session, tenant_id: int, area: str | None) -> str:
+    """Build a structured RAT identifier (PREFIX + 3-digit sequence) per tenant/area.
+
+    Ejemplos: CRÉDITO -> CRE001, TESORERÍA -> TES001, IMPORTACIONES -> IMP001.
+    El secuencial es contiguo por prefijo dentro del tenant.
+    """
+    prefix = area_prefix(area)
+    existing = (
+        db.query(TreatmentActivity.rat_code)
+        .filter(
+            TreatmentActivity.tenant_id == tenant_id,
+            TreatmentActivity.rat_code.like(f"{prefix}%"),
+        )
+        .all()
+    )
+    max_seq = 0
+    for (code,) in existing:
+        if not code:
+            continue
+        tail = code[len(prefix):]
+        if tail.isdigit():
+            max_seq = max(max_seq, int(tail))
+    return f"{prefix}{max_seq + 1:03d}"
+
+
 # ── US-RF04-1 Wizard inline schemas ──────────────────────────────────────────
 
 
@@ -31,11 +84,14 @@ class WizardStartBody(BaseModel):
     name: str
     purpose: str
     department_id: int | None = None
+    area: str | None = None
 
 
 class WizardLegalBasisBody(BaseModel):
     """WizardLegalBasisBody schema/model definition."""
-    legal_basis: str
+    legal_basis: str = ""
+    legal_bases: list[str] = []
+    complementary_legal_bases: list[str] = []
     personal_data_types: list[str] = []
     data_subjects: list[str] = []
 
@@ -67,11 +123,14 @@ def wizard_start(
 
     activity = TreatmentActivity(
         tenant_id=tenant_id,
+        rat_code=generate_rat_code(db, tenant_id, getattr(body, "area", None)),
         owner_id=current_user.id,
         department_id=dept_id,
         name=body.name,
         purpose=body.purpose,
+        area=getattr(body, "area", None),
         legal_basis="",
+        legal_bases=[],
         personal_data_types=[],
         data_subjects=[],
         status="DRAFT",
@@ -90,9 +149,13 @@ def wizard_legal_basis(
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
 ):
-    """Step 2: Set legal basis, personal data types and subjects."""
-    if not body.legal_basis.strip():
+    """Step 2: Set legal basis (principal + multiple), personal data types and subjects."""
+    bases = list(body.legal_bases)
+    principal = body.legal_basis.strip() or (bases[0] if bases else "")
+    if not principal:
         raise HTTPException(status_code=422, detail="legal_basis cannot be empty.")
+    if not bases:
+        bases = [principal]
     activity = (
         db.query(TreatmentActivity)
         .filter(TreatmentActivity.id == activity_id, TreatmentActivity.tenant_id == tenant_id)
@@ -100,7 +163,9 @@ def wizard_legal_basis(
     )
     if not activity:
         raise HTTPException(status_code=404, detail="Treatment activity not found.")
-    activity.legal_basis = body.legal_basis
+    activity.legal_basis = principal
+    activity.legal_bases = bases
+    activity.complementary_legal_bases = body.complementary_legal_bases
     activity.personal_data_types = body.personal_data_types
     activity.data_subjects = body.data_subjects
     db.commit()
@@ -210,11 +275,13 @@ def create_activity(
 
     activity = TreatmentActivity(
         tenant_id=tenant_id,
+        rat_code=generate_rat_code(db, tenant_id, body.area),
         owner_id=current_user.id,
         department_id=dept_id,
         name=body.name,
         purpose=body.purpose,
         legal_basis=body.legal_basis,
+        legal_bases=body.legal_bases,
         personal_data_types=body.personal_data_types,
         data_subjects=body.data_subjects,
         retention_period_days=body.retention_period_days,
@@ -224,6 +291,9 @@ def create_activity(
         processor_country=body.processor_country,
         status=body.status,
     )
+    # Variables adicionales del RAT
+    for field in _RAT_EXTRA_FIELDS:
+        setattr(activity, field, getattr(body, field))
     db.add(activity)
     db.commit()
     db.refresh(activity)
@@ -278,8 +348,20 @@ def update_activity(
     if current_user.role == "DEPT_HEAD" and activity.department_id != current_user.department_id:
         raise HTTPException(status_code=403, detail="Access restricted to your department.")
 
-    for field, value in body.model_dump(exclude_none=True).items():
+    data = body.model_dump(exclude_none=True)
+    for field, value in data.items():
         setattr(activity, field, value)
+
+    # Sincronizar base principal <-> bases múltiples
+    if "legal_bases" in data and activity.legal_bases:
+        activity.legal_basis = activity.legal_bases[0]
+    elif "legal_basis" in data and not activity.legal_bases:
+        activity.legal_bases = [activity.legal_basis]
+
+    # Generar identificador estructurado si se define el área y aún no existe
+    if not activity.rat_code and activity.area:
+        activity.rat_code = generate_rat_code(db, tenant_id, activity.area)
+
     db.commit()
     db.refresh(activity)
     AuditLog.create_log(
