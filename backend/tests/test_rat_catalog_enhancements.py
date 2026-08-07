@@ -25,7 +25,12 @@ def test_rat_code_generated_per_area(client: TestClient, dpo_token):
     ).json()
     c = client.post(
         "/api/v1/treatment-activities",
-        json={"name": "Tesorería 1", "purpose": "x", "legal_basis": "CONTRACT", "area": "TESORERÍA"},
+        json={
+            "name": "Tesorería 1",
+            "purpose": "x",
+            "legal_basis": "CONTRACT",
+            "area": "TESORERÍA",
+        },
         headers=auth_headers(dpo_token),
     ).json()
     assert a["rat_code"] == "CRE001"
