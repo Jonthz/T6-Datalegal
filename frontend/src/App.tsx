@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import { AppShell } from './components/layout/AppShell'
 import { LoadingState } from './components/ui'
 import { PROTECTED_ROUTES, PUBLIC_ROUTES } from './routes/routes'
+import { getStoredAccountScope } from './routes/permissions'
 
 function ShellFallback() {
   return (
@@ -22,6 +23,8 @@ function AuthFallback() {
 }
 
 export default function App() {
+  const defaultPath = getStoredAccountScope() === 'PLATFORM' ? '/platform' : '/dashboard'
+
   return (
     <BrowserRouter>
       <Routes>
@@ -37,12 +40,16 @@ export default function App() {
           />
         ))}
 
-        {PROTECTED_ROUTES.map(({ path, Component, roles }) => (
+        {PROTECTED_ROUTES.map(({ path, Component, roles, accountScopes, platformPermissions }) => (
           <Route
             key={path}
             path={path}
             element={
-              <ProtectedRoute roles={roles}>
+              <ProtectedRoute
+                roles={roles}
+                accountScopes={accountScopes}
+                platformPermissions={platformPermissions}
+              >
                 <AppShell>
                   <Suspense fallback={<LoadingState />}>
                     <Component />
@@ -53,8 +60,8 @@ export default function App() {
           />
         ))}
 
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to={defaultPath} replace />} />
+        <Route path="*" element={<Navigate to={defaultPath} replace />} />
       </Routes>
     </BrowserRouter>
   )

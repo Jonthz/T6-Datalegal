@@ -17,6 +17,9 @@ class User(TenantBase):
     role: Mapped[str] = mapped_column(
         String(50), nullable=False, default="AUDITOR"
     )  # SUPER_ADMIN, DPO, ADMIN, DEPT_HEAD, AUDITOR
+    account_scope: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="TENANT"
+    )  # TENANT, PLATFORM
     department_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("departments.id"), nullable=True
     )
@@ -43,3 +46,9 @@ class User(TenantBase):
     )
     audit_logs: Mapped[list] = relationship("AuditLog", back_populates="user", lazy="noload")
     enrollments: Mapped[list] = relationship("Enrollment", back_populates="user", lazy="noload")
+    platform_permissions: Mapped[list["PlatformPermission"]] = relationship(  # noqa: F821
+        "PlatformPermission",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )

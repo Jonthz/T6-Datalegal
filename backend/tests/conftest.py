@@ -28,6 +28,7 @@ from app.models import (  # noqa: F401
     incident,
     information_asset,
     legal_document,
+    platform_access,
     portability,
     remediation,
     retention,
@@ -38,6 +39,7 @@ from app.models import (  # noqa: F401
     user,
 )
 from app.models import role as role_model  # noqa: F401
+from app.models.platform_access import PlatformPermission
 from app.models.tenant import Tenant
 from app.models.user import User
 
@@ -114,7 +116,14 @@ def tenant_b(session) -> Tenant:
 
 
 def _make_user(
-    session, *, tenant_id: int, email: str, role: str, password: str = "Test@1234!"
+    session,
+    *,
+    tenant_id: int,
+    email: str,
+    role: str,
+    password: str = "Test@1234!",
+    account_scope: str = "TENANT",
+    platform_permissions: list[str] | None = None,
 ) -> User:
     """Handle make user."""
     u = User(
@@ -123,8 +132,12 @@ def _make_user(
         hashed_password=get_password_hash(password),
         full_name=f"User {email}",
         role=role,
+        account_scope=account_scope,
     )
     session.add(u)
+    session.flush()
+    for permission in platform_permissions or []:
+        session.add(PlatformPermission(user_id=u.id, permission=permission))
     session.flush()
     return u
 
@@ -167,6 +180,19 @@ def tenant_b_user(session, tenant_b) -> User:
     return _make_user(session, tenant_id=tenant_b.id, email="tenant_b_user@test.com", role="ADMIN")
 
 
+@pytest.fixture
+def platform_owner(session, tenant_a) -> User:
+    """Handle platform owner."""
+    return _make_user(
+        session,
+        tenant_id=tenant_a.id,
+        email="owner@datalegal.test",
+        role="SUPER_ADMIN",
+        account_scope="PLATFORM",
+        platform_permissions=["tenants:read", "tenants:provision"],
+    )
+
+
 # ── Token fixtures ───────────────────────────────────────────────────────────
 
 
@@ -177,6 +203,7 @@ def _token_for(u: User) -> str:
             "sub": str(u.id),
             "tenant_id": u.tenant_id,
             "role": u.role,
+            "account_scope": u.account_scope,
         }
     )
 
@@ -215,6 +242,12 @@ def dept_head_token(dept_head_user) -> str:
 def tenant_b_token(tenant_b_user) -> str:
     """Handle tenant b token."""
     return _token_for(tenant_b_user)
+
+
+@pytest.fixture
+def platform_owner_token(platform_owner) -> str:
+    """Handle platform owner token."""
+    return _token_for(platform_owner)
 
 
 # ── Auth header helper ───────────────────────────────────────────────────────

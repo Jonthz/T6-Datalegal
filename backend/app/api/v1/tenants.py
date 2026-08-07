@@ -3,7 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db, require_super_admin
+from app.api.deps import (
+    PLATFORM_PERMISSION_TENANTS_PROVISION,
+    PLATFORM_PERMISSION_TENANTS_READ,
+    get_db,
+    require_platform_permission,
+)
 from app.core.security import get_password_hash
 from app.models.audit_log import AuditLog
 from app.models.tenant import Tenant
@@ -16,7 +21,7 @@ router = APIRouter(prefix="/tenants", tags=["tenants"])
 
 @router.get("", response_model=list[TenantRead])
 def list_tenants(
-    _: Annotated[User, Depends(require_super_admin)],
+    _: Annotated[User, Depends(require_platform_permission(PLATFORM_PERMISSION_TENANTS_READ))],
     db: Session = Depends(get_db),
 ):
     """List tenants."""
@@ -26,7 +31,7 @@ def list_tenants(
 @router.get("/{tenant_id}", response_model=TenantRead)
 def get_tenant(
     tenant_id: int,
-    _: Annotated[User, Depends(require_super_admin)],
+    _: Annotated[User, Depends(require_platform_permission(PLATFORM_PERMISSION_TENANTS_READ))],
     db: Session = Depends(get_db),
 ):
     """Return tenant."""
@@ -39,10 +44,12 @@ def get_tenant(
 @router.post("/provision", status_code=status.HTTP_201_CREATED)
 def provision_tenant(
     body: TenantProvision,
-    current_user: Annotated[User, Depends(require_super_admin)],
+    current_user: Annotated[
+        User, Depends(require_platform_permission(PLATFORM_PERMISSION_TENANTS_PROVISION))
+    ],
     db: Session = Depends(get_db),
 ):
-    """SUPER_ADMIN provisions a new tenant + its first DPO/ADMIN account."""
+    """Platform account provisions a new tenant + its first DPO/ADMIN account."""
     existing = db.query(Tenant).filter(Tenant.ruc == body.tenant.ruc).first()
     if existing:
         raise HTTPException(

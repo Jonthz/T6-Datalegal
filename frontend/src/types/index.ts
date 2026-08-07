@@ -1,4 +1,12 @@
-export type { Role, AuthState, TokenResponse, MFAPendingResponse, MFASetupResponse } from './auth'
+export type {
+  AccountScope,
+  PlatformPermission,
+  Role,
+  AuthState,
+  TokenResponse,
+  MFAPendingResponse,
+  MFASetupResponse,
+} from './auth'
 export type {
   User,
   Tenant,

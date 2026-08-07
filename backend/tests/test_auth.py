@@ -19,6 +19,21 @@ class TestLogin:
         assert "access_token" in data
         assert data["role"] == "ADMIN"
         assert data["tenant_id"] == tenant_a.id
+        assert data["account_scope"] == "TENANT"
+        assert data["platform_permissions"] == []
+
+    def test_platform_login_includes_scope_and_permissions(
+        self, client: TestClient, platform_owner
+    ):
+        """Platform auth response exposes platform scope and explicit permissions."""
+        resp = client.post(
+            "/api/v1/auth/login",
+            json={"email": platform_owner.email, "password": "Test@1234!"},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["account_scope"] == "PLATFORM"
+        assert {"tenants:read", "tenants:provision"} <= set(data["platform_permissions"])
 
     def test_login_wrong_password(self, client: TestClient, tenant_a, session):
         """Test that login wrong password behaves as expected."""

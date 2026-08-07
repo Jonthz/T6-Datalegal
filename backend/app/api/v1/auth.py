@@ -32,6 +32,10 @@ from app.schemas.auth import (
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+def _platform_permissions(user: User) -> list[str]:
+    return sorted(permission.permission for permission in user.platform_permissions or [])
+
+
 def _get_client_ip(request: Request) -> str:
     """Handle get client ip."""
     return get_client_ip(request)
@@ -110,6 +114,7 @@ def login(
             "sub": str(user.id),
             "tenant_id": user.tenant_id,
             "role": user.role,
+            "account_scope": user.account_scope,
         }
     )
     AuditLog.create_log(
@@ -120,7 +125,13 @@ def login(
         user_id=user.id,
         ip_address=ip,
     )
-    return TokenResponse(access_token=access_token, role=user.role, tenant_id=user.tenant_id)
+    return TokenResponse(
+        access_token=access_token,
+        role=user.role,
+        tenant_id=user.tenant_id,
+        account_scope=user.account_scope,
+        platform_permissions=_platform_permissions(user),
+    )
 
 
 @router.post("/mfa-verify", response_model=TokenResponse)
@@ -169,6 +180,7 @@ def mfa_verify(
             "sub": str(user.id),
             "tenant_id": user.tenant_id,
             "role": user.role,
+            "account_scope": user.account_scope,
         }
     )
     AuditLog.create_log(
@@ -180,7 +192,13 @@ def mfa_verify(
         detail="MFA verified",
         ip_address=ip,
     )
-    return TokenResponse(access_token=access_token, role=user.role, tenant_id=user.tenant_id)
+    return TokenResponse(
+        access_token=access_token,
+        role=user.role,
+        tenant_id=user.tenant_id,
+        account_scope=user.account_scope,
+        platform_permissions=_platform_permissions(user),
+    )
 
 
 @router.post("/mfa-setup", response_model=MFASetupResponse)

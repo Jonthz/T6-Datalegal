@@ -7,8 +7,8 @@ from tests.conftest import auth_headers
 
 class TestTenantProvisioning:
     """TestTenantProvisioning schema/model definition."""
-    def test_provision_tenant_as_super_admin(self, client: TestClient, super_admin_token):
-        """Test that provision tenant as super admin behaves as expected."""
+    def test_provision_tenant_as_platform_owner(self, client: TestClient, platform_owner_token):
+        """Test that provision tenant as platform owner behaves as expected."""
         resp = client.post(
             "/api/v1/tenants/provision",
             json={
@@ -25,7 +25,7 @@ class TestTenantProvisioning:
                     "role": "DPO",
                 },
             },
-            headers=auth_headers(super_admin_token),
+            headers=auth_headers(platform_owner_token),
         )
         assert resp.status_code == 201
         data = resp.json()
@@ -33,7 +33,7 @@ class TestTenantProvisioning:
         assert data["admin_user"]["role"] == "DPO"
         assert data["admin_user"]["tenant_id"] == data["tenant"]["id"]
 
-    def test_provision_tenant_duplicate_ruc(self, client: TestClient, super_admin_token):
+    def test_provision_tenant_duplicate_ruc(self, client: TestClient, platform_owner_token):
         """Test that provision tenant duplicate ruc behaves as expected."""
         client.post(
             "/api/v1/tenants/provision",
@@ -46,7 +46,7 @@ class TestTenantProvisioning:
                     "role": "DPO",
                 },
             },
-            headers=auth_headers(super_admin_token),
+            headers=auth_headers(platform_owner_token),
         )
         # Try same RUC again
         resp = client.post(
@@ -60,12 +60,12 @@ class TestTenantProvisioning:
                     "role": "DPO",
                 },
             },
-            headers=auth_headers(super_admin_token),
+            headers=auth_headers(platform_owner_token),
         )
         assert resp.status_code == 409
 
-    def test_provision_tenant_non_super_admin_forbidden(self, client: TestClient, admin_token):
-        """Test that provision tenant non super admin forbidden behaves as expected."""
+    def test_provision_tenant_tenant_admin_forbidden(self, client: TestClient, admin_token):
+        """Test that tenant admin cannot provision tenants."""
         resp = client.post(
             "/api/v1/tenants/provision",
             json={
@@ -81,15 +81,39 @@ class TestTenantProvisioning:
         )
         assert resp.status_code == 403
 
-    def test_list_tenants_as_super_admin(self, client: TestClient, super_admin_token, tenant_a):  # pylint: disable=unused-argument
-        """Test that list tenants as super admin behaves as expected."""
-        resp = client.get("/api/v1/tenants", headers=auth_headers(super_admin_token))
+    def test_provision_tenant_super_admin_forbidden(self, client: TestClient, super_admin_token):
+        """Tenant-scoped SUPER_ADMIN is not a platform owner."""
+        resp = client.post(
+            "/api/v1/tenants/provision",
+            json={
+                "tenant": {"name": "Unauthorized", "ruc": "4444444444001"},
+                "admin_user": {
+                    "email": "tenant-super@test.com",
+                    "password": "Secure@Pass1!",
+                    "full_name": "Tenant Super",
+                    "role": "DPO",
+                },
+            },
+            headers=auth_headers(super_admin_token),
+        )
+        assert resp.status_code == 403
+
+    def test_list_tenants_as_platform_owner(
+        self, client: TestClient, platform_owner_token, tenant_a  # pylint: disable=unused-argument
+    ):
+        """Test that list tenants as platform owner behaves as expected."""
+        resp = client.get("/api/v1/tenants", headers=auth_headers(platform_owner_token))
         assert resp.status_code == 200
         assert isinstance(resp.json(), list)
         assert len(resp.json()) >= 1
 
-    def test_list_tenants_non_super_admin_forbidden(self, client: TestClient, admin_token):
-        """Test that list tenants non super admin forbidden behaves as expected."""
+    def test_list_tenants_tenant_super_admin_forbidden(self, client: TestClient, super_admin_token):
+        """Tenant-scoped SUPER_ADMIN cannot list tenants."""
+        resp = client.get("/api/v1/tenants", headers=auth_headers(super_admin_token))
+        assert resp.status_code == 403
+
+    def test_list_tenants_non_platform_forbidden(self, client: TestClient, admin_token):
+        """Test that list tenants non platform forbidden behaves as expected."""
         resp = client.get("/api/v1/tenants", headers=auth_headers(admin_token))
         assert resp.status_code == 403
 
@@ -118,13 +142,12 @@ class TestTenantIsolation:
         for u in users:
             assert u["tenant_id"] == tenant_b.id
 
-    def test_super_admin_can_access_any_tenant(
+    def test_super_admin_cannot_override_tenant_scope(
         self, client: TestClient, super_admin_token, tenant_b, tenant_b_user
     ):
-        """SUPER_ADMIN with ?tenant_id can access tenant B data."""
+        """Tenant-scoped SUPER_ADMIN cannot use ?tenant_id to access another tenant."""
         resp = client.get(
             f"/api/v1/users/{tenant_b_user.id}?tenant_id={tenant_b.id}",
             headers=auth_headers(super_admin_token),
         )
-        assert resp.status_code == 200
-        assert resp.json()["id"] == tenant_b_user.id
+        assert resp.status_code == 403

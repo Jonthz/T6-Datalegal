@@ -22,6 +22,7 @@ from app.models import (  # noqa: F401
     incident,
     information_asset,
     legal_document,
+    platform_access,
     portability,
     remediation,
     retention,

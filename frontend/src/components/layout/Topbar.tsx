@@ -101,6 +101,8 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
     localStorage.removeItem('access_token')
     localStorage.removeItem('role')
     localStorage.removeItem('tenant_id')
+    localStorage.removeItem('account_scope')
+    localStorage.removeItem('platform_permissions')
     navigate('/login')
   }
 
