@@ -5,6 +5,7 @@ from tests.conftest import auth_headers
 
 
 def test_full_wizard_flow_reaches_finalize(client, dpo_token):
+    """Validates the wizard can progress through all steps and finalize."""
     h = auth_headers(dpo_token)
 
     r1 = client.post(
