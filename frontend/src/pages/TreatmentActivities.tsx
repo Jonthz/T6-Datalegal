@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type FormEvent,
   type ReactNode,
@@ -343,10 +344,19 @@ function WizardModal({
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  // Inicializa el formulario UNA sola vez por apertura del modal. Sin esto, cada
+  // onSavedStep actualiza `initial`, re-dispara el efecto y la fórmula de "reanudar"
+  // (tope en 3) revierte el setStep(4), dejando el wizard atascado en el paso 3.
+  const initializedRef = useRef(false)
 
   // Sync local form when modal opens or initial activity changes
   useEffect(() => {
-    if (!open) return
+    if (!open) {
+      initializedRef.current = false
+      return
+    }
+    if (initializedRef.current) return
+    initializedRef.current = true
     setError('')
     if (initial) {
       setActivity(initial)
@@ -403,11 +413,15 @@ function WizardModal({
     setSubmitting(true)
     try {
       if (step === 1) {
+        if (!s1.name.trim() || !s1.purpose.trim()) {
+          setError(t('treatmentActivities.wizard.validationStep1'))
+          return
+        }
         const created = await wizardStart({
-          name: s1.name,
-          purpose: s1.purpose,
+          name: s1.name.trim(),
+          purpose: s1.purpose.trim(),
           department_id: s1.department_id ? Number(s1.department_id) : null,
-          area: s1.area || null,
+          area: s1.area.trim() || null,
         })
         setActivity(created)
         onSavedStep(created)
@@ -415,6 +429,10 @@ function WizardModal({
       } else if (step === 2 && activity) {
         const bases = parseList(s2.legal_bases)
         const principal = s2.legal_basis.trim() || bases[0] || ''
+        if (!principal) {
+          setError(t('treatmentActivities.wizard.validationStep2'))
+          return
+        }
         const updated = await wizardLegalBasis(activity.id, {
           legal_basis: principal,
           legal_bases: bases.length ? bases : principal ? [principal] : [],

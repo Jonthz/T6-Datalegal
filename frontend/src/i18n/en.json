@@ -103,7 +103,7 @@
     "quickActions": {
       "title": "Quick actions",
       "registerActivity": "Register a treatment activity",
-      "registerActivityHint": "Start the guided RoT wizard.",
+      "registerActivityHint": "Start the guided RAT wizard.",
       "runRisk": "Run a risk assessment",
       "runRiskHint": "Use the questionnaire to score a treatment activity.",
       "openARCO": "Manage ARCO requests",
@@ -327,8 +327,8 @@
   },
   "treatmentActivities": {
     "title": "Treatment activities",
-    "description": "Register, edit and finalize processing activities with the guided RoT wizard.",
-    "create": "Start RoT wizard",
+    "description": "Register, edit and finalize processing activities with the guided RAT wizard.",
+    "create": "Start RAT wizard",
     "filterStatus": "Filter by status",
     "filterAll": "All",
     "filterDraft": "Draft",
@@ -373,12 +373,12 @@
     },
     "csvHelp": "Separate entries with commas",
     "wizard": {
-      "title": "RoT wizard",
+      "title": "RAT wizard",
       "step1": "Identification",
       "step2": "Legal basis & data",
       "step3": "Transfers",
       "step4": "Review",
-      "step1Hint": "Name, purpose and responsible department.",
+      "step1Hint": "Name, purpose, area (sets the RAT ID) and responsible department.",
       "step2Hint": "Choose the legal basis, the data types processed and the data subjects.",
       "step3Hint": "Declare any international transfer or external processor.",
       "step4Hint": "Review the activity before activating it.",
@@ -388,7 +388,9 @@
       "started": "Draft created.",
       "stepSaved": "Step saved.",
       "finalized": "Activity activated.",
-      "validateLegal": "Legal basis is required before activating."
+      "validateLegal": "Legal basis is required before activating.",
+      "validationStep1": "Name and purpose are required.",
+      "validationStep2": "A legal basis is required."
     },
     "deleteSuccess": "Activity archived.",
     "confirmDelete": "Archive this treatment activity? It will not be deleted but its status will become ARCHIVED.",
@@ -1441,7 +1443,7 @@
       },
       "treatmentActivities": {
         "title": "Treatment activities",
-        "description": "Registry of processing activities with the guided RoT wizard."
+        "description": "Registry of processing activities with the guided RAT wizard."
       },
       "informationAssets": {
         "title": "Information assets",
