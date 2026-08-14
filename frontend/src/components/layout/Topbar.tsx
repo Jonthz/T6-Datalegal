@@ -78,9 +78,15 @@ function formatRole(role: string | null): string {
     .join(' ')
 }
 
+const LANGUAGES = [
+  { code: 'es', label: 'ES' },
+  { code: 'en', label: 'EN' },
+] as const
+
 export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const activeLanguage = i18n.language?.startsWith('es') ? 'es' : 'en'
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const role = getStoredRole()
@@ -139,6 +145,29 @@ export function Topbar({ onMenuClick, unreadAlerts }: TopbarProps) {
       <div className="flex-1 md:hidden" />
 
       <div className="ml-auto flex items-center gap-3">
+        <div
+          role="group"
+          aria-label={t('topbar.language')}
+          className="flex h-9 items-center rounded-md border border-slate-300 bg-white overflow-hidden text-xs font-semibold"
+        >
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              type="button"
+              onClick={() => i18n.changeLanguage(lang.code)}
+              aria-pressed={activeLanguage === lang.code}
+              className={cn(
+                'h-full px-2.5 transition-colors',
+                activeLanguage === lang.code
+                  ? 'bg-brand-600 text-white'
+                  : 'text-ink-300 hover:bg-slate-50 hover:text-ink-50'
+              )}
+            >
+              {lang.label}
+            </button>
+          ))}
+        </div>
+
         <Link
           to="/alerts"
           aria-label={t('nav.alerts')}
