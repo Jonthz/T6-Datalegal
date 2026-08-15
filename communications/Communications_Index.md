@@ -1,11 +1,11 @@
 # Communications Index
 
-This document centralizes the links to the cloud folders where all project evidence and communications are backed up.
+This document centralizes the links to the cloud folders where all project evidence and communications are backed up. 
 
-| Category | Folder Link | Content Description |
-| :--- | :--- | :--- |
-| **Captures Communications** | [Access folder](https://drive.google.com/drive/folders/1NQg0wiTns73j662q55AWLKVFT0-p5Q2v?usp=drive_link) | Written evidence, messaging screenshots, emails, and confirmations. |
-| **Client meetings** | [Access folder](https://drive.google.com/drive/folders/14o30tRcsc2RxesfB-hG33P17uKRG_V-z?usp=drive_link) | Recordings and minutes from requirements gathering and client validation meetings. |
-| **Team meetings** | [Access folder](https://drive.google.com/drive/folders/1drtnOQiZcHbHgVB-fAUKSMd2BynaEhtO?usp=drive_link) | Records of work sessions, architecture planning, and internal team coordination. |
-| **Documents** | [Access folder](https://drive.google.com/drive/folders/1XQa_8RKe-z8XIfUxRCaByBPDoAToqSu2?usp=drive_link) | This directory contains all official project documentation. |
-| **Capture Client** | [Access folder](https://drive.google.com/drive/folders/1WGOcSsxOxUwECG9NTQ2F5HVWMfTEumHI?usp=drive_link) | Screenshots of client communications and approvals. |
+| Category | Folder Link | Type | Participants | Date | Content Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Captures Communications** | [Access folder](https://drive.google.com/drive/folders/1NQg0wiTns73j662q55AWLKVFT0-p5Q2v?usp=drive_link) | .jpg, .png | Asanza Romero Freddy Ricardo, Bravo Vidal Jorge Andres, Cedeño Arteaga Luis Abrahan, Pacheco Paredes Darwin Javier, Sambonino Pincay Giovanni Andre, Zambrano Arriaga Jonathan Paul | June - August | Written evidence, messaging screenshots, emails, and confirmations. |
+| **Client meetings** | [Access folder](https://drive.google.com/drive/folders/14o30tRcsc2RxesfB-hG33P17uKRG_V-z?usp=drive_link) | .mp4 | Asanza Romero Freddy Ricardo, Bravo Vidal Jorge Andres, Cedeño Arteaga Luis Abrahan, Pacheco Paredes Darwin Javier, Sambonino Pincay Giovanni Andre, Zambrano Arriaga Jonathan Paul | June - August | Recordings and minutes from requirements gathering and client validation meetings. |
+| **Team meetings** | [Access folder](https://drive.google.com/drive/folders/1drtnOQiZcHbHgVB-fAUKSMd2BynaEhtO?usp=drive_link) | .mp4 | Asanza Romero Freddy Ricardo, Bravo Vidal Jorge Andres, Cedeño Arteaga Luis Abrahan, Pacheco Paredes Darwin Javier, Sambonino Pincay Giovanni Andre, Zambrano Arriaga Jonathan Paul | June - August | Records of work sessions, architecture planning, and internal team coordination. |
+| **Documents** | [Access folder](https://drive.google.com/drive/folders/1XQa_8RKe-z8XIfUxRCaByBPDoAToqSu2?usp=drive_link) | .pdf | Asanza Romero Freddy Ricardo, Bravo Vidal Jorge Andres, Cedeño Arteaga Luis Abrahan, Pacheco Paredes Darwin Javier, Sambonino Pincay Giovanni Andre, Zambrano Arriaga Jonathan Paul | June - August | This directory contains all official project documentation. |
+| **Capture Client** | [Access folder](https://drive.google.com/drive/folders/1WGOcSsxOxUwECG9NTQ2F5HVWMfTEumHI?usp=drive_link) | .jpg, .png | Asanza Romero Freddy Ricardo, Bravo Vidal Jorge Andres, Cedeño Arteaga Luis Abrahan, Pacheco Paredes Darwin Javier, Sambonino Pincay Giovanni Andre, Zambrano Arriaga Jonathan Paul | June - August | Screenshots of client communications and approvals. |
