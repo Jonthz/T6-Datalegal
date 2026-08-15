@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 
 from tests.conftest import auth_headers
 
-
 # ── RAT: identificador estructurado ──────────────────────────────────────────
 
 
