@@ -1,0 +1,1581 @@
+{
+  "app": {
+    "title": "DataLegal",
+    "subtitle": "Plataforma de cumplimiento LOPDP",
+    "environment": "Espacio de cumplimiento multiempresa"
+  },
+  "nav": {
+    "sidebar": "Navegación principal",
+    "breadcrumbs": "Ruta de navegación",
+    "openSidebar": "Abrir navegación",
+    "platform": "Consola de la plataforma",
+    "dashboard": "Panel",
+    "alerts": "Alertas",
+    "reports": "Reportes",
+    "companyProfile": "Perfil de la empresa",
+    "users": "Usuarios",
+    "departments": "Departamentos",
+    "catalogs": "Catálogos maestros",
+    "tenants": "Empresas",
+    "dataInventory": "Inventario de datos",
+    "treatmentActivities": "Actividades de tratamiento",
+    "informationAssets": "Activos de información",
+    "retention": "Retención",
+    "importExport": "Importar / exportar",
+    "riskAssessments": "Evaluaciones de riesgo",
+    "dpias": "EIPD",
+    "arco": "Solicitudes ARCO",
+    "portability": "Portabilidad",
+    "incidents": "Incidentes",
+    "consents": "Consentimientos",
+    "legalDocuments": "Documentos legales",
+    "ropa": "RAT",
+    "actionPlans": "Planes de acción",
+    "auditPlans": "Planes de auditoría",
+    "remediations": "Remediaciones",
+    "auditLog": "Bitácora de auditoría",
+    "training": "Capacitación",
+    "backups": "Respaldos",
+    "settings": "Configuración",
+    "sectors": "Sectores económicos",
+    "logout": "Cerrar sesión",
+    "groups": {
+      "overview": "Resumen",
+      "organization": "Organización",
+      "dataRegistry": "Registro de datos",
+      "risk": "Riesgo y EIPD",
+      "rights": "Derechos e incidentes",
+      "documents": "Documentos",
+      "operations": "Operaciones",
+      "transversal": "Soporte"
+    }
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "signIn": "Iniciar sesión",
+    "mfaTitle": "Autenticación de dos factores",
+    "mfaDescription": "Ingresa el código de 6 dígitos de tu aplicación de autenticación.",
+    "mfaCode": "Código TOTP",
+    "mfaVerify": "Verificar",
+    "mfaSetupTitle": "Configurar autenticador",
+    "mfaSetupDescription": "Escanea este código QR con tu aplicación de autenticación (Google Authenticator, Authy, 1Password) y luego ingresa el código generado para confirmar.",
+    "mfaSetupManualKey": "Clave de ingreso manual",
+    "mfaSetupSuccess": "MFA habilitado correctamente. Redirigiendo…",
+    "mfaConfirm": "Confirmar y habilitar MFA",
+    "loginFailed": "Correo o contraseña inválidos.",
+    "mfaFailed": "Código TOTP inválido. Inténtalo de nuevo.",
+    "accountLocked": "La cuenta está bloqueada. Inténtalo más tarde.",
+    "loggingIn": "Iniciando sesión…",
+    "tagline": "Diseñado para DPO, auditores y responsables de cumplimiento.",
+    "tenantPrompt": "Inicia sesión en el espacio de tu empresa."
+  },
+  "topbar": {
+    "signedInAs": "Sesión iniciada como",
+    "tenantId": "Empresa",
+    "manageMfa": "Gestionar MFA",
+    "language": "Idioma"
+  },
+  "dashboard": {
+    "title": "Panel ejecutivo",
+    "description": "Vista en tiempo real de la postura de riesgo, el SLA de ARCO y las alertas operativas.",
+    "kpis": {
+      "title": "Indicadores clave",
+      "activitiesRegistered": "Actividades registradas",
+      "activitiesHint": "Actividades de tratamiento con estado ACTIVO.",
+      "avgRisk": "Puntaje de riesgo promedio",
+      "avgRiskHint": "Puntaje de riesgo medio de todas las evaluaciones.",
+      "arcoOnTime": "Tasa de ARCO a tiempo",
+      "arcoHint": "Cerradas dentro del SLA de 30 días.",
+      "breaches": "Brechas reportadas",
+      "breachesHint": "Incidentes reportados al regulador."
+    },
+    "trends": {
+      "title": "Tendencias",
+      "description": "Señales de riesgo y operativas de los últimos meses.",
+      "noData": "Mostraremos tendencias en cuanto haya datos disponibles."
+    },
+    "alerts": {
+      "title": "Últimas alertas",
+      "viewAll": "Ver todas las alertas",
+      "empty": "No hay alertas nuevas — estás al día."
+    },
+    "quickActions": {
+      "title": "Acciones rápidas",
+      "registerActivity": "Registrar una actividad de tratamiento",
+      "registerActivityHint": "Inicia el asistente guiado de RAT.",
+      "runRisk": "Ejecutar una evaluación de riesgo",
+      "runRiskHint": "Usa el cuestionario para puntuar una actividad de tratamiento.",
+      "openARCO": "Gestionar solicitudes ARCO",
+      "openARCOHint": "Controla el SLA de 30 días en acceso, rectificación, cancelación y oposición.",
+      "exportReport": "Exportar reporte consolidado",
+      "exportReportHint": "Descarga PDF o CSV con KPIs y tendencias."
+    }
+  },
+  "users": {
+    "title": "Gestión de usuarios",
+    "description": "Invita, desactiva o actualiza miembros del espacio y sus roles asignados.",
+    "create": "Crear usuario",
+    "email": "Correo electrónico",
+    "fullName": "Nombre completo",
+    "role": "Rol",
+    "department": "Departamento",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "mfaEnabled": "MFA",
+    "actions": "Acciones",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "createSuccess": "Usuario creado correctamente.",
+    "updateSuccess": "Usuario actualizado correctamente.",
+    "deleteSuccess": "Usuario eliminado correctamente.",
+    "confirmDelete": "¿Seguro que quieres eliminar este usuario?"
+  },
+  "alerts": {
+    "title": "Centro de alertas",
+    "description": "Notificaciones internas sobre eventos críticos de cumplimiento.",
+    "unread": "No leídas",
+    "all": "Todas",
+    "markRead": "Marcar como leída",
+    "delete": "Eliminar",
+    "create": "Nueva alerta",
+    "createHint": "Difunde un evento de cumplimiento a tu empresa o a un usuario específico.",
+    "createSuccess": "Alerta creada.",
+    "validation": "El tipo, el título y el mensaje son obligatorios.",
+    "broadcast": "Difusión",
+    "new": "Nueva",
+    "creationGated": "Solo los roles DPO, ADMIN y SUPER_ADMIN pueden crear alertas. Puedes marcar o eliminar las alertas que recibes.",
+    "empty": "Nada que mostrar",
+    "emptyAll": "Aún no se han registrado alertas.",
+    "emptyDescription": "Cuando ocurran eventos relevantes de cumplimiento, aparecerán aquí.",
+    "loadFailed": "No pudimos cargar las alertas. Inténtalo de nuevo.",
+    "kpis": {
+      "unread": "No leídas",
+      "unreadHint": "Entre tu bandeja y las difusiones de toda la empresa.",
+      "shown": "En vista",
+      "shownUnreadHint": "Filtrado actualmente a elementos no leídos.",
+      "shownAllHint": "Todas las alertas visibles para tu rol."
+    },
+    "columns": {
+      "title": "Título",
+      "type": "Tipo",
+      "severity": "Severidad",
+      "created": "Creada",
+      "actions": "Acciones"
+    },
+    "fields": {
+      "type": "Tipo de alerta",
+      "typeHint": "Código de dominio libre (ej. ARCO_SLA, INCIDENT_REPORTED).",
+      "title": "Título",
+      "message": "Mensaje",
+      "severity": "Severidad",
+      "resourceType": "Tipo de recurso",
+      "resourceId": "ID del recurso",
+      "recipientId": "ID de usuario destinatario",
+      "recipientHint": "Déjalo vacío para difundir a todos los DPO."
+    }
+  },
+  "departments": {
+    "title": "Departamentos",
+    "description": "Organiza los equipos del espacio y asigna jefes de departamento.",
+    "create": "Crear departamento",
+    "edit": "Editar departamento",
+    "fields": {
+      "name": "Nombre",
+      "head": "Jefe de departamento",
+      "created": "Creado"
+    },
+    "noHead": "Sin jefe asignado",
+    "createSuccess": "Departamento creado.",
+    "updateSuccess": "Departamento actualizado.",
+    "deleteSuccess": "Departamento eliminado.",
+    "confirmDelete": "¿Eliminar este departamento? Los usuarios asignados perderán esta asignación.",
+    "empty": "Aún no hay departamentos",
+    "emptyHint": "Crea el primer departamento para empezar a organizar equipos.",
+    "loadFailed": "No pudimos cargar los departamentos."
+  },
+  "companyProfile": {
+    "title": "Perfil de la empresa",
+    "description": "Configura la entidad legal, el contacto del DPO y la identidad de la empresa.",
+    "sections": {
+      "company": "Datos de la empresa",
+      "dpo": "Delegado de protección de datos"
+    },
+    "fields": {
+      "name": "Nombre de la empresa",
+      "ruc": "RUC",
+      "country": "País",
+      "sector": "Sector económico",
+      "address": "Dirección",
+      "website": "Sitio web",
+      "dpoName": "Nombre del DPO",
+      "dpoEmail": "Correo del DPO",
+      "dpoPhone": "Teléfono del DPO"
+    },
+    "updateSuccess": "Perfil guardado.",
+    "loadFailed": "No pudimos cargar el perfil de la empresa.",
+    "rucReadonly": "El RUC solo puede cambiarlo el Super-Admin durante el aprovisionamiento de la empresa.",
+    "permissionRequired": "Solo el DPO o un Super-Admin pueden editar el perfil de la empresa."
+  },
+  "tenants": {
+    "title": "Empresas",
+    "description": "Aprovisiona nuevas empresas cliente e inicializa su primer administrador.",
+    "create": "Aprovisionar empresa",
+    "fields": {
+      "name": "Nombre de la empresa",
+      "ruc": "RUC",
+      "country": "País",
+      "sector": "Sector",
+      "status": "Estado",
+      "created": "Creada"
+    },
+    "newAdmin": "Cuenta de administrador inicial",
+    "adminFields": {
+      "email": "Correo del administrador",
+      "password": "Contraseña temporal",
+      "fullName": "Nombre completo",
+      "role": "Rol"
+    },
+    "provisionSuccess": "Empresa aprovisionada. Comparte las credenciales del administrador de forma segura.",
+    "loadFailed": "No pudimos cargar las empresas.",
+    "empty": "No hay empresas",
+    "emptyHint": "Aprovisiona la primera empresa para inicializar un espacio de cliente.",
+    "passwordHint": "Mínimo 8 caracteres, mayúsculas y minúsculas, un dígito y un símbolo."
+  },
+  "sectors": {
+    "title": "Sectores económicos",
+    "description": "Pre-carga por sector económico para actividades de tratamiento, tipos de datos y plantillas de documentos.",
+    "currentSector": "Sector actual de la empresa",
+    "noSectorYet": "Aún no hay sector configurado — elige la opción más cercana abajo.",
+    "useSector": "Usar este sector",
+    "useSectorSuccess": "Sector de la empresa actualizado.",
+    "loadFailed": "No pudimos cargar los sectores.",
+    "suggested": {
+      "dataTypes": "Tipos de datos sugeridos",
+      "activities": "Actividades de tratamiento de ejemplo",
+      "templates": "Plantillas recomendadas"
+    }
+  },
+  "catalogs": {
+    "title": "Catálogos maestros",
+    "description": "Gestiona tablas de referencia editables para bases legales, tipos de datos, amenazas, controles, taxonomía de activos y más.",
+    "filterByType": "Filtrar por tipo",
+    "allTypes": "Todos los tipos de catálogo",
+    "create": "Importar entradas masivamente",
+    "addEntry": "Agregar entrada",
+    "fields": {
+      "type": "Tipo",
+      "code": "Código",
+      "label": "Etiqueta",
+      "description": "Descripción",
+      "sensitivity": "Sensibilidad",
+      "criticality": "Criticidad",
+      "version": "Versión",
+      "active": "Activo",
+      "typeCustom": "Tipo (personalizado)"
+    },
+    "sensitivity": {
+      "ORDINARY": "Ordinario",
+      "SENSITIVE": "Sensible"
+    },
+    "criticality": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta"
+    },
+    "csvLabel": "Archivo CSV",
+    "csvHint": "Columnas requeridas: type, code, label, description.",
+    "csvImported": "Importación masiva exitosa: {{count}} entradas.",
+    "csvFailed": "La importación masiva falló — verifica las columnas del CSV.",
+    "createSuccess": "Entrada creada.",
+    "updateSuccess": "Entrada guardada.",
+    "deleteSuccess": "Entrada eliminada.",
+    "deleteBlocked": "No se puede eliminar esta entrada — aún está referenciada por otros registros.",
+    "confirmDelete": "¿Eliminar (borrado lógico) esta entrada del catálogo?",
+    "loadFailed": "No pudimos cargar los catálogos.",
+    "empty": "Ninguna entrada coincide con el filtro actual.",
+    "createSingle": "Agregar entrada individual",
+    "reclassify": "Auto-clasificar",
+    "reclassifySuccess": "Entrada reclasificada a partir de su código.",
+    "reclassifyNoRule": "No hay regla de clasificación automática para el código \"{{code}}\".",
+    "history": "Historial de versiones",
+    "noHistory": "Aún no hay versiones registradas.",
+    "inactive": "Inactivo",
+    "autoClassifyHint": "Los códigos LOPDP conocidos (ej. HEALTH_DATA, BIOMETRIC) se clasifican automáticamente."
+  },
+  "dataInventory": {
+    "title": "Avance del inventario de datos",
+    "description": "Cobertura de actividades de tratamiento, evaluaciones de riesgo y activos de información.",
+    "kpis": {
+      "completion": "Cobertura de actividades",
+      "completionHint": "Actividades con al menos una evaluación de riesgo.",
+      "activities": "Actividades de tratamiento",
+      "activitiesHint": "Total registradas (cualquier estado).",
+      "assets": "Activos de información",
+      "assetsHint": "Activos técnicos registrados.",
+      "assessments": "Evaluaciones de riesgo",
+      "assessmentsHint": "Registros de riesgo independientes."
+    },
+    "statusBreakdown": "Actividades por estado",
+    "riskBreakdown": "Distribución de riesgo",
+    "classBreakdown": "Distribución por clasificación",
+    "asOf": "Al {{date}}",
+    "noClassifications": "Aún no hay activos de información clasificados.",
+    "noRiskScores": "Aún no hay evaluaciones de riesgo.",
+    "loadFailed": "No pudimos cargar las métricas del inventario de datos."
+  },
+  "treatmentActivities": {
+    "title": "Actividades de tratamiento",
+    "description": "Registra, edita y finaliza actividades de tratamiento con el asistente guiado de RAT.",
+    "create": "Iniciar asistente de RAT",
+    "filterStatus": "Filtrar por estado",
+    "filterAll": "Todas",
+    "filterDraft": "Borrador",
+    "filterActive": "Activa",
+    "filterArchived": "Archivada",
+    "fields": {
+      "name": "Nombre de la actividad",
+      "purpose": "Finalidad",
+      "legalBasis": "Base legal",
+      "dataTypes": "Tipos de datos personales",
+      "dataSubjects": "Titulares de datos",
+      "retentionDays": "Retención (días)",
+      "department": "Departamento",
+      "isCrossBorder": "Transferencia internacional",
+      "destinationCountries": "Países de destino",
+      "processorName": "Nombre del encargado",
+      "processorCountry": "País del encargado",
+      "status": "Estado",
+      "ratCode": "ID de RAT",
+      "area": "Área",
+      "operationalOwner": "Responsable operativo",
+      "legalBases": "Bases legales (múltiples)",
+      "complementaryLegalBases": "Bases complementarias / condicionales",
+      "dataCategories": "Categorías de datos",
+      "dataOrigin": "Origen de los datos",
+      "treatmentOperations": "Operaciones de tratamiento",
+      "recipients": "Destinatarios",
+      "processors": "Encargados",
+      "systemPlatform": "Sistema / plataforma",
+      "technicalMeasures": "Medidas técnicas",
+      "organizationalMeasures": "Medidas organizativas",
+      "physicalMeasures": "Medidas físicas",
+      "legalMeasures": "Medidas legales",
+      "mtgeScore": "Puntaje MTGE",
+      "mtgeResult": "Resultado MTGE",
+      "usesProfiling": "Elaboración de perfiles",
+      "usesAi": "Usa IA",
+      "automatedDecision": "Decisión automatizada",
+      "requiresDpia": "Requiere EIPD",
+      "hasSpecialData": "Datos especiales",
+      "involvesMinors": "Involucra menores"
+    },
+    "csvHelp": "Separa las entradas con comas",
+    "wizard": {
+      "title": "Asistente de RAT",
+      "step1": "Identificación",
+      "step2": "Base legal y datos",
+      "step3": "Transferencias",
+      "step4": "Revisión",
+      "step1Hint": "Nombre, finalidad, área (define el ID de RAT) y departamento responsable.",
+      "step2Hint": "Elige la base legal, los tipos de datos tratados y los titulares.",
+      "step3Hint": "Declara cualquier transferencia internacional o encargado externo.",
+      "step4Hint": "Revisa la actividad antes de activarla.",
+      "stepLabel": "Paso {{current}} de {{total}}",
+      "finalize": "Finalizar y activar",
+      "saveDraft": "Guardar borrador",
+      "started": "Borrador creado.",
+      "stepSaved": "Paso guardado.",
+      "finalized": "Actividad activada.",
+      "validateLegal": "La base legal es obligatoria antes de activar.",
+      "validationStep1": "El nombre y la finalidad son obligatorios.",
+      "validationStep2": "La base legal es obligatoria."
+    },
+    "deleteSuccess": "Actividad archivada.",
+    "confirmDelete": "¿Archivar esta actividad de tratamiento? No se eliminará, pero su estado pasará a ARCHIVADA.",
+    "loadFailed": "No pudimos cargar las actividades de tratamiento.",
+    "empty": "No hay actividades registradas",
+    "emptyHint": "Usa el asistente para registrar la primera actividad de tratamiento.",
+    "areaHint": "Define el prefijo del ID de RAT (ej. CRÉDITO → CRE001).",
+    "legalBasesHint": "Varias bases separadas por comas. La primera se toma como principal.",
+    "section": {
+      "general": "General",
+      "legalBases": "Bases legales",
+      "data": "Datos",
+      "flags": "Indicadores de riesgo",
+      "recipients": "Destinatarios y sistemas",
+      "measures": "Medidas de seguridad",
+      "mtge": "Evaluación MTGE"
+    }
+  },
+  "informationAssets": {
+    "title": "Activos de información",
+    "description": "Metadatos técnicos, formato, medio de almacenamiento y clasificación de cada activo.",
+    "create": "Agregar activo",
+    "edit": "Editar activo",
+    "fields": {
+      "name": "Nombre del activo",
+      "description": "Descripción",
+      "assetType": "Tipo de activo",
+      "format": "Formato",
+      "storageMedium": "Medio de almacenamiento",
+      "classification": "Clasificación",
+      "treatmentActivity": "Actividad vinculada",
+      "department": "Departamento"
+    },
+    "filterByClass": "Filtrar por clasificación",
+    "filterAll": "Todas las clasificaciones",
+    "createSuccess": "Activo creado.",
+    "updateSuccess": "Activo actualizado.",
+    "deleteSuccess": "Activo eliminado.",
+    "confirmDelete": "¿Eliminar este activo de información?",
+    "loadFailed": "No pudimos cargar los activos.",
+    "empty": "Aún no hay activos",
+    "emptyHint": "Registra el primer activo para habilitar evaluaciones de riesgo y retención.",
+    "missingCatalogs": "No hay entradas de catálogo configuradas para {{type}}. Agrégalas en Catálogos antes de registrar activos."
+  },
+  "retention": {
+    "title": "Retención",
+    "description": "Define políticas de retención, controla registros, identifica datos vencidos y ejecuta limpiezas programadas.",
+    "tabs": {
+      "policies": "Políticas",
+      "records": "Registros",
+      "expired": "Vencidos en revisión",
+      "logs": "Bitácora de ejecución"
+    },
+    "policies": {
+      "title": "Políticas de retención",
+      "create": "Agregar política",
+      "fields": {
+        "name": "Nombre de la política",
+        "category": "Categoría de datos",
+        "days": "Retención (días)",
+        "action": "Acción al vencer",
+        "legalBasis": "Base legal"
+      },
+      "actions": {
+        "DELETE": "Eliminar",
+        "ANONYMIZE": "Anonimizar",
+        "REVIEW": "Revisar (manual)"
+      },
+      "createSuccess": "Política guardada.",
+      "updateSuccess": "Política actualizada.",
+      "empty": "No hay políticas de retención definidas",
+      "emptyHint": "Agrega una política para empezar a controlar fechas de vencimiento por categoría de datos."
+    },
+    "records": {
+      "title": "Registros de retención",
+      "fields": {
+        "asset": "Activo de información",
+        "policy": "Política",
+        "expiry": "Fecha de vencimiento",
+        "status": "Estado",
+        "legalHold": "Retención legal"
+      },
+      "empty": "No hay registros de retención",
+      "emptyHint": "Crea registros para asociar fechas de vencimiento a los activos de información."
+    },
+    "expired": {
+      "title": "Vencidos en revisión",
+      "description": "Registros que superaron su fecha de vencimiento y requieren una decisión del DPO.",
+      "asOf": "Al {{date}}",
+      "empty": "No hay registros vencidos pendientes de revisión",
+      "decisionLabel": "Decisión",
+      "rationale": "Justificación",
+      "decisionOptions": {
+        "RETAIN": "Conservar",
+        "DELETE": "Eliminar",
+        "ANONYMIZE": "Anonimizar"
+      },
+      "decisionSaved": "Decisión registrada.",
+      "noLegalHold": "Solo se listan los registros con legal_hold=true."
+    },
+    "execute": {
+      "title": "Ejecutar retención",
+      "description": "Marca los registros vencidos como EN_REVISIÓN según las políticas activas.",
+      "policyAll": "Todas las políticas activas",
+      "runType": "Tipo de ejecución",
+      "manual": "Manual",
+      "scheduled": "Programada",
+      "success": "Ejecución de retención completada.",
+      "failed": "La ejecución de retención falló."
+    },
+    "logs": {
+      "title": "Bitácora de ejecución",
+      "empty": "Aún no se han ejecutado procesos de retención.",
+      "processed": "Procesados",
+      "exceptions": "Excepciones",
+      "runType": "Tipo de ejecución"
+    },
+    "loadFailed": "No pudimos cargar los datos de retención."
+  },
+  "importExport": {
+    "title": "Importar y exportar",
+    "description": "Importa masivamente actividades de tratamiento desde CSV/JSON y exporta conjuntos de datos de cumplimiento.",
+    "tabs": {
+      "import": "Importar",
+      "export": "Exportar"
+    },
+    "import": {
+      "title": "Importar actividades de tratamiento",
+      "description": "Sube un archivo CSV o JSON. Columnas requeridas: name, purpose, legal_basis. Los arreglos (personal_data_types, data_subjects, destination_countries) pueden separarse con barra vertical (|) en CSV.",
+      "csvFile": "Archivo",
+      "preview": "Vista previa",
+      "previewHint": "{{count}} fila(s) detectada(s).",
+      "submit": "Importar {{count}} fila(s)",
+      "success": "Se importaron {{count}} actividades.",
+      "partial": "Se importaron {{count}} actividades con {{errors}} error(es).",
+      "failed": "La importación falló — corrige el archivo e inténtalo de nuevo.",
+      "parsingFailed": "No pudimos procesar el archivo.",
+      "errorsTitle": "Errores",
+      "noFile": "No se seleccionó ningún archivo.",
+      "emptyFile": "El archivo no contiene filas."
+    },
+    "export": {
+      "title": "Exportar",
+      "csvActivities": "Actividades de tratamiento (CSV)",
+      "csvActivitiesHint": "id, name, purpose, legal_basis, status, retention_period_days, is_cross_border, department_id",
+      "jsonReport": "Reporte de cumplimiento (JSON)",
+      "jsonReportHint": "Totales y desgloses de los módulos de cumplimiento.",
+      "downloadCsv": "Descargar CSV",
+      "downloadJson": "Descargar JSON",
+      "downloading": "Preparando la descarga…",
+      "failed": "La exportación falló."
+    }
+  },
+  "riskAssessments": {
+    "title": "Evaluaciones de riesgo",
+    "description": "Puntúa actividades de tratamiento con el cuestionario LOPDP y visualiza la postura verde/amarilla/roja.",
+    "create": "Nueva evaluación",
+    "edit": "Editar evaluación",
+    "tabs": {
+      "list": "Evaluaciones",
+      "dashboard": "Panel"
+    },
+    "fields": {
+      "activity": "Actividad de tratamiento",
+      "level": "Nivel de riesgo",
+      "score": "Puntaje",
+      "probability": "Probabilidad",
+      "impact": "Impacto",
+      "status": "Estado",
+      "analyst": "Analista",
+      "notes": "Notas del analista"
+    },
+    "scoreLabel": "{{score}}/25",
+    "questionnaire": {
+      "title": "Cuestionario de riesgo",
+      "description": "Responde Sí o No a cada pregunta. La P1 es una puerta de entrada — responder No omite por completo la evaluación.",
+      "gatewayBlocked": "Esta actividad no maneja datos personales — no se requiere evaluación de riesgo.",
+      "yes": "Sí",
+      "no": "No",
+      "loadFailed": "No pudimos cargar el cuestionario."
+    },
+    "createSuccess": "Evaluación de riesgo registrada.",
+    "updateSuccess": "Evaluación de riesgo actualizada.",
+    "loadFailed": "No pudimos cargar las evaluaciones de riesgo.",
+    "empty": "Aún no hay evaluaciones de riesgo",
+    "emptyHint": "Elige una actividad de tratamiento y responde el cuestionario para calcular su puntaje.",
+    "selectActivity": "Selecciona una actividad de tratamiento",
+    "noActivities": "Registra primero una actividad de tratamiento antes de ejecutar una evaluación.",
+    "filters": {
+      "level": "Nivel de riesgo",
+      "all": "Todos los niveles"
+    },
+    "dashboard": {
+      "title": "Panel de riesgo",
+      "total": "Total de evaluaciones",
+      "totalHint": "Todos los registros de riesgo (cualquier estado).",
+      "avg": "Puntaje promedio",
+      "avgHint": "Media de P × I en el espacio de trabajo.",
+      "green": "Bajo (verde)",
+      "greenHint": "Puntaje 1-8 — riesgo residual aceptable.",
+      "yellow": "Medio (amarillo)",
+      "yellowHint": "Puntaje 9-16 — requiere plan de mitigación.",
+      "red": "Alto (rojo)",
+      "redHint": "Puntaje 17-25 — requiere acción inmediata.",
+      "high": "Actividades de mayor riesgo",
+      "highHint": "Actividades con mayor puntaje pendientes de mitigación.",
+      "noHighRisk": "No hay actividades de alto riesgo — sigue monitoreando.",
+      "kpiTitle": "KPIs de reportes",
+      "registeredActivities": "Actividades registradas",
+      "registeredHint": "Actividades de tratamiento activas reportadas vía /reports/kpis.",
+      "breachesReported": "Brechas reportadas",
+      "breachesHint": "Incidentes con notificación al regulador marcada."
+    }
+  },
+  "dpias": {
+    "title": "Evaluaciones de impacto (EIPD)",
+    "description": "Asistente de EIPD en tres pasos con descripción, análisis de riesgo, mitigaciones, firma y exportación a PDF.",
+    "create": "Nueva EIPD",
+    "edit": "Editar EIPD",
+    "fields": {
+      "activity": "Actividad de tratamiento",
+      "status": "Estado",
+      "version": "Versión",
+      "signedAt": "Firmada el",
+      "signedBy": "Firmada por",
+      "step1": "Paso 1 — Descripción",
+      "step2": "Paso 2 — Análisis de riesgo",
+      "step3": "Paso 3 — Medidas de mitigación"
+    },
+    "wizard": {
+      "title": "Asistente de EIPD",
+      "stepLabel": "Paso {{current}} de {{total}}",
+      "step1Hint": "Describe el tratamiento, la base legal y los titulares de datos.",
+      "step2Hint": "Identifica riesgos residuales, amenazas e impacto en la CIA.",
+      "step3Hint": "Lista las medidas de mitigación y los controles.",
+      "step4": "Revisión",
+      "step4Hint": "Confirma y crea el borrador. Fírmalo desde la lista para emitir el PDF.",
+      "step1Placeholder": "Describe la actividad de tratamiento, la base legal, los titulares y cualquier transferencia internacional.",
+      "step2Placeholder": "Lista los riesgos identificados: impactos en confidencialidad, integridad y disponibilidad. Referencia Probabilidad × Impacto.",
+      "step3Placeholder": "Lista las medidas técnicas y organizativas, los controles y el riesgo residual tras la mitigación.",
+      "createSuccess": "Borrador de EIPD creado.",
+      "saveSuccess": "EIPD actualizada.",
+      "signSuccess": "EIPD firmada. El PDF está listo para descargar.",
+      "validate": "Los tres pasos deben tener contenido antes de firmar."
+    },
+    "sign": "Firmar EIPD",
+    "downloadPdf": "Descargar PDF",
+    "pdfFilename": "eipd_{{id}}_v{{version}}.pdf",
+    "pdfMissing": "Firma la EIPD antes de descargar el PDF.",
+    "permissionRequired": "Solo el DPO o el Super-Admin pueden firmar una EIPD.",
+    "loadFailed": "No pudimos cargar las EIPD.",
+    "empty": "Aún no hay EIPD",
+    "emptyHint": "Elige una actividad de tratamiento de alto riesgo e inicia una EIPD.",
+    "selectActivity": "Selecciona una actividad de tratamiento",
+    "noActivities": "Registra primero una actividad de tratamiento para lanzar una EIPD."
+  },
+  "arco": {
+    "title": "Solicitudes ARCO",
+    "description": "Tickets de acceso, rectificación, cancelación y oposición con semáforo de SLA de 30 días.",
+    "create": "Registrar solicitud ARCO",
+    "tabs": {
+      "list": "Tickets",
+      "dashboard": "Panel"
+    },
+    "fields": {
+      "ticket": "Ticket",
+      "type": "Tipo",
+      "requester": "Solicitante",
+      "email": "Correo electrónico",
+      "idNumber": "Número de identificación",
+      "status": "Estado",
+      "deadline": "Plazo",
+      "received": "Recibida",
+      "description": "Descripción",
+      "responseText": "Respuesta",
+      "rejectionReason": "Motivo de rechazo",
+      "assignedDpo": "DPO asignado"
+    },
+    "types": {
+      "ACCESS": "Acceso",
+      "RECTIFICATION": "Rectificación",
+      "CANCELLATION": "Cancelación",
+      "OPPOSITION": "Oposición"
+    },
+    "statuses": {
+      "RECEIVED": "Recibida",
+      "VERIFYING": "Verificando",
+      "IN_PROGRESS": "En progreso",
+      "RESPONDED": "Respondida",
+      "CLOSED": "Cerrada",
+      "REJECTED": "Rechazada"
+    },
+    "sla": {
+      "label": "Estado del SLA",
+      "GREEN": "En regla",
+      "YELLOW": "Por vencer",
+      "RED": "Vencido",
+      "GREY": "Cerrado",
+      "daysRemaining": "{{days}} día(s) restante(s)",
+      "overdue": "Vencido por {{days}} día(s)",
+      "closed": "Cerrado",
+      "onTime": "Cerrado a tiempo",
+      "late": "Cerrado con retraso",
+      "loadFailed": "No pudimos cargar el estado del SLA."
+    },
+    "filters": {
+      "type": "Tipo de solicitud",
+      "status": "Estado",
+      "all": "Todas"
+    },
+    "dashboard": {
+      "total": "Total de tickets",
+      "totalHint": "Solicitudes ARCO registradas.",
+      "overdue": "Vencidas",
+      "overdueHint": "Superaron el plazo de 30 días y no están cerradas.",
+      "byType": "Por tipo de solicitud",
+      "byStatus": "Por estado",
+      "empty": "Aún no hay datos."
+    },
+    "createSuccess": "Solicitud ARCO creada — se notificó al DPO.",
+    "updateSuccess": "Ticket actualizado.",
+    "loadFailed": "No pudimos cargar las solicitudes ARCO.",
+    "empty": "Aún no hay solicitudes ARCO",
+    "emptyHint": "Registra el primer ticket de acceso, rectificación, cancelación u oposición.",
+    "detail": {
+      "title": "Ticket {{ticket}}",
+      "back": "Volver a la lista",
+      "sectionRequester": "Solicitante",
+      "sectionRequest": "Solicitud",
+      "sectionResolution": "Resolución"
+    }
+  },
+  "incidents": {
+    "title": "Incidentes",
+    "description": "Registra brechas de datos, clasifica el impacto y controla los plazos de notificación al regulador y a los titulares.",
+    "create": "Registrar incidente",
+    "edit": "Editar incidente",
+    "fields": {
+      "title": "Título",
+      "description": "Descripción",
+      "type": "Tipo de incidente",
+      "severity": "Severidad",
+      "status": "Estado",
+      "spdp": "Requiere notificación a la SPDP",
+      "spdpHint": "Actívalo si se debe notificar a la Superintendencia de Protección de Datos Personales.",
+      "affectedData": "Tipos de datos afectados",
+      "department": "Departamento",
+      "assigned": "Asignado a",
+      "regulatoryNotified": "Regulador notificado",
+      "resolvedAt": "Resuelto el",
+      "reporter": "Reportado por",
+      "vulnerability": "Tipo de vulneración",
+      "vulnerabilityHint": "Qué propiedades de seguridad se vieron afectadas (marca todas las que apliquen).",
+      "delegate": "Delegado de protección de datos (DPO)",
+      "controller": "Responsable del tratamiento",
+      "partiesHint": "Pre-llenado desde el perfil de la empresa. Edítalo si este incidente requiere datos distintos.",
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "phone": "Teléfono"
+    },
+    "vulnerabilities": {
+      "CONFIDENTIALITY": "Confidencialidad",
+      "INTEGRITY": "Integridad",
+      "AVAILABILITY": "Disponibilidad"
+    },
+    "closure": {
+      "title": "Informe de cierre",
+      "action": "Cerrar con informe",
+      "summary": "Resumen de cierre",
+      "summaryHint": "Describe la resolución y la remediación. Obligatorio para generar el informe de cierre.",
+      "requirements": "Para cerrar se requieren el tipo de vulneración, el nombre del delegado, el nombre del responsable y un resumen de cierre.",
+      "success": "Incidente cerrado e informe PDF generado.",
+      "download": "Descargar informe",
+      "closed": "Cerrado",
+      "reportReady": "Informe disponible"
+    },
+    "types": {
+      "DATA_BREACH": "Brecha de datos",
+      "UNAUTHORIZED_ACCESS": "Acceso no autorizado",
+      "SYSTEM_FAILURE": "Falla del sistema",
+      "POLICY_VIOLATION": "Violación de política",
+      "OTHER": "Otro"
+    },
+    "severities": {
+      "LOW": "Baja",
+      "MEDIUM": "Media",
+      "HIGH": "Alta",
+      "CRITICAL": "Crítica"
+    },
+    "statuses": {
+      "OPEN": "Abierto",
+      "INVESTIGATING": "En investigación",
+      "RESOLVED": "Resuelto",
+      "CLOSED": "Cerrado"
+    },
+    "deadlines": {
+      "title": "Plazos de notificación",
+      "regulator": "Regulador (5 días desde la detección)",
+      "subjects": "Titulares afectados (sin dilación indebida)",
+      "regulatorNotified": "Regulador notificado {{when}}",
+      "subjectsPending": "Comunicación a titulares pendiente",
+      "overdue": "Vencido por {{days}} día(s)",
+      "remaining": "{{days}} día(s) restante(s)",
+      "today": "Vence hoy",
+      "noDeadline": "Aún no hay plazo regulatorio"
+    },
+    "filters": {
+      "status": "Estado",
+      "severity": "Severidad",
+      "all": "Todos"
+    },
+    "createSuccess": "Incidente registrado.",
+    "updateSuccess": "Incidente actualizado.",
+    "notifySuccess": "Notificación al regulador marcada.",
+    "notifyAction": "Marcar regulador notificado",
+    "closeAction": "Cerrar",
+    "downloadReportFailed": "No pudimos descargar el informe.",
+    "validation": {
+      "titleRequired": "El título es obligatorio.",
+      "descriptionRequired": "La descripción es obligatoria.",
+      "breachRequired": "Selecciona al menos un tipo de vulneración.",
+      "delegateRequired": "El nombre del delegado (DPO) es obligatorio.",
+      "controllerRequired": "El nombre del responsable es obligatorio.",
+      "summaryRequired": "Se requiere un resumen de cierre para generar el informe."
+    },
+    "loadFailed": "No pudimos cargar los incidentes.",
+    "empty": "No hay incidentes reportados",
+    "emptyHint": "Registra el primer incidente de seguridad o privacidad para empezar a controlar los plazos.",
+    "csvHelp": "Valores separados por comas."
+  },
+  "portability": {
+    "title": "Portabilidad de datos",
+    "description": "Recibe solicitudes de portabilidad, complétalas y exporta los datos en JSON interoperable (RFC 8259).",
+    "create": "Nueva solicitud de portabilidad",
+    "complete": "Completar y exportar",
+    "fields": {
+      "subjectName": "Nombre del titular",
+      "subjectEmail": "Correo del titular",
+      "status": "Estado",
+      "requestDate": "Solicitada",
+      "completedAt": "Completada",
+      "notes": "Notas",
+      "responseData": "Contenido de respuesta (JSON)"
+    },
+    "filters": {
+      "status": "Estado",
+      "all": "Todas"
+    },
+    "statuses": {
+      "PENDING": "Pendiente",
+      "IN_PROGRESS": "En progreso",
+      "COMPLETED": "Completada",
+      "REJECTED": "Rechazada"
+    },
+    "createSuccess": "Solicitud de portabilidad creada.",
+    "updateSuccess": "Solicitud actualizada.",
+    "completeSuccess": "Solicitud marcada como completada.",
+    "exportSuccess": "Exportación lista.",
+    "exportLabel": "Exportar JSON",
+    "responseHint": "Contenido JSON que se exportará al titular. Déjalo vacío para exportar un objeto vacío.",
+    "invalidJson": "El contenido de respuesta debe ser JSON válido.",
+    "loadFailed": "No pudimos cargar las solicitudes de portabilidad.",
+    "empty": "Aún no hay solicitudes de portabilidad",
+    "emptyHint": "Registra una solicitud para iniciar el flujo de exportación interoperable.",
+    "exportFilename": "portabilidad_{{id}}_{{subject}}.json"
+  },
+  "consents": {
+    "title": "Consentimientos",
+    "description": "Registro de consentimientos, revocación inmutable, banners de cookies y consentimientos de cookies.",
+    "loadFailed": "No pudimos cargar los datos de consentimiento.",
+    "stats": {
+      "total": "Total de registros",
+      "active": "Activos",
+      "revoked": "Revocados",
+      "sensitive": "Sensibles",
+      "revocationRate": "tasa de revocación"
+    },
+    "tabs": {
+      "records": "Registros de consentimiento",
+      "banners": "Banners de cookies",
+      "cookies": "Consentimientos de cookies"
+    },
+    "records": {
+      "create": "Registrar consentimiento",
+      "createHint": "Captura el otorgamiento de un consentimiento en nombre de un titular para una actividad de tratamiento existente.",
+      "createSuccess": "Consentimiento registrado.",
+      "validation": "El token del titular y la finalidad son obligatorios.",
+      "revoke": "Revocar",
+      "revokeHint": "Una vez revocado, el registro de consentimiento se vuelve inmutable; no podrás otorgarlo de nuevo con el mismo token.",
+      "revokeSuccess": "Consentimiento revocado.",
+      "alreadyRevoked": "Ya revocado",
+      "filter": "Filtrar",
+      "filterAll": "Todos los consentimientos",
+      "filterActive": "Solo activos",
+      "filterRevoked": "Solo revocados",
+      "active": "Activo",
+      "revoked": "Revocado",
+      "sensitive": "Sensible",
+      "empty": "Aún no hay registros de consentimiento",
+      "emptyHint": "Captura el primer consentimiento para poblar el registro.",
+      "columns": {
+        "subject": "Titular / finalidad",
+        "legalBasis": "Base legal",
+        "flags": "Indicadores",
+        "granted": "Otorgado",
+        "revoked": "Revocado"
+      },
+      "fields": {
+        "subject": "Token del titular de datos",
+        "purpose": "Finalidad",
+        "legalBasis": "Base legal",
+        "treatmentActivityId": "ID de actividad de tratamiento",
+        "treatmentActivityHint": "Opcional — vincula el consentimiento a una actividad de tratamiento.",
+        "sensitive": "Este consentimiento involucra datos personales sensibles",
+        "reason": "Motivo de revocación (opcional)"
+      }
+    },
+    "banners": {
+      "subtitle": "Banners versionados con fecha de vigencia. Solo debe haber un banner activo a la vez.",
+      "create": "Crear banner",
+      "createSuccess": "Banner creado.",
+      "validation": "La versión y el contenido son obligatorios.",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "activateSuccess": "Banner activado.",
+      "deactivateSuccess": "Banner desactivado.",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "empty": "Aún no hay banners",
+      "emptyHint": "Publica el primer banner de cookies para empezar a recolectar consentimientos.",
+      "columns": {
+        "version": "Versión / contenido",
+        "effective": "Fecha de vigencia",
+        "state": "Estado"
+      },
+      "fields": {
+        "version": "Versión",
+        "content": "Texto del banner",
+        "effective": "Fecha de vigencia"
+      }
+    },
+    "cookies": {
+      "title": "Consentimientos de cookies",
+      "description": "Registra un consentimiento de cookies contra el banner activo y opcionalmente revócalo.",
+      "modalHint": "Cada par (banner_id, token_del_titular) es único.",
+      "record": "Registrar consentimiento de cookies",
+      "createSuccess": "Consentimiento de cookies registrado.",
+      "revoke": "Revocar",
+      "revokeSuccess": "Consentimiento de cookies revocado.",
+      "validation": "El banner y el token del titular son obligatorios.",
+      "noBanners": "Crea y activa un banner primero.",
+      "recorded": "Consentimiento de cookies registrado",
+      "revoked": "Consentimiento de cookies revocado",
+      "acceptedAt": "Aceptado",
+      "revokedAt": "Revocado",
+      "fields": {
+        "banner": "Banner de cookies",
+        "bannerPlaceholder": "Elige un banner",
+        "subject": "Token del titular de datos"
+      }
+    }
+  },
+  "legalDocuments": {
+    "title": "Documentos legales",
+    "description": "Genera, versiona y descarga avisos de privacidad, avisos de cookies y plantillas contractuales.",
+    "create": "Nuevo documento",
+    "createHint": "Un nuevo documento del mismo tipo degrada automáticamente la versión vigente anterior.",
+    "createSuccess": "Documento generado.",
+    "validation": "El tipo de documento, el título y la versión son obligatorios.",
+    "downloadPdf": "Descargar PDF",
+    "generate": "Generar",
+    "current": "Vigente",
+    "loadFailed": "No pudimos cargar los documentos legales.",
+    "notFound": "El PDF generado no está disponible.",
+    "empty": "Aún no hay documentos",
+    "emptyHint": "Genera el primer documento legal a partir de una de las plantillas del catálogo.",
+    "filterType": "Tipo de documento",
+    "filterAllTypes": "Todos los tipos",
+    "onlyCurrent": "Mostrar solo versiones vigentes",
+    "templates": {
+      "title": "Plantillas del catálogo",
+      "description": "Plantillas LOPDP predefinidas cargadas por el backend.",
+      "empty": "El backend no devolvió plantillas."
+    },
+    "columns": {
+      "title": "Título",
+      "version": "Versión",
+      "effective": "Vigencia",
+      "created": "Creado"
+    },
+    "fields": {
+      "docType": "Plantilla",
+      "docTypePlaceholder": "Elige una plantilla",
+      "title": "Título",
+      "version": "Versión",
+      "effective": "Fecha de vigencia",
+      "content": "Contenido",
+      "contentHint": "Déjalo vacío para usar los valores por defecto de la plantilla. Evita rayas largas y comillas tipográficas (la fuente del PDF es Latin-1)."
+    }
+  },
+  "ropa": {
+    "title": "Registro de Actividades de Tratamiento",
+    "description": "RAT alineado a la LOPDP, ensamblado a partir de cada actividad de tratamiento de esta empresa.",
+    "downloadPdf": "Descargar PDF",
+    "loadFailed": "No pudimos ensamblar el reporte RAT.",
+    "empty": "El RAT está vacío",
+    "emptyHint": "Registra actividades de tratamiento para poblar este reporte.",
+    "footer": {
+      "note": "El PDF descargable refleja este contenido agrupado por base legal."
+    },
+    "kpis": {
+      "total": "Total de actividades",
+      "totalHint": "Actividades de tratamiento dentro del alcance del RAT.",
+      "legalBases": "Bases legales en uso",
+      "legalBasesHint": "Bases legales distintas aplicadas en las actividades.",
+      "generated": "Generado",
+      "generatedHint": "Marca de tiempo del reporte."
+    },
+    "section": {
+      "legalBasis": "Base legal",
+      "activities": "actividades",
+      "crossBorder": "Transferencia internacional",
+      "dataTypes": "Datos personales",
+      "subjects": "Titulares de datos",
+      "retention": "Retención",
+      "days": "días",
+      "destinations": "Destinos",
+      "processor": "Encargado"
+    },
+    "downloadXlsx": "Exportar Excel (RAT)"
+  },
+  "actionPlans": {
+    "title": "Planes de acción",
+    "description": "Plantillas, auto-generación a partir de resultados de alto riesgo y seguimiento del avance por tarea.",
+    "create": "Nuevo plan",
+    "createSuccess": "Plan de acción creado.",
+    "edit": "Editar plan",
+    "updateSuccess": "Plan actualizado.",
+    "validation": "El título es obligatorio.",
+    "filter": "Estado",
+    "loadFailed": "No pudimos cargar los planes de acción.",
+    "autoGenerate": "Auto-generar desde riesgo",
+    "autoGenerateSuccess": "Auto-generación completada. Se crearon {{count}} planes nuevos.",
+    "autoGenerated": "Auto",
+    "linkedRisk": "Evaluación de riesgo",
+    "overdue": "Vencido",
+    "tasksUnit": "tareas",
+    "empty": "Aún no hay planes de acción",
+    "emptyHint": "Crea planes manualmente o auto-genéralos a partir de evaluaciones de riesgo ALTO / MEDIO.",
+    "tabs": {
+      "plans": "Planes",
+      "templates": "Plantillas"
+    },
+    "templates": {
+      "create": "Nueva plantilla",
+      "createSuccess": "Plantilla creada.",
+      "validation": "El nombre de la plantilla es obligatorio.",
+      "description": "Las plantillas reutilizables pre-cargan las tareas del plan. La auto-generación también las utiliza.",
+      "empty": "Aún no hay plantillas — crea una para agilizar la creación de planes."
+    },
+    "columns": {
+      "title": "Título",
+      "tasks": "Tareas",
+      "target": "Fecha objetivo"
+    },
+    "fields": {
+      "title": "Título",
+      "description": "Descripción",
+      "target": "Fecha objetivo",
+      "template": "Plantilla",
+      "templateNone": "(sin plantilla)",
+      "risk": "Vincular a evaluación de riesgo",
+      "riskNone": "(ninguna)",
+      "tasks": "Tareas",
+      "addTask": "Agregar tarea",
+      "noTasks": "Aún no hay tareas — agrega una o aplica una plantilla.",
+      "taskTitle": "Título de la tarea",
+      "taskDescription": "Notas",
+      "taskDue": "Fecha límite",
+      "name": "Nombre de la plantilla",
+      "appliesTo": "Aplica al nivel de riesgo"
+    }
+  },
+  "auditPlans": {
+    "title": "Planes de auditoría",
+    "description": "Planifica auditorías internas, registra hallazgos y descarga el PDF del informe de auditoría.",
+    "create": "Nuevo plan de auditoría",
+    "createSuccess": "Plan de auditoría creado.",
+    "edit": "Editar plan de auditoría",
+    "updateSuccess": "Plan de auditoría actualizado.",
+    "downloadReport": "PDF del informe",
+    "reportNotFound": "El PDF del informe aún no está disponible.",
+    "filter": "Estado",
+    "validation": "El nombre del plan es obligatorio.",
+    "loadFailed": "No pudimos cargar los planes de auditoría.",
+    "empty": "Aún no hay planes de auditoría",
+    "emptyHint": "Crea el primer plan de auditoría para registrar hallazgos más adelante.",
+    "columns": {
+      "name": "Plan / alcance",
+      "period": "Periodo"
+    },
+    "fields": {
+      "name": "Nombre",
+      "scope": "Alcance",
+      "periodStart": "Inicio del periodo",
+      "periodEnd": "Fin del periodo",
+      "notes": "Notas"
+    },
+    "findings": {
+      "title": "Hallazgos",
+      "open": "Hallazgos",
+      "add": "Agregar hallazgo",
+      "edit": "Editar hallazgo",
+      "createSuccess": "Hallazgo registrado.",
+      "updateSuccess": "Hallazgo actualizado.",
+      "validation": "El título del hallazgo es obligatorio.",
+      "loadFailed": "No pudimos cargar los hallazgos.",
+      "empty": "Aún no hay hallazgos",
+      "emptyHint": "Registra el primer hallazgo de este plan de auditoría.",
+      "columns": {
+        "title": "Hallazgo",
+        "severity": "Severidad",
+        "remediation": "Remediación vence"
+      },
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "evidence": "Evidencia",
+        "severity": "Severidad",
+        "remediationNotes": "Notas de remediación",
+        "remediationDate": "Fecha de remediación"
+      }
+    }
+  },
+  "remediations": {
+    "title": "Remediaciones",
+    "description": "Tareas de remediación vinculadas a evaluaciones de riesgo. Controla los puntajes de riesgo antes y después de la remediación.",
+    "create": "Nueva remediación",
+    "createSuccess": "Remediación creada.",
+    "edit": "Editar remediación",
+    "updateSuccess": "Remediación actualizada.",
+    "validation": "La evaluación de riesgo y el título son obligatorios.",
+    "filter": "Estado",
+    "filterRisk": "Evaluación de riesgo",
+    "linkedRisk": "Evaluación de riesgo",
+    "overdue": "Vencida",
+    "loadFailed": "No pudimos cargar las remediaciones.",
+    "empty": "Aún no hay remediaciones",
+    "emptyHint": "Abre la primera remediación contra una evaluación de riesgo ALTO / CRÍTICO.",
+    "columns": {
+      "title": "Título",
+      "before": "Antes",
+      "after": "Después",
+      "score": "Puntaje",
+      "due": "Fecha límite"
+    },
+    "fields": {
+      "risk": "Evaluación de riesgo",
+      "riskPlaceholder": "Elige una evaluación de riesgo",
+      "title": "Título",
+      "description": "Descripción",
+      "due": "Fecha límite",
+      "completed": "Fecha de finalización",
+      "scoreAfter": "Puntaje de riesgo después",
+      "levelAfter": "Nivel de riesgo después",
+      "levelUnchanged": "(sin cambios)"
+    }
+  },
+  "reports": {
+    "title": "Reportes",
+    "description": "Reportes consolidados de cumplimiento con filtros, exportación a PDF / CSV y desglose de KPIs / tendencias.",
+    "loadFailed": "No pudimos cargar los datos de los reportes.",
+    "tabs": {
+      "overview": "KPIs",
+      "trends": "Tendencias",
+      "summary": "Resumen consolidado"
+    },
+    "kpis": {
+      "activitiesActive": "Actividades activas",
+      "activitiesActiveHint": "% de actividades de tratamiento con estado ACTIVO.",
+      "avgRisk": "Puntaje de riesgo promedio",
+      "avgRiskHint": "Puntaje de riesgo medio de todas las evaluaciones (1-25).",
+      "arcoOnTime": "ARCO a tiempo",
+      "arcoOnTimeHint": "% de solicitudes ARCO respondidas/cerradas antes del plazo.",
+      "breaches": "Brechas reportadas",
+      "breachesHint": "Incidentes ALTOS / CRÍTICOS (nivel regulatorio)."
+    },
+    "alerts": {
+      "title": "Alertas en vivo",
+      "description": "Elementos abiertos que el comité ejecutivo debería conocer ahora mismo.",
+      "overdueArco": "Solicitudes ARCO vencidas",
+      "criticalFindings": "Hallazgos críticos (ABIERTOS)",
+      "highRisk": "Evaluaciones de alto riesgo (ABIERTAS)"
+    },
+    "trends": {
+      "range": "Rango de tiempo",
+      "months": "Últimos {{count}} meses",
+      "month": "Mes",
+      "activities": "Actividades",
+      "risks": "Riesgos",
+      "incidents": "Incidentes",
+      "arco": "ARCO",
+      "consents": "Consentimientos",
+      "empty": "No hay datos de tendencias disponibles."
+    },
+    "summary": {
+      "empty": "El resumen consolidado no está disponible.",
+      "activities": "Actividades de tratamiento",
+      "risks": "Riesgos",
+      "arco": "ARCO",
+      "incidents": "Incidentes",
+      "actionPlans": "Planes de acción",
+      "audits": "Auditorías",
+      "consents": "Consentimientos",
+      "documents": "Documentos y remediación",
+      "total": "Total",
+      "high": "Alto",
+      "medium": "Medio",
+      "low": "Bajo",
+      "open": "Abiertos",
+      "completed": "Completados",
+      "draft": "Borrador",
+      "active": "Activos",
+      "regulator": "Requiere notificación al regulador",
+      "totalPlans": "Total de planes",
+      "openFindings": "Hallazgos abiertos",
+      "criticalFindings": "Hallazgos críticos",
+      "revoked": "Revocados",
+      "sensitive": "Sensibles",
+      "legalDocs": "Documentos legales (vigentes)",
+      "dpias": "EIPD",
+      "openRemediations": "Remediaciones abiertas"
+    }
+  },
+  "auditLog": {
+    "title": "Bitácora de auditoría",
+    "description": "Registro de actividad inmutable. Filtra por acción, usuario o rango de fechas y exporta a CSV.",
+    "loadFailed": "No pudimos cargar la bitácora de auditoría.",
+    "exportForbidden": "Tu rol no puede exportar la bitácora de auditoría.",
+    "empty": "Ningún registro de la bitácora coincide con el filtro.",
+    "emptyHint": "Prueba ampliando el rango de fechas o limpiando el filtro de acción.",
+    "system": "sistema",
+    "filters": {
+      "action": "Acción",
+      "actionPlaceholder": "ej. LOGIN, USER_CREATE",
+      "user": "ID de usuario",
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "columns": {
+      "time": "Cuándo",
+      "user": "Usuario",
+      "action": "Acción",
+      "resource": "Recurso",
+      "detail": "Detalle",
+      "ip": "IP"
+    }
+  },
+  "training": {
+    "title": "Capacitación",
+    "description": "Programas, módulos y materiales con seguimiento del avance de inscripciones.",
+    "loadFailed": "No pudimos cargar el catálogo de capacitación.",
+    "tabs": {
+      "catalog": "Catálogo",
+      "enrollments": "Inscripciones"
+    },
+    "programs": {
+      "title": "Programas",
+      "create": "Nuevo programa",
+      "edit": "Editar",
+      "createSuccess": "Programa creado.",
+      "updateSuccess": "Programa actualizado.",
+      "validation": "El título es obligatorio.",
+      "empty": "Aún no hay programas.",
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "active": "Activo"
+      }
+    },
+    "modules": {
+      "title": "Módulos",
+      "create": "Agregar módulo",
+      "edit": "Editar módulo",
+      "createSuccess": "Módulo creado.",
+      "updateSuccess": "Módulo actualizado.",
+      "validation": "El título es obligatorio.",
+      "selectProgram": "Selecciona un programa para gestionar sus módulos.",
+      "empty": "Aún no hay módulos.",
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "order": "Orden"
+      }
+    },
+    "materials": {
+      "title": "Materiales",
+      "create": "Agregar material",
+      "edit": "Editar material",
+      "createSuccess": "Material creado.",
+      "updateSuccess": "Material actualizado.",
+      "validation": "El título es obligatorio.",
+      "selectModule": "Selecciona un módulo para gestionar sus materiales.",
+      "empty": "Aún no hay materiales.",
+      "fields": {
+        "title": "Título",
+        "contentType": "Tipo",
+        "url": "URL",
+        "content": "Contenido"
+      }
+    },
+    "enrollments": {
+      "description": "Controla qué usuarios están inscritos en qué programa y actualiza su avance.",
+      "create": "Nueva inscripción",
+      "createSuccess": "Inscripción creada.",
+      "validation": "El usuario y el programa son obligatorios.",
+      "inProgress": "En progreso",
+      "empty": "Aún no hay inscripciones.",
+      "emptyHint": "Inscribe usuarios en un programa para empezar a seguir su avance.",
+      "columns": {
+        "user": "Usuario",
+        "program": "Programa",
+        "progress": "Avance",
+        "completed": "Completado"
+      },
+      "fields": {
+        "user": "Usuario",
+        "userPlaceholder": "Elige un usuario",
+        "program": "Programa",
+        "programPlaceholder": "Elige un programa"
+      }
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Sesión personal, seguridad y preferencias del espacio de trabajo.",
+    "sections": {
+      "identity": "Identidad",
+      "security": "Seguridad",
+      "preferences": "Preferencias",
+      "about": "Acerca de este espacio"
+    },
+    "identity": {
+      "role": "Rol activo",
+      "tenant": "Empresa",
+      "session": "Token de sesión",
+      "sessionHint": "La sesión expira tras 30 minutos de inactividad.",
+      "tokenStored": "Almacenado localmente",
+      "tokenNone": "Sin sesión iniciada"
+    },
+    "security": {
+      "mfaTitle": "Autenticación multifactor",
+      "mfaBody": "Usa la aplicación de autenticación vinculada a tu cuenta para confirmar los inicios de sesión.",
+      "mfaManage": "Gestionar MFA",
+      "signOutTitle": "Cerrar sesión en todas partes",
+      "signOutBody": "Limpia la sesión local y regresa a la pantalla de inicio de sesión.",
+      "signOutAction": "Cerrar sesión"
+    },
+    "preferences": {
+      "language": "Idioma de la interfaz",
+      "languageHint": "Elige el idioma de la interfaz. Tu preferencia se guarda en este dispositivo.",
+      "current": "Español (es-EC)"
+    },
+    "about": {
+      "platform": "DataLegal",
+      "version": "Compilación",
+      "buildLabel": "Versión {{label}}",
+      "docs": "Documentación de la API",
+      "docsLink": "Abrir /api/docs",
+      "support": "Soporte",
+      "supportHint": "Contacta a tu DPO o abre un ticket interno para obtener ayuda."
+    }
+  },
+  "backups": {
+    "title": "Respaldos",
+    "description": "Respaldos de la base de datos con verificación de checksum y postura de RPO / RTO.",
+    "create": "Crear respaldo",
+    "createSuccess": "Respaldo creado y checksum capturado.",
+    "createPending": "Registro de respaldo creado con estado PENDIENTE — ejecuta pg_dump manualmente para completarlo.",
+    "verify": "Verificar",
+    "verifySuccess": "El checksum coincide — el respaldo está íntegro.",
+    "verifyMismatch": "Se detectó una discrepancia de checksum. Investiga el archivo antes de confiar en él.",
+    "loadFailed": "No pudimos cargar el historial de respaldos.",
+    "forbidden": "Solo SUPER_ADMIN puede crear o leer respaldos de SQLite (la instantánea es entre empresas).",
+    "empty": "Aún no hay respaldos registrados.",
+    "emptyHint": "Crea el primer respaldo para empezar a cumplir tu RPO.",
+    "gate": {
+      "title": "Se requiere SUPER_ADMIN",
+      "body": "Los respaldos de SQLite son instantáneas entre empresas. Los roles limitados a una empresa pueden ver esta página pero no crear respaldos nuevos."
+    },
+    "kpis": {
+      "total": "Respaldos registrados",
+      "totalHint": "En todas las ventanas de retención.",
+      "verified": "Verificados / completados",
+      "verifiedHint": "Checksum verificado tras la creación.",
+      "rpo": "Tiempo desde el último respaldo",
+      "rpoHint": "RPO objetivo ≤ {{rpo}} horas.",
+      "rpoNever": "Aún no hay respaldos",
+      "rto": "RTO objetivo",
+      "rtoHint": "Las restauraciones deberían completarse dentro de esta ventana."
+    },
+    "posture": {
+      "title": "Postura de recuperación ante desastres",
+      "description": "Menos es mejor. Verde cuando está dentro del RPO y el respaldo más reciente tiene checksum verificado.",
+      "rpoBadge": "RPO: {{ok}}",
+      "green": "dentro del objetivo",
+      "red": "fuera del objetivo",
+      "checksumOk": "Checksum verificado",
+      "checksumWarn": "Checksum sin verificar"
+    },
+    "verifyResult": {
+      "ok": "Respaldo verificado",
+      "fail": "Discrepancia de checksum del respaldo",
+      "expected": "Esperado",
+      "actual": "Real",
+      "verifiedAt": "Verificado el"
+    },
+    "columns": {
+      "filename": "Archivo / checksum",
+      "size": "Tamaño",
+      "created": "Creado",
+      "verified": "Verificado"
+    }
+  },
+  "placeholder": {
+    "comingSoonTitle": "Disponible en el próximo sprint",
+    "comingSoonBody": "Este módulo ya existe en el backend. La interfaz de usuario está prevista para un próximo sprint y seguirá este mismo sistema de diseño.",
+    "explore": "Explora los endpoints disponibles",
+    "scheduledFor": "Previsto para",
+    "modules": {
+      "departments": {
+        "title": "Departamentos",
+        "description": "CRUD de departamentos y asignación de jefes. Backend listo en /api/v1/departments."
+      },
+      "companyProfile": {
+        "title": "Perfil de la empresa",
+        "description": "Configura los datos de la organización, el contacto del DPO y la clasificación por sector."
+      },
+      "tenants": {
+        "title": "Empresas",
+        "description": "Consola SUPER_ADMIN para aprovisionar empresas e inicializar cuentas de administrador."
+      },
+      "catalogs": {
+        "title": "Catálogos maestros",
+        "description": "Entradas de catálogo versionadas para bases legales, tipos de datos, amenazas, controles y más."
+      },
+      "dataInventory": {
+        "title": "Inventario de datos",
+        "description": "Panel de avance de actividades de tratamiento y activos de información clasificados."
+      },
+      "treatmentActivities": {
+        "title": "Actividades de tratamiento",
+        "description": "Registro de actividades de tratamiento con el asistente guiado de RAT."
+      },
+      "informationAssets": {
+        "title": "Activos de información",
+        "description": "Metadatos técnicos, nivel de clasificación y propiedad de cada activo."
+      },
+      "retention": {
+        "title": "Retención",
+        "description": "Políticas, ejecución y seguimiento de vencidos en revisión."
+      },
+      "importExport": {
+        "title": "Importar y exportar",
+        "description": "Importación y exportación estándar en CSV/JSON de actividades de tratamiento y datos de cumplimiento."
+      },
+      "riskAssessments": {
+        "title": "Evaluaciones de riesgo",
+        "description": "Puntuación de riesgo por cuestionario con trazabilidad CIA y visualización tipo semáforo."
+      },
+      "dpias": {
+        "title": "Evaluaciones de impacto (EIPD)",
+        "description": "Flujo de EIPD en tres pasos con firma y generación de PDF versionado."
+      },
+      "arco": {
+        "title": "Solicitudes ARCO",
+        "description": "Tickets de acceso, rectificación, cancelación y oposición con seguimiento de SLA de 30 días."
+      },
+      "portability": {
+        "title": "Portabilidad de datos",
+        "description": "Recibe, completa y exporta solicitudes de portabilidad en JSON interoperable."
+      },
+      "incidents": {
+        "title": "Incidentes",
+        "description": "Registra brechas, clasifica el impacto y dispara los flujos de notificación al regulador."
+      },
+      "consents": {
+        "title": "Consentimientos",
+        "description": "Registro de consentimientos, revocación inmutable, banners de cookies y consentimientos de cookies."
+      },
+      "legalDocuments": {
+        "title": "Documentos legales",
+        "description": "Genera, versiona y descarga avisos de privacidad, avisos de cookies y plantillas contractuales."
+      },
+      "ropa": {
+        "title": "RAT",
+        "description": "Registro de Actividades de Tratamiento completo con exportación a PDF."
+      },
+      "actionPlans": {
+        "title": "Planes de acción",
+        "description": "Plantillas, auto-generación a partir de resultados de alto riesgo y seguimiento de tareas."
+      },
+      "auditPlans": {
+        "title": "Planes de auditoría",
+        "description": "Planifica auditorías internas, registra hallazgos y descarga el PDF del informe de auditoría."
+      },
+      "remediations": {
+        "title": "Remediaciones",
+        "description": "Tareas de remediación vinculadas a evaluaciones de riesgo y hallazgos de auditoría."
+      },
+      "reports": {
+        "title": "Reportes",
+        "description": "Reportes consolidados con filtros, exportación a PDF / CSV y desglose de KPIs / tendencias."
+      },
+      "auditLog": {
+        "title": "Bitácora de auditoría",
+        "description": "Registro de actividad inmutable con exportación a CSV para usuarios autorizados."
+      },
+      "training": {
+        "title": "Capacitación",
+        "description": "Programas, módulos, materiales y avance de inscripciones."
+      },
+      "backups": {
+        "title": "Respaldos",
+        "description": "Instantáneas de SQLite y guía de PostgreSQL con verificación y postura de RPO/RTO."
+      },
+      "settings": {
+        "title": "Configuración",
+        "description": "Preferencias personales, MFA y valores por defecto del espacio de trabajo."
+      }
+    }
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando…",
+    "error": "Algo salió mal. Inténtalo de nuevo.",
+    "noData": "No hay datos disponibles.",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar…",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "exportPdf": "Exportar PDF",
+    "exportCsv": "Exportar CSV",
+    "yes": "Sí",
+    "no": "No",
+    "retry": "Reintentar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "viewDetails": "Ver detalles",
+    "all": "Todos",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "optional": "opcional",
+    "actions": "Acciones",
+    "name": "Nombre",
+    "description": "Descripción",
+    "code": "Código",
+    "label": "Etiqueta",
+    "status": "Estado",
+    "type": "Tipo",
+    "created": "Creado",
+    "updated": "Actualizado",
+    "refresh": "Actualizar",
+    "saveChanges": "Guardar cambios",
+    "saved": "Guardado",
+    "submit": "Enviar",
+    "noResults": "Ningún resultado coincide con el filtro actual.",
+    "deleting": "Eliminando…",
+    "saving": "Guardando…"
+  },
+  "errors": {
+    "unauthorized": "No estás autorizado para realizar esta acción.",
+    "notFound": "No se encontró el recurso solicitado.",
+    "serverError": "Ocurrió un error del servidor. Contacta a soporte.",
+    "networkError": "Error de red. Verifica tu conexión.",
+    "loadDashboard": "No pudimos cargar el panel. Algunas métricas pueden no estar disponibles."
+  }
+}
