@@ -7,6 +7,7 @@ from tests.conftest import auth_headers
 
 class TestTrainingPrograms:
     """TestTrainingPrograms schema/model definition."""
+
     def test_create_program(self, client: TestClient, dpo_token):
         """Test that create program behaves as expected."""
         resp = client.post(
@@ -74,6 +75,7 @@ class TestTrainingPrograms:
 
 class TestTrainingModules:
     """TestTrainingModules schema/model definition."""
+
     def _create_program(self, client, token):
         """Handle create program."""
         resp = client.post(
@@ -129,6 +131,7 @@ class TestTrainingModules:
 
 class TestTrainingMaterials:
     """TestTrainingMaterials schema/model definition."""
+
     def _setup(self, client, token):
         """Handle setup."""
         prog = client.post(
@@ -173,6 +176,7 @@ class TestTrainingMaterials:
 
 class TestEnrollments:
     """TestEnrollments schema/model definition."""
+
     def _setup_program(self, client, token):
         """Handle setup program."""
         prog = client.post(

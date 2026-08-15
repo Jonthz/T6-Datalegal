@@ -118,9 +118,11 @@ def get_document(
     db: Session = Depends(get_db),
 ):
     """Retrieve a legal document by ID."""
-    doc = db.query(LegalDocument).filter(
-        LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id
-    ).first()
+    doc = (
+        db.query(LegalDocument)
+        .filter(LegalDocument.id == doc_id, LegalDocument.tenant_id == tenant_id)
+        .first()
+    )
     if not doc:
         raise HTTPException(status_code=404, detail="Legal document not found.")
     return doc

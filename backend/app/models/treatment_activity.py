@@ -48,6 +48,7 @@ def area_prefix(area: str | None) -> str:
 
 class TreatmentActivity(TenantBase):
     """TreatmentActivity schema/model definition."""
+
     __tablename__ = "treatment_activities"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

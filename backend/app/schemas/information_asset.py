@@ -10,6 +10,7 @@ CLASSIFICATION_LEVELS = [
 
 class InformationAssetCreate(BaseModel):
     """InformationAssetCreate schema/model definition."""
+
     name: str
     description: str = ""
     asset_type_code: str
@@ -22,6 +23,7 @@ class InformationAssetCreate(BaseModel):
 
 class InformationAssetUpdate(BaseModel):
     """InformationAssetUpdate schema/model definition."""
+
     name: str | None = None
     description: str | None = None
     asset_type_code: str | None = None
@@ -34,6 +36,7 @@ class InformationAssetUpdate(BaseModel):
 
 class InformationAssetRead(BaseModel):
     """InformationAssetRead schema/model definition."""
+
     id: int
     tenant_id: int
     name: str

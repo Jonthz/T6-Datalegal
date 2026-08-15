@@ -9,6 +9,7 @@ from tests.conftest import auth_headers
 
 class TestAuditLog:
     """TestAuditLog schema/model definition."""
+
     def test_audit_log_created_on_login(self, client: TestClient, tenant_a, session):
         """Test that audit log created on login behaves as expected."""
         from tests.conftest import _make_user

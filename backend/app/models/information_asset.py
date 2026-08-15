@@ -8,6 +8,7 @@ from app.db.base import TenantBase
 
 class InformationAsset(TenantBase):
     """InformationAsset schema/model definition."""
+
     __tablename__ = "information_assets"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

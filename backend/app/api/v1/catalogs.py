@@ -71,6 +71,7 @@ def _snapshot(db: Session, entry: CatalogEntry, user_id: int | None) -> None:
 
 class CatalogEntryUpdate(BaseModel):
     """CatalogEntryUpdate schema/model definition."""
+
     label: str | None = None
     description: str | None = None
     sensitivity: str | None = None
@@ -143,9 +144,7 @@ def list_catalogs(
     _: Annotated[User, Depends(require_permission("catalogs", "r"))],
     tenant_id: int = Depends(get_current_tenant_id),
     db: Session = Depends(get_db),
-    type_filter: str | None = Query(
-        None, alias="type", description="Filter by catalog type"
-    ),
+    type_filter: str | None = Query(None, alias="type", description="Filter by catalog type"),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
 ):

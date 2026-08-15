@@ -213,6 +213,7 @@ def expired_under_review_report(
 
 class RetentionExecuteBody(BaseModel):
     """RetentionExecuteBody schema/model definition."""
+
     policy_id: int | None = None
     run_type: str = "MANUAL"
 

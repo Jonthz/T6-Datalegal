@@ -6,6 +6,7 @@ from app.db.base import TenantBase
 
 class Department(TenantBase):
     """Department schema/model definition."""
+
     __tablename__ = "departments"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

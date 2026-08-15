@@ -11,6 +11,7 @@ from app.core.mfa_crypto import (
 
 class TestMfaCryptoRoundTrip:
     """TestMfaCryptoRoundTrip schema/model definition."""
+
     def test_encrypt_then_decrypt_returns_original(self):
         """Test that encrypt then decrypt returns original behaves as expected."""
         secret = pyotp.random_base32()

@@ -23,10 +23,14 @@ def create_remediation(
     db: Session = Depends(get_db),
 ):
     """Create a remediation action linked to a risk assessment."""
-    ra = db.query(RiskAssessment).filter(
-        RiskAssessment.id == body.risk_assessment_id,
-        RiskAssessment.tenant_id == tenant_id,
-    ).first()
+    ra = (
+        db.query(RiskAssessment)
+        .filter(
+            RiskAssessment.id == body.risk_assessment_id,
+            RiskAssessment.tenant_id == tenant_id,
+        )
+        .first()
+    )
     if not ra:
         raise HTTPException(status_code=404, detail="Risk assessment not found.")
 
@@ -83,9 +87,11 @@ def get_remediation(
     db: Session = Depends(get_db),
 ):
     """Retrieve a remediation by ID."""
-    rem = db.query(Remediation).filter(
-        Remediation.id == remediation_id, Remediation.tenant_id == tenant_id
-    ).first()
+    rem = (
+        db.query(Remediation)
+        .filter(Remediation.id == remediation_id, Remediation.tenant_id == tenant_id)
+        .first()
+    )
     if not rem:
         raise HTTPException(status_code=404, detail="Remediation not found.")
     return rem
@@ -100,9 +106,11 @@ def update_remediation(
     db: Session = Depends(get_db),
 ):
     """Update a remediation's status, dates, or risk impact scores."""
-    rem = db.query(Remediation).filter(
-        Remediation.id == remediation_id, Remediation.tenant_id == tenant_id
-    ).first()
+    rem = (
+        db.query(Remediation)
+        .filter(Remediation.id == remediation_id, Remediation.tenant_id == tenant_id)
+        .first()
+    )
     if not rem:
         raise HTTPException(status_code=404, detail="Remediation not found.")
     for field, value in body.model_dump(exclude_none=True).items():

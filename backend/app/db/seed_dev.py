@@ -237,9 +237,7 @@ def _seed_departments(db: Session, tenant: Tenant) -> dict[str, Department]:
         "Atencion al Cliente",
         "Marketing",
     ]:
-        departments[name] = _get_or_create(
-            db, Department, {"tenant_id": tenant.id, "name": name}
-        )
+        departments[name] = _get_or_create(db, Department, {"tenant_id": tenant.id, "name": name})
     return departments
 
 
@@ -305,9 +303,7 @@ def _seed_users(
     return users
 
 
-def _assign_department_heads(
-    departments: dict[str, Department], users: dict[str, User]
-) -> None:
+def _assign_department_heads(departments: dict[str, Department], users: dict[str, User]) -> None:
     departments["Legal y Cumplimiento"].head_user_id = users["dpo"].id
     departments["Tecnologia"].head_user_id = users["tech"].id
     departments["Talento Humano"].head_user_id = users["hr"].id
@@ -315,9 +311,7 @@ def _assign_department_heads(
     departments["Marketing"].head_user_id = users["ops"].id
 
 
-def _seed_catalogs(
-    db: Session, tenant: Tenant, admin: User
-) -> dict[tuple[str, str], CatalogEntry]:
+def _seed_catalogs(db: Session, tenant: Tenant, admin: User) -> dict[tuple[str, str], CatalogEntry]:
     entries = [
         ("PERSONAL_DATA_TYPE", "NATIONAL_ID", "Cedula", "Identificador nacional"),
         ("PERSONAL_DATA_TYPE", "EMAIL", "Correo electronico", "Contacto digital"),
@@ -460,7 +454,8 @@ def _seed_treatment_activities(
                 "personal_data_types": data_types,
                 "data_subjects": subjects,
                 "retention_period_days": 1095,
-                "is_cross_border": name in {
+                "is_cross_border": name
+                in {
                     "Campanas informativas",
                     "Gestion de proveedores tecnologicos",
                 },

@@ -30,13 +30,27 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("permission", sa.String(length=100), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint("user_id", "permission", name="uq_platform_permissions_user_permission"),
+        sa.UniqueConstraint(
+            "user_id", "permission", name="uq_platform_permissions_user_permission"
+        ),
     )
-    op.create_index(op.f("ix_platform_permissions_id"), "platform_permissions", ["id"], unique=False)
+    op.create_index(
+        op.f("ix_platform_permissions_id"), "platform_permissions", ["id"], unique=False
+    )
     op.create_index(
         op.f("ix_platform_permissions_permission"),
         "platform_permissions",

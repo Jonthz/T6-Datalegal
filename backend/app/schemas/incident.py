@@ -19,15 +19,14 @@ def _validate_vulnerability_types(value: list[str]) -> list[str]:
     """Ensure every value is a known SSPDP breach type, de-duplicated and ordered."""
     invalid = [v for v in value if v not in VULNERABILITY_TYPES]
     if invalid:
-        raise ValueError(
-            f"Invalid vulnerability_types {invalid}. Allowed: {VULNERABILITY_TYPES}"
-        )
+        raise ValueError(f"Invalid vulnerability_types {invalid}. Allowed: {VULNERABILITY_TYPES}")
     # Preserve canonical order, drop duplicates.
     return [v for v in VULNERABILITY_TYPES if v in value]
 
 
 class IncidentCreate(BaseModel):
     """IncidentCreate schema/model definition."""
+
     title: str
     description: str
     incident_type: str
@@ -53,6 +52,7 @@ class IncidentCreate(BaseModel):
 
 class IncidentUpdate(BaseModel):
     """IncidentUpdate schema/model definition."""
+
     title: str | None = None
     description: str | None = None
     incident_type: str | None = None
@@ -79,11 +79,13 @@ class IncidentUpdate(BaseModel):
 
 class IncidentClose(BaseModel):
     """DAT-52: payload to close an incident and generate its PDF closure report."""
+
     closure_summary: str
 
 
 class IncidentRead(BaseModel):
     """IncidentRead schema/model definition."""
+
     id: int
     tenant_id: int
     title: str

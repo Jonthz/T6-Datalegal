@@ -63,6 +63,7 @@ def risk_assessment(client, dpo_token, activity):
 
 class TestCompanyProfile:
     """TestCompanyProfile schema/model definition."""
+
     def test_get_profile_authenticated(self, client, dpo_token):
         """Test that get profile authenticated behaves as expected."""
         resp = client.get("/api/v1/company-profile", headers=auth_headers(dpo_token))
@@ -105,6 +106,7 @@ class TestCompanyProfile:
 
 class TestWizard:
     """TestWizard schema/model definition."""
+
     def test_wizard_start(self, client, dpo_token):
         """Test that wizard start behaves as expected."""
         resp = client.post(
@@ -199,6 +201,7 @@ class TestWizard:
 
 class TestDPIA:
     """TestDPIA schema/model definition."""
+
     def test_create_dpia(self, client, dpo_token, activity):
         """Test that create dpia behaves as expected."""
         resp = client.post(
@@ -302,6 +305,7 @@ class TestDPIA:
 
 class TestRiskDashboard:
     """TestRiskDashboard schema/model definition."""
+
     def test_dashboard_structure(self, client, dpo_token, risk_assessment):  # pylint: disable=unused-argument
         """Test that dashboard structure behaves as expected."""
         resp = client.get("/api/v1/risk-assessments/dashboard", headers=auth_headers(dpo_token))
@@ -338,6 +342,7 @@ class TestRiskDashboard:
 
 class TestRetentionExecution:
     """TestRetentionExecution schema/model definition."""
+
     @pytest.fixture
     def policy(self, client, dpo_token):
         """Handle policy."""
@@ -402,6 +407,7 @@ class TestRetentionExecution:
 
 class TestARCO:
     """TestARCO schema/model definition."""
+
     def _create(self, client, token, rtype="ACCESS"):
         """Handle create."""
         resp = client.post(
@@ -498,6 +504,7 @@ class TestARCO:
 
 class TestROPA:
     """TestROPA schema/model definition."""
+
     def test_ropa_json(self, client, dpo_token, activity):  # pylint: disable=unused-argument
         """Test that ropa json behaves as expected."""
         resp = client.get("/api/v1/ropa", headers=auth_headers(dpo_token))
@@ -539,6 +546,7 @@ class TestROPA:
 
 class TestActionPlans:
     """TestActionPlans schema/model definition."""
+
     def test_create_template(self, client, dpo_token):
         """Test that create template behaves as expected."""
         resp = client.post(

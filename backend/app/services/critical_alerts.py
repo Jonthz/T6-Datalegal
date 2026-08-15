@@ -62,9 +62,7 @@ def _alert_suppressed(
     return raised_today >= MAX_ALERTS_PER_DAY
 
 
-def _scan_arco_deadlines(
-    db: Session, tenant_id: int, today: date, now: datetime
-) -> list[Alert]:
+def _scan_arco_deadlines(db: Session, tenant_id: int, today: date, now: datetime) -> list[Alert]:
     """Raise ARCO_OVERDUE and ARCO_DEADLINE_APPROACHING alerts for open requests."""
     created: list[Alert] = []
     open_requests = (
@@ -121,9 +119,7 @@ def _scan_arco_deadlines(
     return created
 
 
-def _scan_audit_plans(
-    db: Session, tenant_id: int, today: date, now: datetime
-) -> list[Alert]:
+def _scan_audit_plans(db: Session, tenant_id: int, today: date, now: datetime) -> list[Alert]:
     """Raise AUDIT_SCHEDULED alerts for planned audits about to start."""
     created: list[Alert] = []
     upcoming = (

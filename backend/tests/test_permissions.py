@@ -7,6 +7,7 @@ from tests.conftest import auth_headers
 
 class TestRBACPermissions:
     """TestRBACPermissions schema/model definition."""
+
     def test_auditor_cannot_create_user(self, client: TestClient, auditor_token):
         """Test that auditor cannot create user behaves as expected."""
         resp = client.post(

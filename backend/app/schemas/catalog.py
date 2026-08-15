@@ -9,6 +9,7 @@ class CatalogEntryCreate(BaseModel):
     `sensitivity`/`criticality` son opcionales: si no se envían, se intenta la
     clasificación automática según el `code` (US-RF05-1).
     """
+
     type: str
     code: str
     label: str
@@ -19,6 +20,7 @@ class CatalogEntryCreate(BaseModel):
 
 class CatalogEntryRead(BaseModel):
     """CatalogEntryRead schema/model definition."""
+
     model_config = {"from_attributes": True}
 
     id: int
@@ -38,6 +40,7 @@ class CatalogEntryRead(BaseModel):
 
 class CatalogEntryVersionRead(BaseModel):
     """US-RF20-1: A single historical version of a catalog entry."""
+
     model_config = {"from_attributes": True}
 
     id: int
@@ -54,4 +57,5 @@ class CatalogEntryVersionRead(BaseModel):
 
 class BulkLoadRequest(BaseModel):
     """BulkLoadRequest schema/model definition."""
+
     entries: list[CatalogEntryCreate]
