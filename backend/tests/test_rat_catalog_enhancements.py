@@ -5,7 +5,7 @@ from io import BytesIO
 
 from fastapi.testclient import TestClient
 
-from tests.conftest import auth_headers
+from backend.tests.conftest import auth_headers
 
 # ── RAT: identificador estructurado ──────────────────────────────────────────
 
