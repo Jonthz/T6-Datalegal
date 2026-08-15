@@ -24,13 +24,10 @@ import {
 } from '../components/ui'
 import type { DataTableColumn } from '../components/ui'
 import {
+  createTreatmentActivity,
   deleteTreatmentActivity,
   listTreatmentActivities,
   updateTreatmentActivity,
-  wizardFinalize,
-  wizardLegalBasis,
-  wizardStart,
-  wizardTransfers,
 } from '../api/treatmentActivities'
 import { listDepartments } from '../api/departments'
 import type { Department, TreatmentActivity } from '../types'
@@ -254,7 +251,6 @@ export default function TreatmentActivitiesPage() {
           setSuccess(t('treatmentActivities.wizard.finalized'))
           load()
         }}
-        onSavedStep={(activity) => setWizardActivity(activity)}
       />
 
       <EditModal
@@ -279,7 +275,6 @@ interface WizardModalProps {
   departments: Department[]
   onClose: () => void
   onCompleted: () => void
-  onSavedStep: (activity: TreatmentActivity) => void
 }
 
 interface Step1 {
@@ -307,12 +302,10 @@ function WizardModal({
   departments,
   onClose,
   onCompleted,
-  onSavedStep,
 }: WizardModalProps) {
   const { t } = useTranslation()
   const totalSteps = 4
   const [step, setStep] = useState(1)
-  const [activity, setActivity] = useState<TreatmentActivity | null>(initial)
   const [s1, setS1] = useState<Step1>({ name: '', purpose: '', department_id: '' })
   const [s2, setS2] = useState<Step2>({
     legal_basis: '',
@@ -333,7 +326,6 @@ function WizardModal({
     if (!open) return
     setError('')
     if (initial) {
-      setActivity(initial)
       setS1({
         name: initial.name ?? '',
         purpose: initial.purpose ?? '',
@@ -350,9 +342,8 @@ function WizardModal({
         processor_name: initial.processor_name ?? '',
         processor_country: initial.processor_country ?? '',
       })
-      setStep(initial.legal_basis ? (initial.is_cross_border !== null ? 3 : 2) : 2)
+      setStep(initial.legal_basis ? 3 : 2)
     } else {
-      setActivity(null)
       setS1({ name: '', purpose: '', department_id: '' })
       setS2({ legal_basis: '', personal_data_types: '', data_subjects: '' })
       setS3({
@@ -372,43 +363,48 @@ function WizardModal({
       .filter(Boolean)
   }
 
-  async function submitStep(e: FormEvent) {
-    e.preventDefault()
+  function validateCurrentStep() {
+    if (step === 1 && (!s1.name.trim() || !s1.purpose.trim())) {
+      setError(t('common.error'))
+      return false
+    }
+    if (step === 2 && !s2.legal_basis.trim()) {
+      setError(t('common.error'))
+      return false
+    }
+    return true
+  }
+
+  async function submitStep(e?: FormEvent) {
+    e?.preventDefault()
     setError('')
+    if (step < 4) {
+      if (!validateCurrentStep()) return
+      setStep((s) => Math.min(4, s + 1))
+      return
+    }
+
     setSubmitting(true)
     try {
-      if (step === 1) {
-        const created = await wizardStart({
-          name: s1.name,
-          purpose: s1.purpose,
-          department_id: s1.department_id ? Number(s1.department_id) : null,
-        })
-        setActivity(created)
-        onSavedStep(created)
-        setStep(2)
-      } else if (step === 2 && activity) {
-        const updated = await wizardLegalBasis(activity.id, {
-          legal_basis: s2.legal_basis,
-          personal_data_types: parseList(s2.personal_data_types),
-          data_subjects: parseList(s2.data_subjects),
-        })
-        setActivity(updated)
-        onSavedStep(updated)
-        setStep(3)
-      } else if (step === 3 && activity) {
-        const updated = await wizardTransfers(activity.id, {
-          is_cross_border: s3.is_cross_border,
-          destination_countries: parseList(s3.destination_countries),
-          processor_name: s3.processor_name || null,
-          processor_country: s3.processor_country || null,
-        })
-        setActivity(updated)
-        onSavedStep(updated)
-        setStep(4)
-      } else if (step === 4 && activity) {
-        await wizardFinalize(activity.id)
-        onCompleted()
+      const payload = {
+        name: s1.name,
+        purpose: s1.purpose,
+        legal_basis: s2.legal_basis,
+        personal_data_types: parseList(s2.personal_data_types),
+        data_subjects: parseList(s2.data_subjects),
+        is_cross_border: s3.is_cross_border,
+        destination_countries: s3.is_cross_border ? parseList(s3.destination_countries) : [],
+        processor_name: s3.processor_name || null,
+        processor_country: s3.processor_country || null,
+        department_id: s1.department_id ? Number(s1.department_id) : null,
+        status: 'ACTIVE',
       }
+      if (initial) {
+        await updateTreatmentActivity(initial.id, payload)
+      } else {
+        await createTreatmentActivity(payload)
+      }
+      onCompleted()
     } catch (err) {
       setError(extractErrorMessage(err, t('common.error')))
     } finally {
@@ -448,7 +444,7 @@ function WizardModal({
               {t('common.previous')}
             </Button>
           )}
-          <Button onClick={submitStep} loading={submitting}>
+          <Button onClick={() => submitStep()} loading={submitting}>
             {step < 4
               ? t('common.next')
               : t('treatmentActivities.wizard.finalize')}
@@ -555,31 +551,31 @@ function WizardModal({
           </div>
         )}
 
-        {step === 4 && activity && (
+        {step === 4 && (
           <div className="space-y-3">
             <p className="text-xs text-ink-300">{t('treatmentActivities.wizard.step4Hint')}</p>
-            <ReviewLine label={t('treatmentActivities.fields.name')} value={activity.name} />
-            <ReviewLine label={t('treatmentActivities.fields.purpose')} value={activity.purpose} />
+            <ReviewLine label={t('treatmentActivities.fields.name')} value={s1.name} />
+            <ReviewLine label={t('treatmentActivities.fields.purpose')} value={s1.purpose} />
             <ReviewLine
               label={t('treatmentActivities.fields.legalBasis')}
-              value={activity.legal_basis || '—'}
+              value={s2.legal_basis || '—'}
             />
             <ReviewLine
               label={t('treatmentActivities.fields.dataTypes')}
-              value={(activity.personal_data_types ?? []).join(', ') || '—'}
+              value={parseList(s2.personal_data_types).join(', ') || '—'}
             />
             <ReviewLine
               label={t('treatmentActivities.fields.dataSubjects')}
-              value={(activity.data_subjects ?? []).join(', ') || '—'}
+              value={parseList(s2.data_subjects).join(', ') || '—'}
             />
             <ReviewLine
               label={t('treatmentActivities.fields.isCrossBorder')}
-              value={activity.is_cross_border ? t('common.yes') : t('common.no')}
+              value={s3.is_cross_border ? t('common.yes') : t('common.no')}
             />
-            {activity.is_cross_border && (
+            {s3.is_cross_border && (
               <ReviewLine
                 label={t('treatmentActivities.fields.destinationCountries')}
-                value={(activity.destination_countries ?? []).join(', ') || '—'}
+                value={parseList(s3.destination_countries).join(', ') || '—'}
               />
             )}
           </div>
