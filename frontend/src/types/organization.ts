@@ -66,6 +66,19 @@ export interface CatalogEntry {
   created_at: string
 }
 
+export interface CatalogEntryVersion {
+  id: number
+  catalog_entry_id: number
+  version: number
+  label: string
+  description: string
+  sensitivity: string | null
+  criticality: string | null
+  is_active: boolean
+  changed_by_id: number | null
+  created_at: string
+}
+
 export interface SectorSuggestions {
   sector_code: string
   label: string

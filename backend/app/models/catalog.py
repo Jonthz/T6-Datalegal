@@ -28,3 +28,22 @@ class CatalogEntry(TenantBase):
     updated_by_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=True
     )
+
+
+class CatalogEntryVersion(TenantBase):
+    """US-RF20-1: Immutable snapshot of a catalog entry at each edit (version history)."""
+    __tablename__ = "catalog_entry_versions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    catalog_entry_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("catalog_entries.id"), nullable=False, index=True
+    )
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    label: Mapped[str] = mapped_column(String(255), nullable=False, default="")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    sensitivity: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    criticality: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    changed_by_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )

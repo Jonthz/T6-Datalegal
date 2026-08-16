@@ -13,6 +13,7 @@ export type {
   TenantProvisionRequest,
   Department,
   CatalogEntry,
+  CatalogEntryVersion,
   SectorSuggestions,
 } from './organization'
 export type {

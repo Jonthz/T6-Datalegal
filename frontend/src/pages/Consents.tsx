@@ -594,7 +594,7 @@ export default function ConsentsPage() {
           label={t('consents.stats.revoked')}
           value={stats ? stats.revoked : '—'}
           hint={
-            stats ? `${formatPercent(stats.revocation_rate * 100, 1)} ${t('consents.stats.revocationRate')}` : ''
+            stats ? `${formatPercent(stats.revocation_rate, 1)} ${t('consents.stats.revocationRate')}` : ''
           }
           loading={statsLoading}
         />
