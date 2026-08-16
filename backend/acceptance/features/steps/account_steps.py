@@ -54,7 +54,7 @@ def step_department_listed(context, name):
 
 
 # ── US-RF24-1: Permission matrix / RBAC (negative) ───────────────────────────
-@when('I try to create a treatment activity')
+@when("I try to create a treatment activity")
 def step_try_create_activity(context):
     """Attempt to create a treatment activity as the current actor."""
     context.response = context.api.post(
@@ -64,7 +64,7 @@ def step_try_create_activity(context):
     )
 
 
-@then('the activity is not created')
+@then("the activity is not created")
 def step_activity_not_created(context):
     """Assert the request was forbidden and no activity was returned."""
     assert context.response.status_code == 403
@@ -97,7 +97,7 @@ def step_provision_tenant(context, name):
     )
 
 
-@then('the tenant is created with its administrator')
+@then("the tenant is created with its administrator")
 def step_tenant_created(context):
     """Assert the tenant was created and its admin belongs to it."""
     body = context.response.json()

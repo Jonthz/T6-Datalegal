@@ -134,13 +134,24 @@ def _seed(db):
             db.add(PlatformPermission(user_id=u.id, permission=p))
         return u
 
-    mk("owner@datalegal.local", "SUPER_ADMIN", tenant_a.id, password=OWNER_PASSWORD,
-       scope="PLATFORM", perms=("tenants:read", "tenants:provision"))
+    mk(
+        "owner@datalegal.local",
+        "SUPER_ADMIN",
+        tenant_a.id,
+        password=OWNER_PASSWORD,
+        scope="PLATFORM",
+        perms=("tenants:read", "tenants:provision"),
+    )
     mk("admin@datalegal.local", "SUPER_ADMIN", tenant_a.id, password=COMMON_PASSWORD)
     mk("dpo@datalegal.local", "DPO", tenant_a.id, password=COMMON_PASSWORD, dept=dept_legal.id)
     mk("admin.ops@datalegal.local", "ADMIN", tenant_a.id, password=COMMON_PASSWORD)
-    mk("tech@datalegal.local", "DEPT_HEAD", tenant_a.id,
-       password=COMMON_PASSWORD, dept=dept_tech.id)
+    mk(
+        "tech@datalegal.local",
+        "DEPT_HEAD",
+        tenant_a.id,
+        password=COMMON_PASSWORD,
+        dept=dept_tech.id,
+    )
     mk("auditor@datalegal.local", "AUDITOR", tenant_a.id, password=COMMON_PASSWORD)
     # Second tenant, used by the isolation scenarios.
     mk("dpo.b@empresab.local", "DPO", tenant_b.id, password=COMMON_PASSWORD)

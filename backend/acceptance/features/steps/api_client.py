@@ -38,9 +38,7 @@ class ApiClient:
 
     def request(self, method, path, token=None, headers=None, **kwargs):
         """Send an HTTP request and return the response."""
-        return self._client.request(
-            method, path, headers=self._headers(token, headers), **kwargs
-        )
+        return self._client.request(method, path, headers=self._headers(token, headers), **kwargs)
 
     def get(self, path, token=None, **kw):
         """Send a GET request."""
