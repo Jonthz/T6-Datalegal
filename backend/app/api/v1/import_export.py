@@ -100,6 +100,7 @@ def import_treatment_activities(
 
 # ── Export: Treatment Activities ──────────────────────────────────────────────
 
+
 @router.get("/export/treatment-activities")
 def export_treatment_activities(
     current_user: Annotated[User, Depends(require_permission("treatment_activities", "r"))],
@@ -146,11 +147,12 @@ def export_treatment_activities(
     return StreamingResponse(
         iter([csv_bytes]),
         media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=\"treatment_activities.csv\""},
+        headers={"Content-Disposition": 'attachment; filename="treatment_activities.csv"'},
     )
 
 
 # ── Export: Compliance Report ─────────────────────────────────────────────────
+
 
 @router.get("/export/compliance-report")
 def export_compliance_report(

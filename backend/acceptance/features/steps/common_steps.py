@@ -71,7 +71,7 @@ def step_token_with_role(context, role):
     assert body.get("role") == role, f"Expected role {role}, got {body.get('role')}"
 
 
-@then('the response status is {code:d}')
+@then("the response status is {code:d}")
 def step_status_code(context, code):
     """Assert the last response has the expected HTTP status code."""
     assert context.response is not None, "No response recorded."
@@ -88,7 +88,7 @@ def step_forbidden(context):
     )
 
 
-@then('access is denied')
+@then("access is denied")
 def step_access_denied(context):
     """Assert access was denied (403 Forbidden or 404 hidden by tenant isolation)."""
     assert context.response.status_code in (403, 404), (

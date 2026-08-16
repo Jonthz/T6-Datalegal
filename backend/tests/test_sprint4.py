@@ -14,6 +14,7 @@ from tests.conftest import auth_headers
 
 class TestCatalogAutoClassification:
     """TestCatalogAutoClassification schema/model definition."""
+
     def test_bulk_load_auto_classifies_known_codes(self, client: TestClient, dpo_token: str):
         """Test that bulk load auto classifies known codes behaves as expected."""
         resp = client.post(
@@ -72,6 +73,7 @@ class TestCatalogAutoClassification:
 
 class TestCatalogVersioning:
     """TestCatalogVersioning schema/model definition."""
+
     def _create_entry(self, client, dpo_token):
         """Handle create entry."""
         resp = client.post(
@@ -141,6 +143,7 @@ class TestCatalogVersioning:
 
 class TestConsentRevocation:
     """TestConsentRevocation schema/model definition."""
+
     def _create_consent(self, client, dpo_token, token="subj-001"):
         """Handle create consent."""
         return client.post(
@@ -226,6 +229,7 @@ class TestConsentRevocation:
 
 class TestCookieBanners:
     """TestCookieBanners schema/model definition."""
+
     def _create_banner(self, client, dpo_token, version="1.0"):
         """Handle create banner."""
         return client.post(
@@ -285,6 +289,7 @@ class TestCookieBanners:
 
 class TestLegalDocuments:
     """TestLegalDocuments schema/model definition."""
+
     def _create_doc(self, client, dpo_token, doc_type="PRIVACY_POLICY", version="1.0"):
         """Handle create doc."""
         return client.post(
@@ -375,6 +380,7 @@ class TestLegalDocuments:
 
 class TestAuditPlans:
     """TestAuditPlans schema/model definition."""
+
     def _create_plan(self, client, token, name="Test Audit"):
         """Handle create plan."""
         return client.post(
@@ -484,6 +490,7 @@ class TestAuditPlans:
 
 class TestRemediations:
     """TestRemediations schema/model definition."""
+
     def _create_treatment_activity(self, client, dpo_token):
         """Handle create treatment activity."""
         resp = client.post(
@@ -564,6 +571,7 @@ class TestRemediations:
 
 class TestSectors:
     """TestSectors schema/model definition."""
+
     def test_list_sectors(self, client: TestClient, admin_token: str):
         """Test that list sectors behaves as expected."""
         resp = client.get("/api/v1/sectors", headers=auth_headers(admin_token))
@@ -615,6 +623,7 @@ class TestSectors:
 
 class TestSummaryReport:
     """TestSummaryReport schema/model definition."""
+
     def test_summary_report_structure(self, client: TestClient, dpo_token: str):
         """Test that summary report structure behaves as expected."""
         resp = client.get("/api/v1/reports/summary", headers=auth_headers(dpo_token))

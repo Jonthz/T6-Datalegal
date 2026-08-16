@@ -8,6 +8,7 @@ from app.db.base import TenantBase
 
 class User(TenantBase):
     """User schema/model definition."""
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

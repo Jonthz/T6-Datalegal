@@ -53,6 +53,7 @@ def compute_scores(responses: dict[str, bool]) -> tuple[int, int, int, str]:
 
 class RiskAssessmentCreate(BaseModel):
     """RiskAssessmentCreate schema/model definition."""
+
     treatment_activity_id: int
     responses: dict[str, bool]
     notes: str = ""
@@ -60,6 +61,7 @@ class RiskAssessmentCreate(BaseModel):
 
 class RiskAssessmentUpdate(BaseModel):
     """RiskAssessmentUpdate schema/model definition."""
+
     responses: dict[str, bool] | None = None
     notes: str | None = None
     status: str | None = None
@@ -67,6 +69,7 @@ class RiskAssessmentUpdate(BaseModel):
 
 class RiskAssessmentRead(BaseModel):
     """RiskAssessmentRead schema/model definition."""
+
     id: int
     tenant_id: int
     treatment_activity_id: int
@@ -84,4 +87,5 @@ class RiskAssessmentRead(BaseModel):
 
 class QuestionnaireSchema(BaseModel):
     """QuestionnaireSchema schema/model definition."""
+
     questions: list[dict]

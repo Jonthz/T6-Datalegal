@@ -44,7 +44,7 @@ def step_wizard_legal_basis(context, basis):
     )
 
 
-@when('I finalize the wizard')
+@when("I finalize the wizard")
 def step_wizard_finalize(context):
     """Finalize the wizard, activating the current activity."""
     aid = context.data["activity_id"]
@@ -115,7 +115,7 @@ def step_create_activity_named(context, name):
     context.data["activity_id"] = resp.json()["id"]
 
 
-@when('I assess the risk with high-impact answers')
+@when("I assess the risk with high-impact answers")
 def step_high_risk(context):
     """Submit a risk assessment whose answers yield a HIGH classification."""
     responses = {f"q{i}": i <= 7 for i in range(1, 11)}
@@ -132,7 +132,7 @@ def step_risk_level(context, level):
     assert context.response.json().get("risk_level") == level, context.response.text
 
 
-@then('the response includes a risk score')
+@then("the response includes a risk score")
 def step_has_risk_score(context):
     """Assert the risk assessment response carries a numeric risk score."""
     assert "risk_score" in context.response.json(), context.response.text

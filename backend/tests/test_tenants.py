@@ -7,6 +7,7 @@ from tests.conftest import auth_headers
 
 class TestTenantProvisioning:
     """TestTenantProvisioning schema/model definition."""
+
     def test_provision_tenant_as_platform_owner(self, client: TestClient, platform_owner_token):
         """Test that provision tenant as platform owner behaves as expected."""
         resp = client.post(
@@ -99,7 +100,10 @@ class TestTenantProvisioning:
         assert resp.status_code == 403
 
     def test_list_tenants_as_platform_owner(
-        self, client: TestClient, platform_owner_token, tenant_a  # pylint: disable=unused-argument
+        self,
+        client: TestClient,
+        platform_owner_token,
+        tenant_a,  # pylint: disable=unused-argument
     ):
         """Test that list tenants as platform owner behaves as expected."""
         resp = client.get("/api/v1/tenants", headers=auth_headers(platform_owner_token))
@@ -120,8 +124,14 @@ class TestTenantProvisioning:
 
 class TestTenantIsolation:
     """TestTenantIsolation schema/model definition."""
+
     def test_tenant_a_cannot_see_tenant_b_users(
-        self, client: TestClient, admin_token, tenant_b_user, tenant_b_token, session  # pylint: disable=unused-argument
+        self,
+        client: TestClient,
+        admin_token,
+        tenant_b_user,
+        tenant_b_token,
+        session,  # pylint: disable=unused-argument
     ):
         """User from tenant A cannot access users from tenant B."""
         # tenant B user exists
@@ -132,7 +142,12 @@ class TestTenantIsolation:
         assert resp.status_code == 404  # Not found in tenant A's scope
 
     def test_tenant_b_user_sees_only_own_users(
-        self, client: TestClient, tenant_b_token, tenant_b, tenant_b_user, session  # pylint: disable=unused-argument
+        self,
+        client: TestClient,
+        tenant_b_token,
+        tenant_b,
+        tenant_b_user,
+        session,  # pylint: disable=unused-argument
     ):
         """Tenant B admin lists users — should only see tenant B users."""
         resp = client.get("/api/v1/users", headers=auth_headers(tenant_b_token))

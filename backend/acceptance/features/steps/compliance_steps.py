@@ -44,7 +44,7 @@ def step_arco_status(context, status):
     assert context.response.json()["status"] == status, context.response.text
 
 
-@then('the legal response deadline is {days:d} days')
+@then("the legal response deadline is {days:d} days")
 def step_arco_deadline(context, days):
     """Assert the difference between received and deadline dates is N days."""
     body = context.response.json()
@@ -63,19 +63,19 @@ def step_arco_sla(context, color):
 
 
 # ── US-RF31-1: ROPA report ───────────────────────────────────────────────────
-@when('I generate the ROPA report')
+@when("I generate the ROPA report")
 def step_generate_ropa(context):
     """Request the consolidated ROPA report."""
     context.response = context.api.get("/api/v1/ropa", token=context.token)
 
 
-@then('the ROPA report is generated successfully')
+@then("the ROPA report is generated successfully")
 def step_ropa_ok(context):
     """Assert the ROPA report was returned successfully."""
     assert context.response.status_code == 200, context.response.text
 
 
-@when('I download the ROPA as PDF')
+@when("I download the ROPA as PDF")
 def step_ropa_pdf(context):
     """Download the ROPA report as a PDF."""
     context.response = context.api.get("/api/v1/ropa/pdf", token=context.token)
@@ -116,7 +116,7 @@ def step_create_finding(context, title, severity):
     )
 
 
-@when('I download the audit report as PDF')
+@when("I download the audit report as PDF")
 def step_audit_pdf(context):
     """Download the audit plan's PDF report."""
     pid = context.data["plan_id"]
@@ -140,7 +140,7 @@ def step_create_portability(context, name):
         context.data["port_id"] = context.response.json()["id"]
 
 
-@when('I complete the portability request')
+@when("I complete the portability request")
 def step_complete_portability(context):
     """Mark the portability request as completed with the response data."""
     pid = context.data["port_id"]
@@ -149,9 +149,7 @@ def step_complete_portability(context):
         token=context.token,
         json={
             "status": "COMPLETED",
-            "response_data": {
-                "personal_data": {"name": "Subject", "email": "subject@example.com"}
-            },
+            "response_data": {"personal_data": {"name": "Subject", "email": "subject@example.com"}},
         },
     )
 
@@ -172,7 +170,7 @@ def step_portability_standard(context, standard):
 
 
 # ── US-RF32-1: Explicit and immutable consent revocation ─────────────────────
-@given('a registered consent')
+@given("a registered consent")
 def step_create_consent(context):
     """Register a consent record to be revoked later."""
     resp = context.api.post(
@@ -200,7 +198,7 @@ def step_revoke_consent(context, reason):
     )
 
 
-@then('the consent is revoked with a date')
+@then("the consent is revoked with a date")
 def step_consent_revoked(context):
     """Assert the consent is now revoked and carries a revocation timestamp."""
     body = context.response.json()
@@ -208,7 +206,7 @@ def step_consent_revoked(context):
     assert body["revoked_at"] is not None, body
 
 
-@when('I try to revoke the same consent again')
+@when("I try to revoke the same consent again")
 def step_revoke_again(context):
     """Attempt to revoke the same consent a second time."""
     cid = context.data["consent_id"]
@@ -217,14 +215,14 @@ def step_revoke_again(context):
     )
 
 
-@then('the second revocation is rejected')
+@then("the second revocation is rejected")
 def step_revoke_rejected(context):
     """Assert the second revocation is rejected (immutability)."""
     assert context.response.status_code == 400, context.response.text
 
 
 # ── Shared PDF assertion (ROPA + audit report) ───────────────────────────────
-@then('I get a PDF document')
+@then("I get a PDF document")
 def step_get_pdf(context):
     """Assert the last response is a downloadable PDF document."""
     assert context.response.status_code == 200, context.response.text

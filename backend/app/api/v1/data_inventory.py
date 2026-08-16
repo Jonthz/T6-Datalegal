@@ -18,6 +18,7 @@ router = APIRouter(prefix="/data-inventory", tags=["data-inventory"])
 
 class TreatmentActivityProgress(BaseModel):
     """TreatmentActivityProgress schema/model definition."""
+
     total: int
     draft: int
     active: int

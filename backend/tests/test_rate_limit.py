@@ -10,6 +10,7 @@ def _parse_limit(spec: str) -> int:
 
 class TestLoginRateLimit:
     """TestLoginRateLimit schema/model definition."""
+
     def test_login_returns_429_after_threshold(self, client, tenant_a, session):
         """The 21st login from the same IP within a minute is rejected with 429."""
         from tests.conftest import _make_user
@@ -29,7 +30,7 @@ class TestLoginRateLimit:
                 "/api/v1/auth/login",
                 json={"email": email, "password": "Test@1234!"},
             )
-            assert resp.status_code == 200, f"attempt {i+1} unexpectedly rejected"
+            assert resp.status_code == 200, f"attempt {i + 1} unexpectedly rejected"
 
         # threshold+1: should be 429 from slowapi.
         resp = client.post(
@@ -43,6 +44,7 @@ class TestLoginRateLimit:
 
 class TestMFAVerifyRateLimit:
     """TestMFAVerifyRateLimit schema/model definition."""
+
     def test_mfa_verify_returns_429_after_threshold(self, client):
         """mfa-verify is bucketed independently of login but uses same limit."""
         threshold = _parse_limit(settings.MFA_RATE_LIMIT)
@@ -53,7 +55,7 @@ class TestMFAVerifyRateLimit:
                 "/api/v1/auth/mfa-verify",
                 json={"mfa_token": "bogus", "code": "000000"},
             )
-            assert resp.status_code == 401, f"attempt {i+1} unexpected: {resp.status_code}"
+            assert resp.status_code == 401, f"attempt {i + 1} unexpected: {resp.status_code}"
 
         resp = client.post(
             "/api/v1/auth/mfa-verify",
@@ -65,6 +67,7 @@ class TestMFAVerifyRateLimit:
 
 class TestRateLimitReset:
     """TestRateLimitReset schema/model definition."""
+
     def test_counters_isolated_between_tests(self, client):
         """Sanity check: the autouse `_reset_rate_limiter` fixture works."""
         from app.core.rate_limit import limiter

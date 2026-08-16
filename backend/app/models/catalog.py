@@ -12,6 +12,7 @@ DATA_CRITICALITIES = {"LOW", "MEDIUM", "HIGH"}
 
 class CatalogEntry(TenantBase):
     """CatalogEntry schema/model definition."""
+
     __tablename__ = "catalog_entries"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -32,6 +33,7 @@ class CatalogEntry(TenantBase):
 
 class CatalogEntryVersion(TenantBase):
     """US-RF20-1: Immutable snapshot of a catalog entry at each edit (version history)."""
+
     __tablename__ = "catalog_entry_versions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

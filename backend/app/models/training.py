@@ -8,6 +8,7 @@ from app.db.base import TenantBase
 
 class TrainingProgram(TenantBase):
     """TrainingProgram schema/model definition."""
+
     __tablename__ = "training_programs"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -25,6 +26,7 @@ class TrainingProgram(TenantBase):
 
 class TrainingModule(TenantBase):
     """TrainingModule schema/model definition."""
+
     __tablename__ = "training_modules"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -43,6 +45,7 @@ class TrainingModule(TenantBase):
 
 class TrainingMaterial(TenantBase):
     """TrainingMaterial schema/model definition."""
+
     __tablename__ = "training_materials"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -59,6 +62,7 @@ class TrainingMaterial(TenantBase):
 
 class Enrollment(TenantBase):
     """Enrollment schema/model definition."""
+
     __tablename__ = "enrollments"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

@@ -58,9 +58,7 @@ def get_ropa_xlsx(
     xlsx_bytes = _generate_ropa_xlsx(activities)
     return StreamingResponse(
         BytesIO(xlsx_bytes),
-        media_type=(
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        ),
+        media_type=("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
         headers={"Content-Disposition": "attachment; filename=RAT.xlsx"},
     )
 

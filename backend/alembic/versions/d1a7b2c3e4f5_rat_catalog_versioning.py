@@ -26,13 +26,11 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     """Upgrade schema."""
     # ── treatment_activities: RAT enrichment ────────────────────────────────
-    op.add_column("treatment_activities", sa.Column("rat_code", sa.String(length=20), nullable=True))
-    op.create_index(
-        "ix_treatment_activities_rat_code", "treatment_activities", ["rat_code"]
-    )
     op.add_column(
-        "treatment_activities", sa.Column("legal_bases", sa.JSON(), nullable=True)
+        "treatment_activities", sa.Column("rat_code", sa.String(length=20), nullable=True)
     )
+    op.create_index("ix_treatment_activities_rat_code", "treatment_activities", ["rat_code"])
+    op.add_column("treatment_activities", sa.Column("legal_bases", sa.JSON(), nullable=True))
     op.add_column(
         "treatment_activities",
         sa.Column("complementary_legal_bases", sa.JSON(), nullable=True),
@@ -44,7 +42,9 @@ def upgrade() -> None:
     )
     op.add_column("treatment_activities", sa.Column("data_categories", sa.JSON(), nullable=True))
     op.add_column("treatment_activities", sa.Column("data_origin", sa.Text(), nullable=True))
-    op.add_column("treatment_activities", sa.Column("treatment_operations", sa.JSON(), nullable=True))
+    op.add_column(
+        "treatment_activities", sa.Column("treatment_operations", sa.JSON(), nullable=True)
+    )
     op.add_column(
         "treatment_activities",
         sa.Column("uses_profiling", sa.Boolean(), nullable=False, server_default=sa.false()),
@@ -114,25 +114,19 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["changed_by_id"], ["users.id"]),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        "ix_catalog_entry_versions_id", "catalog_entry_versions", ["id"]
-    )
+    op.create_index("ix_catalog_entry_versions_id", "catalog_entry_versions", ["id"])
     op.create_index(
         "ix_catalog_entry_versions_catalog_entry_id",
         "catalog_entry_versions",
         ["catalog_entry_id"],
     )
-    op.create_index(
-        "ix_catalog_entry_versions_tenant_id", "catalog_entry_versions", ["tenant_id"]
-    )
+    op.create_index("ix_catalog_entry_versions_tenant_id", "catalog_entry_versions", ["tenant_id"])
 
 
 def downgrade() -> None:
     """Downgrade schema."""
     op.drop_index("ix_catalog_entry_versions_tenant_id", table_name="catalog_entry_versions")
-    op.drop_index(
-        "ix_catalog_entry_versions_catalog_entry_id", table_name="catalog_entry_versions"
-    )
+    op.drop_index("ix_catalog_entry_versions_catalog_entry_id", table_name="catalog_entry_versions")
     op.drop_index("ix_catalog_entry_versions_id", table_name="catalog_entry_versions")
     op.drop_table("catalog_entry_versions")
 

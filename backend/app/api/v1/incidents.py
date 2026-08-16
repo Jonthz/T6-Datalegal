@@ -369,7 +369,5 @@ def get_incident_report(
     return StreamingResponse(
         BytesIO(incident.closure_report_pdf),
         media_type="application/pdf",
-        headers={
-            "Content-Disposition": f"attachment; filename=incident_{incident_id}_closure.pdf"
-        },
+        headers={"Content-Disposition": f"attachment; filename=incident_{incident_id}_closure.pdf"},
     )

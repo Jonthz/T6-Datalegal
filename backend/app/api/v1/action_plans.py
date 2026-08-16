@@ -179,9 +179,11 @@ def get_plan(
     db: Session = Depends(get_db),
 ):
     """Retrieve an action plan by ID."""
-    plan = db.query(ActionPlan).filter(
-        ActionPlan.id == plan_id, ActionPlan.tenant_id == tenant_id
-    ).first()
+    plan = (
+        db.query(ActionPlan)
+        .filter(ActionPlan.id == plan_id, ActionPlan.tenant_id == tenant_id)
+        .first()
+    )
     if not plan:
         raise HTTPException(status_code=404, detail="Action plan not found.")
     return plan
@@ -196,9 +198,11 @@ def update_plan(
     db: Session = Depends(get_db),
 ):
     """Update an action plan's fields."""
-    plan = db.query(ActionPlan).filter(
-        ActionPlan.id == plan_id, ActionPlan.tenant_id == tenant_id
-    ).first()
+    plan = (
+        db.query(ActionPlan)
+        .filter(ActionPlan.id == plan_id, ActionPlan.tenant_id == tenant_id)
+        .first()
+    )
     if not plan:
         raise HTTPException(status_code=404, detail="Action plan not found.")
     for field, value in body.model_dump(exclude_none=True).items():
