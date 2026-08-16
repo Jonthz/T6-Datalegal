@@ -27,7 +27,7 @@ jobs:
 
       - name: Analysing the code with pylint
         working-directory: backend
-        run: pylint app/
+        run: pylint app/ --rcfile=../pylintrc
 
       - name: Run tests with coverage
         working-directory: backend
