@@ -74,7 +74,8 @@
   "topbar": {
     "signedInAs": "Signed in as",
     "tenantId": "Tenant",
-    "manageMfa": "Manage MFA"
+    "manageMfa": "Manage MFA",
+    "language": "Language"
   },
   "dashboard": {
     "title": "Executive dashboard",
@@ -1351,7 +1352,7 @@
     },
     "preferences": {
       "language": "Interface language",
-      "languageHint": "English is the MVP locale. Additional locales arrive after launch.",
+      "languageHint": "Choose the interface language. Your preference is saved on this device.",
       "current": "English (en-US)"
     },
     "about": {

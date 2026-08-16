@@ -44,3 +44,7 @@ docs/design/screenshots-local/
 *.avi
 *.zip
 *.rar
+
+# Acceptance testing (behave) local artifacts
+backend/acceptance/acceptance_test.db
+backend/acceptance/reports/

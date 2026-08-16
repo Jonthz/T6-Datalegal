@@ -1,0 +1,33 @@
+name: Acceptance Tests (behave)
+
+on: [push, pull_request]
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install backend + behave
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run acceptance tests (in-process, SQLite)
+        working-directory: backend/acceptance
+        run: behave --junit --junit-directory reports
+
+      - name: Upload behave reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-reports
+          path: backend/acceptance/reports/
