@@ -2,10 +2,8 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type FormEvent,
-  type ReactNode,
 } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ClipboardPlus, Pencil, RefreshCw, StepForward, Trash2 } from 'lucide-react'
@@ -112,16 +110,6 @@ export default function TreatmentActivitiesPage() {
 
   const columns = useMemo<DataTableColumn<TreatmentActivity>[]>(
     () => [
-      {
-        key: 'rat_code',
-        header: t('treatmentActivities.fields.ratCode'),
-        render: (a) =>
-          a.rat_code ? (
-            <code className="text-xs font-semibold text-ink-100">{a.rat_code}</code>
-          ) : (
-            <span className="text-xs text-ink-400">—</span>
-          ),
-      },
       {
         key: 'name',
         header: t('treatmentActivities.fields.name'),
@@ -337,18 +325,10 @@ function WizardModal({
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  // Inicializa el formulario una sola vez por apertura del modal para no pisar
-  // el paso actual mientras el usuario avanza o retrocede dentro del wizard.
-  const initializedRef = useRef(false)
 
   // Sync local form when modal opens or initial activity changes
   useEffect(() => {
-    if (!open) {
-      initializedRef.current = false
-      return
-    }
-    if (initializedRef.current) return
-    initializedRef.current = true
+    if (!open) return
     setError('')
     if (initial) {
       setS1({
@@ -619,8 +599,16 @@ function WizardModal({
             <ReviewLine label={t('treatmentActivities.fields.name')} value={s1.name} />
             <ReviewLine label={t('treatmentActivities.fields.purpose')} value={s1.purpose} />
             <ReviewLine
+              label={t('treatmentActivities.fields.area')}
+              value={s1.area || '—'}
+            />
+            <ReviewLine
               label={t('treatmentActivities.fields.legalBasis')}
               value={s2.legal_basis || '—'}
+            />
+            <ReviewLine
+              label={t('treatmentActivities.fields.legalBases')}
+              value={parseList(s2.legal_bases).join(', ') || '—'}
             />
             <ReviewLine
               label={t('treatmentActivities.fields.dataTypes')}
@@ -669,119 +657,29 @@ interface EditModalProps {
 
 function EditModal({ activity, departments, onClose, onSaved }: EditModalProps) {
   const { t } = useTranslation()
-
-  interface EditState {
-    name: string
-    purpose: string
-    area: string
-    operational_owner: string
-    legal_basis: string
-    legal_bases: string
-    complementary_legal_bases: string
-    personal_data_types: string
-    data_categories: string
-    data_subjects: string
-    data_origin: string
-    treatment_operations: string
-    recipients: string
-    processors: string
-    system_platform: string
-    retention_days: string
-    department_id: string
-    technical_measures: string
-    organizational_measures: string
-    physical_measures: string
-    legal_measures: string
-    mtge_score: string
-    mtge_result: string
-    uses_profiling: boolean
-    uses_ai: boolean
-    automated_decision: boolean
-    requires_dpia: boolean
-    has_special_data: boolean
-    involves_minors: boolean
-  }
-
-  const EMPTY: EditState = {
-    name: '',
-    purpose: '',
-    area: '',
-    operational_owner: '',
-    legal_basis: '',
-    legal_bases: '',
-    complementary_legal_bases: '',
-    personal_data_types: '',
-    data_categories: '',
-    data_subjects: '',
-    data_origin: '',
-    treatment_operations: '',
-    recipients: '',
-    processors: '',
-    system_platform: '',
-    retention_days: '',
-    department_id: '',
-    technical_measures: '',
-    organizational_measures: '',
-    physical_measures: '',
-    legal_measures: '',
-    mtge_score: '',
-    mtge_result: '',
-    uses_profiling: false,
-    uses_ai: false,
-    automated_decision: false,
-    requires_dpia: false,
-    has_special_data: false,
-    involves_minors: false,
-  }
-
-  const [f, setF] = useState<EditState>(EMPTY)
+  const [name, setName] = useState('')
+  const [purpose, setPurpose] = useState('')
+  const [legalBasis, setLegalBasis] = useState('')
+  const [dataTypes, setDataTypes] = useState('')
+  const [subjects, setSubjects] = useState('')
+  const [retentionDays, setRetentionDays] = useState('')
+  const [departmentId, setDepartmentId] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (!activity) return
-    setF({
-      name: activity.name ?? '',
-      purpose: activity.purpose ?? '',
-      area: activity.area ?? '',
-      operational_owner: activity.operational_owner ?? '',
-      legal_basis: activity.legal_basis ?? '',
-      legal_bases: (activity.legal_bases ?? []).join(', '),
-      complementary_legal_bases: (activity.complementary_legal_bases ?? []).join(', '),
-      personal_data_types: (activity.personal_data_types ?? []).join(', '),
-      data_categories: (activity.data_categories ?? []).join(', '),
-      data_subjects: (activity.data_subjects ?? []).join(', '),
-      data_origin: activity.data_origin ?? '',
-      treatment_operations: (activity.treatment_operations ?? []).join(', '),
-      recipients: (activity.recipients ?? []).join(', '),
-      processors: (activity.processors ?? []).join(', '),
-      system_platform: activity.system_platform ?? '',
-      retention_days: activity.retention_period_days ? String(activity.retention_period_days) : '',
-      department_id: activity.department_id ? String(activity.department_id) : '',
-      technical_measures: activity.technical_measures ?? '',
-      organizational_measures: activity.organizational_measures ?? '',
-      physical_measures: activity.physical_measures ?? '',
-      legal_measures: activity.legal_measures ?? '',
-      mtge_score: activity.mtge_score != null ? String(activity.mtge_score) : '',
-      mtge_result: activity.mtge_result ?? '',
-      uses_profiling: activity.uses_profiling ?? false,
-      uses_ai: activity.uses_ai ?? false,
-      automated_decision: activity.automated_decision ?? false,
-      requires_dpia: activity.requires_dpia ?? false,
-      has_special_data: activity.has_special_data ?? false,
-      involves_minors: activity.involves_minors ?? false,
-    })
+    setName(activity.name ?? '')
+    setPurpose(activity.purpose ?? '')
+    setLegalBasis(activity.legal_basis ?? '')
+    setDataTypes((activity.personal_data_types ?? []).join(', '))
+    setSubjects((activity.data_subjects ?? []).join(', '))
+    setRetentionDays(activity.retention_period_days ? String(activity.retention_period_days) : '')
+    setDepartmentId(activity.department_id ? String(activity.department_id) : '')
     setError('')
   }, [activity])
 
   if (!activity) return null
-
-  function parseList(input: string): string[] {
-    return input
-      .split(/[,\n;]/)
-      .map((p) => p.trim())
-      .filter(Boolean)
-  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -789,38 +687,20 @@ function EditModal({ activity, departments, onClose, onSaved }: EditModalProps) 
     setSubmitting(true)
     setError('')
     try {
-      const bases = parseList(f.legal_bases)
-      const principal = f.legal_basis.trim() || bases[0] || ''
       await updateTreatmentActivity(activity.id, {
-        name: f.name,
-        purpose: f.purpose,
-        area: f.area || null,
-        operational_owner: f.operational_owner || null,
-        legal_basis: principal,
-        legal_bases: bases.length ? bases : principal ? [principal] : [],
-        complementary_legal_bases: parseList(f.complementary_legal_bases),
-        personal_data_types: parseList(f.personal_data_types),
-        data_categories: parseList(f.data_categories),
-        data_subjects: parseList(f.data_subjects),
-        data_origin: f.data_origin || null,
-        treatment_operations: parseList(f.treatment_operations),
-        recipients: parseList(f.recipients),
-        processors: parseList(f.processors),
-        system_platform: f.system_platform || null,
-        retention_period_days: f.retention_days ? Number(f.retention_days) : undefined,
-        department_id: f.department_id ? Number(f.department_id) : null,
-        technical_measures: f.technical_measures || null,
-        organizational_measures: f.organizational_measures || null,
-        physical_measures: f.physical_measures || null,
-        legal_measures: f.legal_measures || null,
-        mtge_score: f.mtge_score ? Number(f.mtge_score) : null,
-        mtge_result: f.mtge_result || null,
-        uses_profiling: f.uses_profiling,
-        uses_ai: f.uses_ai,
-        automated_decision: f.automated_decision,
-        requires_dpia: f.requires_dpia,
-        has_special_data: f.has_special_data,
-        involves_minors: f.involves_minors,
+        name,
+        purpose,
+        legal_basis: legalBasis,
+        personal_data_types: dataTypes
+          .split(/[,\n;]/)
+          .map((p) => p.trim())
+          .filter(Boolean),
+        data_subjects: subjects
+          .split(/[,\n;]/)
+          .map((p) => p.trim())
+          .filter(Boolean),
+        retention_period_days: retentionDays ? Number(retentionDays) : undefined,
+        department_id: departmentId ? Number(departmentId) : null,
       })
       onSaved()
     } catch (err) {
@@ -830,23 +710,12 @@ function EditModal({ activity, departments, onClose, onSaved }: EditModalProps) 
     }
   }
 
-  const set = (patch: Partial<EditState>) => setF((prev) => ({ ...prev, ...patch }))
-
-  const flags: Array<{ key: keyof EditState; label: string }> = [
-    { key: 'uses_profiling', label: t('treatmentActivities.fields.usesProfiling') },
-    { key: 'uses_ai', label: t('treatmentActivities.fields.usesAi') },
-    { key: 'automated_decision', label: t('treatmentActivities.fields.automatedDecision') },
-    { key: 'requires_dpia', label: t('treatmentActivities.fields.requiresDpia') },
-    { key: 'has_special_data', label: t('treatmentActivities.fields.hasSpecialData') },
-    { key: 'involves_minors', label: t('treatmentActivities.fields.involvesMinors') },
-  ]
-
   return (
     <Modal
       open={!!activity}
       onClose={onClose}
-      title={activity.rat_code ? `${activity.rat_code} · ${activity.name}` : activity.name}
-      size="xl"
+      title={activity.name}
+      size="lg"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
@@ -858,200 +727,58 @@ function EditModal({ activity, departments, onClose, onSaved }: EditModalProps) 
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <SectionTitle>{t('treatmentActivities.section.general')}</SectionTitle>
+      <form onSubmit={handleSubmit} className="space-y-3">
         <Input
           label={t('treatmentActivities.fields.name')}
-          value={f.name}
-          onChange={(e) => set({ name: e.target.value })}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
         />
         <Textarea
           label={t('treatmentActivities.fields.purpose')}
-          value={f.purpose}
-          onChange={(e) => set({ purpose: e.target.value })}
+          value={purpose}
+          onChange={(e) => setPurpose(e.target.value)}
           required
           rows={3}
         />
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            label={t('treatmentActivities.fields.area')}
-            value={f.area}
-            onChange={(e) => set({ area: e.target.value })}
-            hint={t('treatmentActivities.areaHint')}
-          />
-          <Input
-            label={t('treatmentActivities.fields.operationalOwner')}
-            value={f.operational_owner}
-            onChange={(e) => set({ operational_owner: e.target.value })}
-          />
-        </div>
-
-        <SectionTitle>{t('treatmentActivities.section.legalBases')}</SectionTitle>
         <Input
           label={t('treatmentActivities.fields.legalBasis')}
-          value={f.legal_basis}
-          onChange={(e) => set({ legal_basis: e.target.value })}
-          hint="e.g. CONTRACT, LEGAL_OBLIGATION"
-        />
-        <Textarea
-          label={t('treatmentActivities.fields.legalBases')}
-          value={f.legal_bases}
-          onChange={(e) => set({ legal_bases: e.target.value })}
-          hint={t('treatmentActivities.legalBasesHint')}
-          rows={2}
-        />
-        <Textarea
-          label={t('treatmentActivities.fields.complementaryLegalBases')}
-          value={f.complementary_legal_bases}
-          onChange={(e) => set({ complementary_legal_bases: e.target.value })}
-          hint={t('treatmentActivities.csvHelp')}
-          rows={2}
-        />
-
-        <SectionTitle>{t('treatmentActivities.section.data')}</SectionTitle>
-        <Textarea
-          label={t('treatmentActivities.fields.dataSubjects')}
-          value={f.data_subjects}
-          onChange={(e) => set({ data_subjects: e.target.value })}
-          rows={2}
+          value={legalBasis}
+          onChange={(e) => setLegalBasis(e.target.value)}
         />
         <Textarea
           label={t('treatmentActivities.fields.dataTypes')}
-          value={f.personal_data_types}
-          onChange={(e) => set({ personal_data_types: e.target.value })}
+          value={dataTypes}
+          onChange={(e) => setDataTypes(e.target.value)}
           rows={2}
         />
         <Textarea
-          label={t('treatmentActivities.fields.dataCategories')}
-          value={f.data_categories}
-          onChange={(e) => set({ data_categories: e.target.value })}
-          hint={t('treatmentActivities.csvHelp')}
+          label={t('treatmentActivities.fields.dataSubjects')}
+          value={subjects}
+          onChange={(e) => setSubjects(e.target.value)}
           rows={2}
         />
         <div className="grid grid-cols-2 gap-3">
-          <Input
-            label={t('treatmentActivities.fields.dataOrigin')}
-            value={f.data_origin}
-            onChange={(e) => set({ data_origin: e.target.value })}
-          />
-          <Input
-            label={t('treatmentActivities.fields.treatmentOperations')}
-            value={f.treatment_operations}
-            onChange={(e) => set({ treatment_operations: e.target.value })}
-            hint={t('treatmentActivities.csvHelp')}
-          />
-        </div>
-
-        <SectionTitle>{t('treatmentActivities.section.flags')}</SectionTitle>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
-          {flags.map((flag) => (
-            <label key={flag.key} className="flex items-center gap-2 text-sm text-ink-200">
-              <input
-                type="checkbox"
-                checked={f[flag.key] as boolean}
-                onChange={(e) => set({ [flag.key]: e.target.checked } as Partial<EditState>)}
-              />
-              {flag.label}
-            </label>
-          ))}
-        </div>
-
-        <SectionTitle>{t('treatmentActivities.section.recipients')}</SectionTitle>
-        <div className="grid grid-cols-2 gap-3">
-          <Textarea
-            label={t('treatmentActivities.fields.recipients')}
-            value={f.recipients}
-            onChange={(e) => set({ recipients: e.target.value })}
-            hint={t('treatmentActivities.csvHelp')}
-            rows={2}
-          />
-          <Textarea
-            label={t('treatmentActivities.fields.processors')}
-            value={f.processors}
-            onChange={(e) => set({ processors: e.target.value })}
-            hint={t('treatmentActivities.csvHelp')}
-            rows={2}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            label={t('treatmentActivities.fields.systemPlatform')}
-            value={f.system_platform}
-            onChange={(e) => set({ system_platform: e.target.value })}
-          />
           <Input
             label={t('treatmentActivities.fields.retentionDays')}
             type="number"
             min={0}
-            value={f.retention_days}
-            onChange={(e) => set({ retention_days: e.target.value })}
+            value={retentionDays}
+            onChange={(e) => setRetentionDays(e.target.value)}
+          />
+          <Select
+            label={t('treatmentActivities.fields.department')}
+            value={departmentId}
+            onChange={(e) => setDepartmentId(e.target.value)}
+            options={[
+              { value: '', label: t('common.optional') },
+              ...departments.map((d) => ({ value: String(d.id), label: d.name })),
+            ]}
           />
         </div>
-        <Select
-          label={t('treatmentActivities.fields.department')}
-          value={f.department_id}
-          onChange={(e) => set({ department_id: e.target.value })}
-          options={[
-            { value: '', label: t('common.optional') },
-            ...departments.map((d) => ({ value: String(d.id), label: d.name })),
-          ]}
-        />
-
-        <SectionTitle>{t('treatmentActivities.section.measures')}</SectionTitle>
-        <Textarea
-          label={t('treatmentActivities.fields.technicalMeasures')}
-          value={f.technical_measures}
-          onChange={(e) => set({ technical_measures: e.target.value })}
-          rows={2}
-        />
-        <Textarea
-          label={t('treatmentActivities.fields.organizationalMeasures')}
-          value={f.organizational_measures}
-          onChange={(e) => set({ organizational_measures: e.target.value })}
-          rows={2}
-        />
-        <div className="grid grid-cols-2 gap-3">
-          <Textarea
-            label={t('treatmentActivities.fields.physicalMeasures')}
-            value={f.physical_measures}
-            onChange={(e) => set({ physical_measures: e.target.value })}
-            rows={2}
-          />
-          <Textarea
-            label={t('treatmentActivities.fields.legalMeasures')}
-            value={f.legal_measures}
-            onChange={(e) => set({ legal_measures: e.target.value })}
-            rows={2}
-          />
-        </div>
-
-        <SectionTitle>{t('treatmentActivities.section.mtge')}</SectionTitle>
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            label={t('treatmentActivities.fields.mtgeScore')}
-            type="number"
-            step="0.5"
-            value={f.mtge_score}
-            onChange={(e) => set({ mtge_score: e.target.value })}
-          />
-          <Input
-            label={t('treatmentActivities.fields.mtgeResult')}
-            value={f.mtge_result}
-            onChange={(e) => set({ mtge_result: e.target.value })}
-          />
-        </div>
-
         {error && <AlertBox tone="danger">{error}</AlertBox>}
       </form>
     </Modal>
   )
 }
-
-function SectionTitle({ children }: { children: ReactNode }) {
-  return (
-    <h4 className="pt-2 text-xs font-semibold uppercase tracking-wide text-ink-400">
-      {children}
-    </h4>
-  )
-}
+      

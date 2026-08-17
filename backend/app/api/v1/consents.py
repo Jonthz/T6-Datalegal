@@ -123,9 +123,11 @@ def get_consent(
     db: Session = Depends(get_db),
 ):
     """Retrieve a consent record by ID."""
-    record = db.query(ConsentRecord).filter(
-        ConsentRecord.id == record_id, ConsentRecord.tenant_id == tenant_id
-    ).first()
+    record = (
+        db.query(ConsentRecord)
+        .filter(ConsentRecord.id == record_id, ConsentRecord.tenant_id == tenant_id)
+        .first()
+    )
     if not record:
         raise HTTPException(status_code=404, detail="Consent record not found.")
     return record
@@ -166,6 +168,7 @@ def revoke_consent(
 
 
 # ── Cookie Banners (US-RF25-1) ───────────────────────────────────────────────
+
 
 @router.post(
     "/cookie-banners",
@@ -223,9 +226,11 @@ def update_banner(
     db: Session = Depends(get_db),
 ):
     """Update a cookie banner's content or active status."""
-    banner = db.query(CookieBanner).filter(
-        CookieBanner.id == banner_id, CookieBanner.tenant_id == tenant_id
-    ).first()
+    banner = (
+        db.query(CookieBanner)
+        .filter(CookieBanner.id == banner_id, CookieBanner.tenant_id == tenant_id)
+        .first()
+    )
     if not banner:
         raise HTTPException(status_code=404, detail="Cookie banner not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -247,9 +252,11 @@ def record_cookie_consent(
     db: Session = Depends(get_db),
 ):
     """Record a data subject's acceptance of a cookie banner version."""
-    banner = db.query(CookieBanner).filter(
-        CookieBanner.id == body.banner_id, CookieBanner.tenant_id == tenant_id
-    ).first()
+    banner = (
+        db.query(CookieBanner)
+        .filter(CookieBanner.id == body.banner_id, CookieBanner.tenant_id == tenant_id)
+        .first()
+    )
     if not banner:
         raise HTTPException(status_code=404, detail="Cookie banner not found.")
     consent = CookieConsent(
@@ -271,9 +278,11 @@ def revoke_cookie_consent(
     db: Session = Depends(get_db),
 ):
     """Revoke a previously recorded cookie consent."""
-    consent = db.query(CookieConsent).filter(
-        CookieConsent.id == consent_id, CookieConsent.tenant_id == tenant_id
-    ).first()
+    consent = (
+        db.query(CookieConsent)
+        .filter(CookieConsent.id == consent_id, CookieConsent.tenant_id == tenant_id)
+        .first()
+    )
     if not consent:
         raise HTTPException(status_code=404, detail="Cookie consent not found.")
     if consent.is_revoked:

@@ -24,6 +24,7 @@ router = APIRouter(prefix="/audit-plans", tags=["audit-plans"])
 
 # ── Audit Plans ────
 
+
 @router.post("", response_model=AuditPlanRead, status_code=status.HTTP_201_CREATED)
 def create_audit_plan(
     body: AuditPlanCreate,
@@ -45,8 +46,12 @@ def create_audit_plan(
     db.commit()
     db.refresh(plan)
     AuditLog.create_log(
-        db, action="audit_plan_created", resource="audit_plans",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"id={plan.id} name={plan.name}",
+        db,
+        action="audit_plan_created",
+        resource="audit_plans",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"id={plan.id} name={plan.name}",
     )
     return plan
 
@@ -75,12 +80,15 @@ def get_audit_plan(
     db: Session = Depends(get_db),
 ):
     """Retrieve a single audit plan by id within the current tenant."""
-    plan = db.query(AuditPlan).filter(
-        AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id
-    ).first()
+    plan = (
+        db.query(AuditPlan)
+        .filter(AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id)
+        .first()
+    )
     if not plan:
         raise HTTPException(status_code=404, detail="Audit plan not found.")
     return plan
+
 
 @router.patch("/{plan_id}", response_model=AuditPlanRead)
 def update_audit_plan(
@@ -91,9 +99,11 @@ def update_audit_plan(
     db: Session = Depends(get_db),
 ):
     """Update an existing audit plan."""
-    plan = db.query(AuditPlan).filter(
-        AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id
-    ).first()
+    plan = (
+        db.query(AuditPlan)
+        .filter(AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id)
+        .first()
+    )
     if not plan:
         raise HTTPException(status_code=404, detail="Audit plan not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -105,6 +115,7 @@ def update_audit_plan(
 
 # ── Audit Findings ──
 
+
 @router.post("/findings", response_model=AuditFindingRead, status_code=status.HTTP_201_CREATED)
 def create_finding(
     body: AuditFindingCreate,
@@ -114,9 +125,11 @@ def create_finding(
 ):
     """Register a new finding under an audit plan."""
     # Verify audit plan belongs to tenant
-    plan = db.query(AuditPlan).filter(
-        AuditPlan.id == body.audit_plan_id, AuditPlan.tenant_id == tenant_id
-    ).first()
+    plan = (
+        db.query(AuditPlan)
+        .filter(AuditPlan.id == body.audit_plan_id, AuditPlan.tenant_id == tenant_id)
+        .first()
+    )
     if not plan:
         raise HTTPException(status_code=404, detail="Audit plan not found.")
     finding = AuditFinding(
@@ -134,8 +147,11 @@ def create_finding(
     db.commit()
     db.refresh(finding)
     AuditLog.create_log(
-        db, action="audit_finding_created", resource="audit_plans",
-        tenant_id=tenant_id, user_id=current_user.id,
+        db,
+        action="audit_finding_created",
+        resource="audit_plans",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
         detail=f"plan_id={body.audit_plan_id} severity={body.severity}",
     )
     return finding
@@ -152,9 +168,11 @@ def list_findings(
 ):
     """List findings for an audit plan, optionally filtered by severity/status."""
     # Verify plan belongs to tenant
-    plan = db.query(AuditPlan).filter(
-        AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id
-    ).first()
+    plan = (
+        db.query(AuditPlan)
+        .filter(AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id)
+        .first()
+    )
     if not plan:
         raise HTTPException(status_code=404, detail="Audit plan not found.")
     q = db.query(AuditFinding).filter(
@@ -166,6 +184,7 @@ def list_findings(
         q = q.filter(AuditFinding.status == finding_status)
     return q.order_by(AuditFinding.id.desc()).all()
 
+
 @router.patch("/findings/{finding_id}", response_model=AuditFindingRead)
 def update_finding(
     finding_id: int,
@@ -175,9 +194,11 @@ def update_finding(
     db: Session = Depends(get_db),
 ):
     """Update an existing audit finding."""
-    finding = db.query(AuditFinding).filter(
-        AuditFinding.id == finding_id, AuditFinding.tenant_id == tenant_id
-    ).first()
+    finding = (
+        db.query(AuditFinding)
+        .filter(AuditFinding.id == finding_id, AuditFinding.tenant_id == tenant_id)
+        .first()
+    )
     if not finding:
         raise HTTPException(status_code=404, detail="Audit finding not found.")
     for field, value in body.model_dump(exclude_none=True).items():
@@ -189,6 +210,7 @@ def update_finding(
 
 # ── PDF Report ──
 
+
 @router.get("/{plan_id}/report")
 def download_audit_report(
     plan_id: int,
@@ -197,25 +219,35 @@ def download_audit_report(
     db: Session = Depends(get_db),
 ):
     """Generate and download a PDF audit report with all findings (US-RF13-1)."""
-    plan = db.query(AuditPlan).filter(
-        AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id
-    ).first()
+    plan = (
+        db.query(AuditPlan)
+        .filter(AuditPlan.id == plan_id, AuditPlan.tenant_id == tenant_id)
+        .first()
+    )
     if not plan:
         raise HTTPException(status_code=404, detail="Audit plan not found.")
-    findings = db.query(AuditFinding).filter(
-        AuditFinding.audit_plan_id == plan_id, AuditFinding.tenant_id == tenant_id
-    ).order_by(AuditFinding.severity, AuditFinding.id).all()
+    findings = (
+        db.query(AuditFinding)
+        .filter(AuditFinding.audit_plan_id == plan_id, AuditFinding.tenant_id == tenant_id)
+        .order_by(AuditFinding.severity, AuditFinding.id)
+        .all()
+    )
 
     pdf_bytes = _generate_audit_pdf(plan, findings)
     AuditLog.create_log(
-        db, action="audit_report_downloaded", resource="audit_plans",
-        tenant_id=tenant_id, user_id=current_user.id, detail=f"plan_id={plan_id}",
+        db,
+        action="audit_report_downloaded",
+        resource="audit_plans",
+        tenant_id=tenant_id,
+        user_id=current_user.id,
+        detail=f"plan_id={plan_id}",
     )
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename=audit_report_{plan_id}.pdf"},
     )
+
 
 # ── PDF helpers ───
 

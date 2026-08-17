@@ -10,6 +10,7 @@ from app.core.config import DEV_SECRET_PLACEHOLDER, Settings
 
 class TestSecurityHeaders:
     """TestSecurityHeaders schema/model definition."""
+
     def test_security_headers_present_on_api(self, client):
         """Test that security headers present on api behaves as expected."""
         resp = client.get("/health")
@@ -85,6 +86,7 @@ class TestProductionConfigValidation:
 
 class TestDocsGuard:
     """TestDocsGuard schema/model definition."""
+
     def test_docs_exposed_in_dev(self, client):
         # Default ENVIRONMENT=development -> docs on.
         """Test that docs exposed in dev behaves as expected."""

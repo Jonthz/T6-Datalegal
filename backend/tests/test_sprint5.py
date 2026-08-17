@@ -11,6 +11,7 @@ from tests.conftest import auth_headers
 
 class TestConsentStats:
     """TestConsentStats schema/model definition."""
+
     def _create_consent(self, client, token, *, legal_basis="CONSENT", is_sensitive=False):
         """Handle create consent."""
         return client.post(
@@ -63,6 +64,7 @@ class TestConsentStats:
 
 class TestARCOSLA:
     """TestARCOSLA schema/model definition."""
+
     def _create_arco(self, client, token):
         """Handle create arco."""
         return client.post(
@@ -155,6 +157,7 @@ class TestARCOSLA:
 
 class TestReportExports:
     """TestReportExports schema/model definition."""
+
     def test_summary_json(self, client: TestClient, dpo_token: str):
         """Test that summary json behaves as expected."""
         resp = client.get("/api/v1/reports/summary", headers=auth_headers(dpo_token))
@@ -197,6 +200,7 @@ class TestReportExports:
 
 class TestKPIsAndTrends:
     """TestKPIsAndTrends schema/model definition."""
+
     def test_kpis_shape(self, client: TestClient, dpo_token: str):
         """Test that kpis shape behaves as expected."""
         resp = client.get("/api/v1/reports/kpis", headers=auth_headers(dpo_token))
@@ -260,6 +264,7 @@ class TestKPIsAndTrends:
 
 class TestAlerts:
     """TestAlerts schema/model definition."""
+
     def _create_alert(
         self, client, token, *, alert_type="GENERAL", severity="INFO", recipient_id=None
     ):
@@ -367,6 +372,7 @@ class TestAlerts:
 
 class TestImportExport:
     """TestImportExport schema/model definition."""
+
     def test_import_treatment_activities(self, client: TestClient, dpo_token: str):
         """Test that import treatment activities behaves as expected."""
         resp = client.post(
@@ -466,6 +472,7 @@ class TestImportExport:
 
 class TestBackups:
     """TestBackups schema/model definition."""
+
     def test_create_backup(self, client: TestClient, super_admin_token: str):
         """Test that create backup behaves as expected."""
         resp = client.post("/api/v1/backups/create", headers=auth_headers(super_admin_token))

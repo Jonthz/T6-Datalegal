@@ -34,6 +34,7 @@ def _load_baseline_module():
 
 class TestAlembicBaseline:
     """TestAlembicBaseline schema/model definition."""
+
     def test_baseline_revision_present(self):
         """Test that baseline revision present behaves as expected."""
         module = _load_baseline_module()

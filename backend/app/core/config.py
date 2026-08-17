@@ -25,6 +25,7 @@ DEV_SECRET_PLACEHOLDER = "dev-secret-key-change-in-production-please"
 
 class Settings(BaseSettings):
     """Settings schema/model definition."""
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     ENVIRONMENT: str = "development"

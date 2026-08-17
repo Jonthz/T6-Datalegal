@@ -13,6 +13,7 @@ SAMPLE_ENTRIES = [
 
 class TestCatalogs:
     """TestCatalogs schema/model definition."""
+
     def test_bulk_load_catalogs(self, client: TestClient, dpo_token):
         """Test that bulk load catalogs behaves as expected."""
         resp = client.post(

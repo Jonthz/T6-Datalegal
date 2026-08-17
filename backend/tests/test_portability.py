@@ -7,6 +7,7 @@ from tests.conftest import auth_headers
 
 class TestPortabilityRequests:
     """TestPortabilityRequests schema/model definition."""
+
     def test_create_portability_request(self, client: TestClient, dpo_token):
         """Test that create portability request behaves as expected."""
         resp = client.post(

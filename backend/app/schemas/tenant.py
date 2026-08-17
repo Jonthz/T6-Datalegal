@@ -7,6 +7,7 @@ from app.schemas.user import UserCreate
 
 class TenantCreate(BaseModel):
     """TenantCreate schema/model definition."""
+
     name: str
     ruc: str
     country: str = "Ecuador"
@@ -15,6 +16,7 @@ class TenantCreate(BaseModel):
 
 class TenantRead(BaseModel):
     """TenantRead schema/model definition."""
+
     model_config = {"from_attributes": True}
 
     id: int

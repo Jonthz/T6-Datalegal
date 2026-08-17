@@ -39,6 +39,7 @@ class _RATBase(BaseModel):
 
 class TreatmentActivityCreate(_RATBase):
     """TreatmentActivityCreate schema/model definition."""
+
     name: str
     purpose: str
     legal_basis: str = ""
@@ -64,6 +65,7 @@ class TreatmentActivityCreate(_RATBase):
 
 class TreatmentActivityUpdate(_RATBase):
     """TreatmentActivityUpdate schema/model definition."""
+
     # Override list defaults with None so PATCH can distinguish "not sent".
     legal_bases: list[str] | None = None
     complementary_legal_bases: list[str] | None = None
@@ -94,6 +96,7 @@ class TreatmentActivityUpdate(_RATBase):
 
 class TreatmentActivityRead(_RATBase):
     """TreatmentActivityRead schema/model definition."""
+
     id: int
     tenant_id: int
     rat_code: str | None

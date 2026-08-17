@@ -41,9 +41,7 @@ def upgrade() -> None:
         sa.Column("closure_summary", sa.Text(), nullable=False, server_default=""),
     )
     op.add_column("incidents", sa.Column("closure_report_pdf", sa.LargeBinary(), nullable=True))
-    op.add_column(
-        "incidents", sa.Column("closed_at", sa.DateTime(timezone=True), nullable=True)
-    )
+    op.add_column("incidents", sa.Column("closed_at", sa.DateTime(timezone=True), nullable=True))
 
     # Drop the server defaults now that existing rows are backfilled; the ORM
     # supplies these values on new rows. Wrapped in batch mode so SQLite (which

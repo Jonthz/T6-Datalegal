@@ -8,6 +8,7 @@ from tests.conftest import _make_user, auth_headers
 
 class TestLogin:
     """TestLogin schema/model definition."""
+
     def test_login_success(self, client: TestClient, tenant_a, session):
         """Test that login success behaves as expected."""
         _make_user(session, tenant_id=tenant_a.id, email="loginok@test.com", role="ADMIN")
@@ -82,6 +83,7 @@ class TestLogin:
 
 class TestMFAVerify:
     """TestMFAVerify schema/model definition."""
+
     def test_mfa_verify_success(self, client: TestClient, tenant_a, session):
         """Test that mfa verify success behaves as expected."""
         import pyotp
@@ -133,6 +135,7 @@ class TestMFAVerify:
 
 class TestMFASetup:
     """TestMFASetup schema/model definition."""
+
     def test_mfa_setup_returns_secret_and_uri(self, client: TestClient, admin_token):
         """Test that mfa setup returns secret and uri behaves as expected."""
         resp = client.post("/api/v1/auth/mfa-setup", headers=auth_headers(admin_token))
@@ -160,6 +163,7 @@ class TestMFASetup:
 
 class TestPasswordValidation:
     """TestPasswordValidation schema/model definition."""
+
     def test_create_user_weak_password(self, client: TestClient, admin_token, tenant_a):  # pylint: disable=unused-argument
         """Test that create user weak password behaves as expected."""
         resp = client.post(

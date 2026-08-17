@@ -70,7 +70,7 @@ def generate_rat_code(db: Session, tenant_id: int, area: str | None) -> str:
     for (code,) in existing:
         if not code:
             continue
-        tail = code[len(prefix):]
+        tail = code[len(prefix) :]
         if tail.isdigit():
             max_seq = max(max_seq, int(tail))
     return f"{prefix}{max_seq + 1:03d}"
@@ -81,6 +81,7 @@ def generate_rat_code(db: Session, tenant_id: int, area: str | None) -> str:
 
 class WizardStartBody(BaseModel):
     """WizardStartBody schema/model definition."""
+
     name: str
     purpose: str
     department_id: int | None = None
@@ -89,6 +90,7 @@ class WizardStartBody(BaseModel):
 
 class WizardLegalBasisBody(BaseModel):
     """WizardLegalBasisBody schema/model definition."""
+
     legal_basis: str = ""
     legal_bases: list[str] = []
     complementary_legal_bases: list[str] = []
@@ -98,6 +100,7 @@ class WizardLegalBasisBody(BaseModel):
 
 class WizardTransfersBody(BaseModel):
     """WizardTransfersBody schema/model definition."""
+
     is_cross_border: bool = False
     destination_countries: list[str] = []
     processor_name: str | None = None

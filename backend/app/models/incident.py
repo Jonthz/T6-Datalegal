@@ -16,6 +16,7 @@ from app.db.base import TenantBase
 
 class Incident(TenantBase):
     """Incident schema/model definition."""
+
     __tablename__ = "incidents"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

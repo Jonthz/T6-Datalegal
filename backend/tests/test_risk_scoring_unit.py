@@ -50,8 +50,9 @@ def test_maximum_risk_returns_ceiling_of_scale():
     must saturate at 5x5 = 25 and HIGH. Guards the upper bound and confirms the
     top of the RED band is reachable."""
     result = compute_scores(
-        _responses(q2=True, q3=True, q4=True, q5=True, q6=True, q7=True,
-                   q8=False, q9=False, q10=False)
+        _responses(
+            q2=True, q3=True, q4=True, q5=True, q6=True, q7=True, q8=False, q9=False, q10=False
+        )
     )
     assert result == (5, 5, 25, "HIGH")
 
@@ -98,8 +99,8 @@ def test_missing_control_is_not_treated_as_a_failed_control():
     omitted = compute_scores({"q9": True, "q10": True})  # q8 entirely absent
     explicit_no = compute_scores({"q8": False, "q9": True, "q10": True})
     assert missing[0] == 1
-    assert omitted[0] == 1          # absent key -> not a failed control
-    assert explicit_no[0] == 2      # explicit NO -> failed control
+    assert omitted[0] == 1  # absent key -> not a failed control
+    assert explicit_no[0] == 2  # explicit NO -> failed control
 
 
 def test_missing_risk_key_is_ignored():
@@ -126,9 +127,7 @@ def test_each_impact_question_raises_impact_by_one(impact_q):
 def test_each_probability_question_raises_probability_by_one(prob_q):
     """Objective: each probability question (q3, q6) must add exactly 1 to
     probability in isolation. Pins down the probability weight table."""
-    probability, _, _, _ = compute_scores(
-        _responses(**{prob_q: True}, q8=True, q9=True, q10=True)
-    )
+    probability, _, _, _ = compute_scores(_responses(**{prob_q: True}, q8=True, q9=True, q10=True))
     assert probability == 2
 
 
@@ -180,8 +179,7 @@ def test_boundary_score_twenty_is_high():
     band starts at 17 but no product lands in 17-19. Guards the MEDIUM/HIGH cut
     from the RED side."""
     _, _, score, level = compute_scores(
-        _responses(q2=True, q4=True, q5=True, q7=True, q3=True,
-                   q8=False, q9=False, q10=True)
+        _responses(q2=True, q4=True, q5=True, q7=True, q3=True, q8=False, q9=False, q10=True)
     )
     assert (score, level) == (20, "HIGH")
 

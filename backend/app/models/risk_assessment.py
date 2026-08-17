@@ -21,6 +21,7 @@ def _compute_level(score: int) -> str:
 
 class RiskAssessment(TenantBase):
     """RiskAssessment schema/model definition."""
+
     __tablename__ = "risk_assessments"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)

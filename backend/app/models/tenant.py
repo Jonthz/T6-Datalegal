@@ -6,6 +6,7 @@ from app.db.base import Base, TimestampMixin
 
 class Tenant(Base, TimestampMixin):
     """Tenant schema/model definition."""
+
     __tablename__ = "tenants"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
