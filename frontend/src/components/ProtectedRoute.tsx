@@ -1,6 +1,7 @@
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import {
+  getStoredAccountScope,
   getStoredRole,
   hasAccountScope,
   hasPlatformPermissions,
@@ -32,9 +33,15 @@ export default function ProtectedRoute({
   }
 
   const role = getStoredRole()
+  const accountScope = getStoredAccountScope()
+  const defaultPath = accountScope === 'PLATFORM' ? '/platform' : '/dashboard'
+  const accountScopeAllowed = hasAccountScope(accountScopes)
+  if (!accountScopeAllowed) {
+    return <Navigate to={defaultPath} replace />
+  }
+
   if (
     (roles && !hasRole(roles, role)) ||
-    !hasAccountScope(accountScopes) ||
     !hasPlatformPermissions(platformPermissions)
   ) {
     return (
@@ -43,8 +50,8 @@ export default function ProtectedRoute({
           title="Access restricted"
           description="Your current role does not have permission to view this module. Contact a DPO or administrator if you need access."
           action={
-            <Button onClick={() => navigate('/dashboard')} variant="secondary">
-              Back to dashboard
+            <Button onClick={() => navigate(defaultPath)} variant="secondary">
+              Back to {accountScope === 'PLATFORM' ? 'platform console' : 'dashboard'}
             </Button>
           }
         />

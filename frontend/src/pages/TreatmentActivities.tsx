@@ -281,10 +281,13 @@ interface Step1 {
   name: string
   purpose: string
   department_id: string
+  area: string
 }
 
 interface Step2 {
   legal_basis: string
+  legal_bases: string
+  complementary_legal_bases: string
   personal_data_types: string
   data_subjects: string
 }
@@ -306,9 +309,11 @@ function WizardModal({
   const { t } = useTranslation()
   const totalSteps = 4
   const [step, setStep] = useState(1)
-  const [s1, setS1] = useState<Step1>({ name: '', purpose: '', department_id: '' })
+  const [s1, setS1] = useState<Step1>({ name: '', purpose: '', department_id: '', area: '' })
   const [s2, setS2] = useState<Step2>({
     legal_basis: '',
+    legal_bases: '',
+    complementary_legal_bases: '',
     personal_data_types: '',
     data_subjects: '',
   })
@@ -330,9 +335,12 @@ function WizardModal({
         name: initial.name ?? '',
         purpose: initial.purpose ?? '',
         department_id: initial.department_id ? String(initial.department_id) : '',
+        area: initial.area ?? '',
       })
       setS2({
         legal_basis: initial.legal_basis ?? '',
+        legal_bases: (initial.legal_bases ?? []).join(', '),
+        complementary_legal_bases: (initial.complementary_legal_bases ?? []).join(', '),
         personal_data_types: (initial.personal_data_types ?? []).join(', '),
         data_subjects: (initial.data_subjects ?? []).join(', '),
       })
@@ -344,8 +352,14 @@ function WizardModal({
       })
       setStep(initial.legal_basis ? 3 : 2)
     } else {
-      setS1({ name: '', purpose: '', department_id: '' })
-      setS2({ legal_basis: '', personal_data_types: '', data_subjects: '' })
+      setS1({ name: '', purpose: '', department_id: '', area: '' })
+      setS2({
+        legal_basis: '',
+        legal_bases: '',
+        complementary_legal_bases: '',
+        personal_data_types: '',
+        data_subjects: '',
+      })
       setS3({
         is_cross_border: false,
         destination_countries: '',
@@ -365,11 +379,12 @@ function WizardModal({
 
   function validateCurrentStep() {
     if (step === 1 && (!s1.name.trim() || !s1.purpose.trim())) {
-      setError(t('common.error'))
+      setError(t('treatmentActivities.wizard.validationStep1'))
       return false
     }
-    if (step === 2 && !s2.legal_basis.trim()) {
-      setError(t('common.error'))
+    const bases = parseList(s2.legal_bases)
+    if (step === 2 && !(s2.legal_basis.trim() || bases[0])) {
+      setError(t('treatmentActivities.wizard.validationStep2'))
       return false
     }
     return true
@@ -386,17 +401,22 @@ function WizardModal({
 
     setSubmitting(true)
     try {
+      const bases = parseList(s2.legal_bases)
+      const principal = s2.legal_basis.trim() || bases[0] || ''
       const payload = {
-        name: s1.name,
-        purpose: s1.purpose,
-        legal_basis: s2.legal_basis,
+        name: s1.name.trim(),
+        purpose: s1.purpose.trim(),
+        area: s1.area.trim() || null,
+        department_id: s1.department_id ? Number(s1.department_id) : null,
+        legal_basis: principal,
+        legal_bases: bases.length ? bases : principal ? [principal] : [],
+        complementary_legal_bases: parseList(s2.complementary_legal_bases),
         personal_data_types: parseList(s2.personal_data_types),
         data_subjects: parseList(s2.data_subjects),
         is_cross_border: s3.is_cross_border,
         destination_countries: s3.is_cross_border ? parseList(s3.destination_countries) : [],
         processor_name: s3.processor_name || null,
         processor_country: s3.processor_country || null,
-        department_id: s1.department_id ? Number(s1.department_id) : null,
         status: 'ACTIVE',
       }
       if (initial) {
@@ -481,12 +501,20 @@ function WizardModal({
               onChange={(e) => setS1({ ...s1, purpose: e.target.value })}
               rows={3}
             />
-            <Select
-              label={t('treatmentActivities.fields.department')}
-              value={s1.department_id}
-              onChange={(e) => setS1({ ...s1, department_id: e.target.value })}
-              options={deptOptions}
-            />
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label={t('treatmentActivities.fields.area')}
+                value={s1.area}
+                onChange={(e) => setS1({ ...s1, area: e.target.value })}
+                hint={t('treatmentActivities.areaHint')}
+              />
+              <Select
+                label={t('treatmentActivities.fields.department')}
+                value={s1.department_id}
+                onChange={(e) => setS1({ ...s1, department_id: e.target.value })}
+                options={deptOptions}
+              />
+            </div>
           </div>
         )}
 
@@ -499,6 +527,20 @@ function WizardModal({
               value={s2.legal_basis}
               onChange={(e) => setS2({ ...s2, legal_basis: e.target.value })}
               hint="e.g. CONSENT, CONTRACT, LEGAL_OBLIGATION"
+            />
+            <Textarea
+              label={t('treatmentActivities.fields.legalBases')}
+              value={s2.legal_bases}
+              onChange={(e) => setS2({ ...s2, legal_bases: e.target.value })}
+              hint={t('treatmentActivities.legalBasesHint')}
+              rows={2}
+            />
+            <Textarea
+              label={t('treatmentActivities.fields.complementaryLegalBases')}
+              value={s2.complementary_legal_bases}
+              onChange={(e) => setS2({ ...s2, complementary_legal_bases: e.target.value })}
+              hint={t('treatmentActivities.csvHelp')}
+              rows={2}
             />
             <Textarea
               label={t('treatmentActivities.fields.dataTypes')}
@@ -557,8 +599,16 @@ function WizardModal({
             <ReviewLine label={t('treatmentActivities.fields.name')} value={s1.name} />
             <ReviewLine label={t('treatmentActivities.fields.purpose')} value={s1.purpose} />
             <ReviewLine
+              label={t('treatmentActivities.fields.area')}
+              value={s1.area || '—'}
+            />
+            <ReviewLine
               label={t('treatmentActivities.fields.legalBasis')}
               value={s2.legal_basis || '—'}
+            />
+            <ReviewLine
+              label={t('treatmentActivities.fields.legalBases')}
+              value={parseList(s2.legal_bases).join(', ') || '—'}
             />
             <ReviewLine
               label={t('treatmentActivities.fields.dataTypes')}
