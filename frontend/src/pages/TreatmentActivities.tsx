@@ -321,7 +321,6 @@ function WizardModal({
   const { t } = useTranslation()
   const totalSteps = 4
   const [step, setStep] = useState(1)
-  const [activity, setActivity] = useState<TreatmentActivity | null>(initial)
   const [s1, setS1] = useState<Step1>({ name: '', purpose: '', department_id: '', area: '' })
   const [s2, setS2] = useState<Step2>({
     legal_basis: '',
@@ -338,9 +337,8 @@ function WizardModal({
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  // Inicializa el formulario UNA sola vez por apertura del modal. Sin esto, cada
-  // onSavedStep actualiza `initial`, re-dispara el efecto y la fórmula de "reanudar"
-  // (tope en 3) revierte el setStep(4), dejando el wizard atascado en el paso 3.
+  // Inicializa el formulario una sola vez por apertura del modal para no pisar
+  // el paso actual mientras el usuario avanza o retrocede dentro del wizard.
   const initializedRef = useRef(false)
 
   // Sync local form when modal opens or initial activity changes
@@ -374,7 +372,6 @@ function WizardModal({
       })
       setStep(initial.legal_basis ? 3 : 2)
     } else {
-      setActivity(null)
       setS1({ name: '', purpose: '', department_id: '', area: '' })
       setS2({
         legal_basis: '',
@@ -402,11 +399,12 @@ function WizardModal({
 
   function validateCurrentStep() {
     if (step === 1 && (!s1.name.trim() || !s1.purpose.trim())) {
-      setError(t('common.error'))
+      setError(t('treatmentActivities.wizard.validationStep1'))
       return false
     }
-    if (step === 2 && !s2.legal_basis.trim()) {
-      setError(t('common.error'))
+    const bases = parseList(s2.legal_bases)
+    if (step === 2 && !(s2.legal_basis.trim() || bases[0])) {
+      setError(t('treatmentActivities.wizard.validationStep2'))
       return false
     }
     return true
@@ -423,50 +421,28 @@ function WizardModal({
 
     setSubmitting(true)
     try {
-      if (step === 1) {
-        if (!s1.name.trim() || !s1.purpose.trim()) {
-          setError(t('treatmentActivities.wizard.validationStep1'))
-          return
-        }
-        const created = await wizardStart({
-          name: s1.name.trim(),
-          purpose: s1.purpose.trim(),
-          department_id: s1.department_id ? Number(s1.department_id) : null,
-          area: s1.area.trim() || null,
-        })
-        setActivity(created)
-        onSavedStep(created)
-        setStep(2)
-      } else if (step === 2 && activity) {
-        const bases = parseList(s2.legal_bases)
-        const principal = s2.legal_basis.trim() || bases[0] || ''
-        if (!principal) {
-          setError(t('treatmentActivities.wizard.validationStep2'))
-          return
-        }
-        const updated = await wizardLegalBasis(activity.id, {
-          legal_basis: principal,
-          legal_bases: bases.length ? bases : principal ? [principal] : [],
-          complementary_legal_bases: parseList(s2.complementary_legal_bases),
-          personal_data_types: parseList(s2.personal_data_types),
-          data_subjects: parseList(s2.data_subjects),
-        })
-        setActivity(updated)
-        onSavedStep(updated)
-        setStep(3)
-      } else if (step === 3 && activity) {
-        const updated = await wizardTransfers(activity.id, {
-          is_cross_border: s3.is_cross_border,
-          destination_countries: parseList(s3.destination_countries),
-          processor_name: s3.processor_name || null,
-          processor_country: s3.processor_country || null,
-        })
-        setActivity(updated)
-        onSavedStep(updated)
-        setStep(4)
-      } else if (step === 4 && activity) {
-        await wizardFinalize(activity.id)
-        onCompleted()
+      const bases = parseList(s2.legal_bases)
+      const principal = s2.legal_basis.trim() || bases[0] || ''
+      const payload = {
+        name: s1.name.trim(),
+        purpose: s1.purpose.trim(),
+        area: s1.area.trim() || null,
+        department_id: s1.department_id ? Number(s1.department_id) : null,
+        legal_basis: principal,
+        legal_bases: bases.length ? bases : principal ? [principal] : [],
+        complementary_legal_bases: parseList(s2.complementary_legal_bases),
+        personal_data_types: parseList(s2.personal_data_types),
+        data_subjects: parseList(s2.data_subjects),
+        is_cross_border: s3.is_cross_border,
+        destination_countries: s3.is_cross_border ? parseList(s3.destination_countries) : [],
+        processor_name: s3.processor_name || null,
+        processor_country: s3.processor_country || null,
+        status: 'ACTIVE',
+      }
+      if (initial) {
+        await updateTreatmentActivity(initial.id, payload)
+      } else {
+        await createTreatmentActivity(payload)
       }
       onCompleted()
     } catch (err) {
